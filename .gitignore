@@ -73,4 +73,10 @@ dkms.conf
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/c,visualstudiocode
+
+
+# Ruhan: Makefile_temp => template do Makefile localmente
 Projeto 1/Makefile_temp
+
+# Ruhan: para não mandarmos os output gerados para o git, assim cada os gera na propria maquina
+Projeto 1/output/*
