@@ -1,8 +1,9 @@
+#include <stdlib.h>
 #include "../headers/data.h"
 
 struct data_t *data_create(int size){
-    data_t *new_data;
-    new_data = malloc(size * sizeof(data_t));
+    struct data_t *new_data;
+    new_data = malloc(size * sizeof(struct data_t));
     return new_data;
 }
 
