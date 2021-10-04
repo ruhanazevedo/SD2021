@@ -18,9 +18,18 @@ void list_destroy(struct list_t *list){
 
 int list_add(struct list_t *list, struct entry_t *entry){
     if(entry != NULL){
-        entry_replace(list->nodes->child->current_entry, 
-                      entry->key,
-                      entry->value);              
+        struct node_t *comparable = getNodeIfKeyExist(list->nodes, entry->key);
+        struct node_t *node = getNodeWithoutChild(list->nodes);
+        if(comparable == NULL){
+            node->current_entry = malloc(sizeof(struct entry_t)); //check if this was allocated before
+            node->current_entry = entry;
+        }
+        else { //void entry_replace(struct entry_t *entry, char *new_key, struct data_t *new_value){
+            entry_replace(comparable->current_entry, 
+                          entry->key,
+                          entry->value);  
+        }
+                    
         //entry_destroy(entry); //values already copied, so we can kill this entry
         //list->nodes->child->current_entry = entry;
         //initializeNode(list->nodes->child->parent);

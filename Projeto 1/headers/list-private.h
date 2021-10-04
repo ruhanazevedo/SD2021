@@ -63,4 +63,12 @@ struct node_t *getNodeHead(struct node_t *nodes){
     }
 }
 
+struct node_t *getNodeWithoutChild(struct node_t *node){
+    if(node->child == NULL){
+        return node;
+    }
+    else {
+        getNodeWithoutChild(node->child);
+    }
+}
 #endif

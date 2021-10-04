@@ -9,6 +9,7 @@ struct data_t *data_create(int size){
     return new_data;
 }
 
+// DUVIDA: Como criar um data sem reservar memoria?
 struct data_t *data_create2(int size, void *data){
     struct data_t *new_data2;
     new_data2 = malloc(sizeof(struct data_t));
@@ -21,21 +22,19 @@ struct data_t *data_create2(int size, void *data){
 
 void data_destroy(struct data_t *data){
     free(data->data);
-    //free(data->datasize); //talvez n seja necessario libertar visto que n foi alocado
     free(data);
 }
 
 struct data_t *data_dup(struct data_t *data){
     struct data_t *new_data;
-    new_data = malloc(sizeof(struct data_t));
-    new_data->data = malloc(sizeof(data->data));
-    new_data->data = data->data;
+    new_data = data_create2(data->datasize, data->data);
     return new_data;
+    // CASE NULL TO BE TREATED
 }
 
 void data_replace(struct data_t *data, int new_size, void *new_data){
     free(data->data);
-    //free(data->datasize); //probably doesnt need it
     data->data = new_data;
     data->datasize = new_size;
+    // CASE NULL TO BE TREATED
 }
