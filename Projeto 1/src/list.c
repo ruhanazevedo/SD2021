@@ -5,7 +5,8 @@
 struct list_t *list_create(){
     struct list_t *new_list;
     new_list = malloc(sizeof(struct list_t));
-    new_list->size = 0;
+    new_list->size = 1; //does have at least 1 node (head)
+    new_list->nodes = malloc(sizeof(struct node_t));
     initializeNode(new_list->nodes);
 
     return new_list;
@@ -19,10 +20,10 @@ int list_add(struct list_t *list, struct entry_t *entry){
     if(entry != NULL){
         entry_replace(list->nodes->child->current_entry, 
                       entry->key,
-                      entry->value);
-        entry_destroy(entry); //values already copied, so we can kill this entry
+                      entry->value);              
+        //entry_destroy(entry); //values already copied, so we can kill this entry
         //list->nodes->child->current_entry = entry;
-        initializeNode(list->nodes->child->parent);
+        //initializeNode(list->nodes->child->parent);
         //list->nodes->child->parent = list->nodes->current_node;
         //list->nodes->child->child = NULL; // already done in intializeNode()
         ++list->size;

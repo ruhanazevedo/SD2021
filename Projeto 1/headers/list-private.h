@@ -23,14 +23,14 @@ void list_print(struct list_t* list); //check if this function really belongs he
  * alocate memory to node and initialize parent and child with NULL value
  **/
 void initializeNode(struct node_t *node){
-    node = malloc(sizeof(struct node_t));
     node->parent = malloc(sizeof(struct node_t));
     node->child = malloc(sizeof(struct node_t));
     node->current_node = malloc(sizeof(struct node_t));
     node->current_entry = entry_create(NULL, NULL); //initializing entry without values
 
     node->parent = NULL;
-    node->child = NULL;
+    //node->current_node = NULL; // is not necesasry initiate
+    //node->child = NULL;       // this fields, only parent 
 }
 
 int thisNodeIsHead(struct node_t *node){

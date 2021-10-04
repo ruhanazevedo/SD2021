@@ -11,10 +11,16 @@
 #include "src/list.c"
 
 int main(void){
-    struct list_t *list = list_create();
-    list_destroy(list);
+/*
+    char *s1 = "Hello World";
+    int len = strlen(s1);
+    printf("%s\n", s1);*/
+
+    /*struct list_t *list = list_create();
+    //list_destroy(list); //WARNING
     struct entry_t *entry = entry_create(NULL, NULL);
-    list_add(list, entry);
+    list_add(list, entry);*/
+    free(NULL);
     //list_remove(list, NULL);
     //struct entry_t *entry2 = list_get(list, NULL);
     //int i = list_size(list);
