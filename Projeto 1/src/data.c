@@ -4,7 +4,7 @@
 struct data_t *data_create(int size){
     struct data_t *new_data;
     new_data = malloc(sizeof(struct data_t));
-    new_data->data = malloc(sizeof(size));
+    new_data->data = malloc(size);
     new_data->datasize = size;
     return new_data;
 }
@@ -13,7 +13,6 @@ struct data_t *data_create(int size){
 struct data_t *data_create2(int size, void *data){
     struct data_t *new_data2;
     new_data2 = malloc(sizeof(struct data_t));
-    //note: nao era preciso alocar o size para o new_data2->data ?!
     //new_data2->data = malloc(sizeof(size));
     new_data2->data = data;
     new_data2->datasize = size;
@@ -26,10 +25,13 @@ void data_destroy(struct data_t *data){
 }
 
 struct data_t *data_dup(struct data_t *data){
+    if(data == NULL || data->data == NULL){
+        printf("[WARN] the data argument provided is NULL, cant proceed\n");
+        return NULL;
+    }
     struct data_t *new_data;
     new_data = data_create2(data->datasize, data->data);
     return new_data;
-    // CASE NULL TO BE TREATED
 }
 
 void data_replace(struct data_t *data, int new_size, void *new_data){
