@@ -43,15 +43,24 @@ int thisNodeIsHead(struct node_t *node){
 }
 
 struct node_t *getNodeIfKeyExist(struct node_t *node, char *key){
-    if(node->current_entry->key == key){
-        return node; //true   
-    }
-    else if(node->child != NULL){
-        getNodeIfKeyExist(node->child, key);    
-    } 
-    else {
+    
+    if(node == NULL){
+        printf("[WARN] The node received is NULL, can't reach the most younger\n");
         return NULL;
     }
+    else if (node->current_entry != NULL){
+        if(node->current_entry->key == key){
+            return node;
+        }
+        else {
+            getNodeIfKeyExist(node->child, key);  
+        }
+    }
+    else {
+        printf("[WARN] The node->current_entry received is NULL, can't proceed\n");
+        return NULL;
+    }
+    
 }
 
 struct node_t *getNodeHead(struct node_t *nodes){

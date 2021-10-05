@@ -15,7 +15,9 @@
 
 int main(void){
     struct table_t *table = table_create(2);
-    table_put(table, "", NULL);
+    struct data_t *data = data_create(3);
+    struct data_t *data2 = data_create2(3, "conteúdo arbitrario");
+    table_put(table, "abc", data2);
     /*
     struct list_t *list = list_create();
     //list_destroy(list); //WARNING

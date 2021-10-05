@@ -26,12 +26,20 @@ void table_destroy(struct table_t *table){
 int table_put(struct table_t *table, char *key, struct data_t *value){
     char *key_copy = malloc(strlen(key)+1);
     strcpy(key_copy, key);
-    struct data_t *data_copy = data_dup(value); //maybe isn't necessary use the copy of value
-    /*for(int i=0 ; i<table->size ; i++){
-        table->list[i]=
-    }*/
+    if(value == NULL || key == NULL || key == ""){
+        printf("[WARN] some argument provided is NULL, can't proceed\n");
+        return -1;
+    }
+    struct data_t *data_copy = data_dup(value);
     int index = hash(key) % table->size;
     struct entry_t *new_entry = entry_create(key_copy, data_copy);
     list_add(table->list[index], new_entry);
+    return 0;
+    
+     //maybe isn't necessary use the copy of value
+    /*for(int i=0 ; i<table->size ; i++){
+        table->list[i]=
+    }*/
+    
     //table->list[index]->nodes->current_entry = new_entry;
 }
