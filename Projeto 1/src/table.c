@@ -18,8 +18,12 @@ struct table_t *table_create(int n){
 }
 
 void table_destroy(struct table_t *table){
-    free(table->list);
-    free(table);
+    if(table != NULL){   
+        if(table->list != NULL){
+            free(table->list);
+        }
+        free(table);
+    }
 }
 
 //@requires: table != NULL
@@ -33,7 +37,10 @@ int table_put(struct table_t *table, char *key, struct data_t *value){
     struct data_t *data_copy = data_dup(value);
     int index = hash(key) % table->size;
     struct entry_t *new_entry = entry_create(key_copy, data_copy);
+    free(key_copy); //isn't used anymore
+    free(data_copy);
     list_add(table->list[index], new_entry);
+    ++table->size;
     return 0;
     
      //maybe isn't necessary use the copy of value
@@ -42,4 +49,91 @@ int table_put(struct table_t *table, char *key, struct data_t *value){
     }*/
     
     //table->list[index]->nodes->current_entry = new_entry;
+}
+
+struct data_t *table_get(struct table_t *table, char *key){
+    if(table == NULL || key == NULL || key == ""){
+        printf("[ERROR] the argument received is invalid");
+        return NULL;
+    }
+    int index = hash(key) % table->size;
+    if(table->list[index] != NULL){
+        struct node_t *node = getNodeIfKeyExist(table->list[index]->nodes, key);
+        return node->current_entry->value;
+    }
+    printf("[ERROR] internal_error: If this was hitted, something is wrong");
+    return NULL;
+}
+
+int table_del(struct table_t *table, char *key){
+    if(table == NULL || key == NULL || key == ""){
+        printf("[ERROR] Unexpected NULL argument");
+        return -1;
+    }
+
+    int index = hash(key) % table->size;
+    
+    if(table->list[index] == NULL){
+        printf("[WARN] key not found");
+        return -1;
+    }
+    
+    struct entry_t *entry = table->list[index]->nodes->current_entry;
+    if(entry != NULL){
+        if(entry->key != NULL && entry->value != NULL){
+            free(entry->value);
+            free(entry->key);
+        }
+        free(entry);
+        return 0;
+    }
+    printf("[ERROR] internal_error: If this was hitted, something is wrong!");
+    return -1;
+}
+
+int table_size(struct table_t *table){
+    if(table != NULL){
+        return table->size; //check if this is correct (case of add keys in the same index of list connected to another node)
+    }
+    return -1;
+}
+
+char **table_get_keys(struct table_t *table){
+    char **keys = malloc(sizeof(char)*table->size + sizeof(NULL)); 
+    int j = 0;
+    for(int i=0 ; i<table->size ; i++){
+        if(table->list[i]->nodes != NULL){
+            int size = table->list[i]->size;
+            char **str = getAllKeys(table->list[i]); // this method returns all keys into a list, even if exist node's key connected to another node
+            int k = 0;                              // the function getAllKeys put NULL in the final
+            while(size > 0){ 
+                char *key_copy = malloc(strlen(str[k])+1);
+                strcpy(key_copy, str[k]);
+                keys[j] = key_copy;
+                free(key_copy);
+                ++j;
+                ++k;  
+                --size; 
+            }
+        }
+    }
+    return keys;
+}
+
+void table_free_keys(char **keys){
+    if(keys != NULL){
+        free(keys);
+    }
+}
+
+void table_print(struct table_t *table){
+    printf("[");
+    printf("table:");
+    printf("size = %d", table->size);
+    printf("list = ");
+    for(int i=0 ; i<table->size ; i++){
+        list_print(table->list[i]);
+    }
+    printf("]");
+    
 }

@@ -82,3 +82,27 @@ struct node_t *getNodeWithoutChild(struct node_t *node){
     }
 }
 #endif
+
+char **getAllKeys(struct list_t *list){
+    if(list == NULL || list->nodes == NULL){
+        printf("[WARN] NULL isn't a valid argument");
+        return NULL;
+    }
+    char **str = malloc(sizeof(char)*list->size);
+    return getAllKeysRecursiveAux(list->nodes, str, 0);
+}
+
+char **getAllKeysRecursiveAux(struct node_t *node, char **acumulated, int i){
+    
+    if(node->current_entry->key != NULL){
+        acumulated[i] = node->current_entry->key;
+    }
+
+    if(node->child == NULL){
+        acumulated[i+1] = NULL;
+        return acumulated;    
+    }
+    else {
+        getAllKeysRecursiveAux(node->child, acumulated, ++i);
+    }
+}

@@ -97,10 +97,10 @@ void list_free_keys(char **keys){
 void list_print(struct list_t *list){
     struct node_t *nodesList = getNodeHead(list->nodes);
     
-    printf("[");
+    printf("{");
     while(nodesList->child != NULL){
         printf("%s\n",nodesList->current_entry->key);
         nodesList = nodesList->child;
     }
-    printf("]");
+    printf("}");
 }

@@ -18,6 +18,7 @@ int main(int argc, char **argv){
     struct data_t *data = data_create(3);
     struct data_t *data2 = data_create2(3, "abc");
     table_put(table, "123", data2);
+    char **str = table_get_keys(table);
     /*
     struct list_t *list = list_create();
     //list_destroy(list); //WARNING
