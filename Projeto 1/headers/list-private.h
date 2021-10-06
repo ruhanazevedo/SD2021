@@ -3,11 +3,12 @@
 
 #include "list.h"
 #include <stddef.h> //NULLS
+#include <string.h>
+#include <stdio.h>
 
 struct node_t {
     struct node_t *parent;
     struct node_t *child;
-    struct node_t *current_node;
     struct entry_t *current_entry;
 };
 
@@ -25,11 +26,10 @@ void list_print(struct list_t* list); //check if this function really belongs he
 void initializeNode(struct node_t *node){
     node->parent = malloc(sizeof(struct node_t));
     node->child = malloc(sizeof(struct node_t));
-    node->current_node = malloc(sizeof(struct node_t));
     node->current_entry = entry_create(NULL, NULL); //initializing entry without values
 
     node->parent = NULL;
-    //node->current_node = NULL; // is not necesasry initiate
+
     //node->child = NULL;       // this fields, only parent 
 }
 
@@ -43,29 +43,30 @@ int thisNodeIsHead(struct node_t *node){
 }
 
 struct node_t *getNodeIfKeyExist(struct node_t *node, char *key){
-    
-    if(node == NULL){
-        printf("[WARN] The node received is NULL, can't reach the most younger\n");
-        return NULL;
-    }
-    else if (node->current_entry != NULL){
-        if(node->current_entry->key == key){
+    //strcmp(node->current_entry->key, key) == 0
+    //node->current_entry->key == key
+    if(node->current_entry->key != NULL){ 
+        if(strcmp(node->current_entry->key, key) == 0){ //the node received have the same key as the argument
             return node;
         }
         else {
-            getNodeIfKeyExist(node->child, key);  
+            if(node->child != NULL){ //check if the node received have child
+                getNodeIfKeyExist(node->child, key); //try call function again with child instead
+            }
+            else {
+                return NULL; //if doesn't have child and dont have kill, this key doesn't exist, return NULL
+            }
         }
     }
     else {
-        printf("[WARN] The node->current_entry received is NULL, can't proceed\n");
-        return NULL;
+        return NULL; //if this node doesn't have a key, the next won't have
     }
     
 }
 
 struct node_t *getNodeHead(struct node_t *nodes){
-    if(nodes->parent == NULL && nodes->current_node != NULL){
-        return nodes->current_node;
+    if(nodes->parent == NULL && nodes != NULL){
+        return nodes;
     }
     else {
         getNodeHead(nodes->parent);
