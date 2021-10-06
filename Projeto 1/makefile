@@ -8,4 +8,5 @@ main.o: main.c headers/data.h
 	gcc -c main.c -g -o output/main.o
 
 clean:
-	rm -rf output/* 
+	rm -rf output/*
+	rm main.exe 

@@ -20,8 +20,14 @@ struct data_t *data_create2(int size, void *data){
 }
 
 void data_destroy(struct data_t *data){
-    free(data->data);
-    free(data);
+    if(data != NULL){
+        if(data->data != NULL){
+            free(data->data);
+        }
+        free(data);
+    }
+    
+    
 }
 
 struct data_t *data_dup(struct data_t *data){

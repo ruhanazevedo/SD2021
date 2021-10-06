@@ -21,7 +21,9 @@ int list_add(struct list_t *list, struct entry_t *entry){
         struct node_t *comparable = getNodeIfKeyExist(list->nodes, entry->key);
         struct node_t *node = getNodeWithoutChild(list->nodes);
         if(comparable == NULL){
-            node->current_entry = malloc(sizeof(struct entry_t)); //check if this was allocated before
+            if(node->current_entry == NULL){
+                node->current_entry = malloc(sizeof(struct entry_t)); //check if this was allocated before
+            }
             node->current_entry = entry;
         }
         else { //void entry_replace(struct entry_t *entry, char *new_key, struct data_t *new_value){
@@ -33,7 +35,6 @@ int list_add(struct list_t *list, struct entry_t *entry){
         //entry_destroy(entry); //values already copied, so we can kill this entry
         //list->nodes->child->current_entry = entry;
         //initializeNode(list->nodes->child->parent);
-        //list->nodes->child->parent = list->nodes->current_node;
         //list->nodes->child->child = NULL; // already done in intializeNode()
         ++list->size;
         return 0;
@@ -84,7 +85,7 @@ char **list_get_keys(struct list_t *list){
     while(nodesList->child != NULL){
         array[i] = nodesList->current_entry->key;
         ++i;
-        nodesList = nodesList->child->current_node;
+        nodesList = nodesList->child;
     }
     return array;
 }
@@ -99,7 +100,7 @@ void list_print(struct list_t *list){
     printf("[");
     while(nodesList->child != NULL){
         printf("%s\n",nodesList->current_entry->key);
-        nodesList = nodesList->child->current_node;
+        nodesList = nodesList->child;
     }
     printf("]");
 }

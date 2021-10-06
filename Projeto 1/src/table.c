@@ -26,7 +26,7 @@ void table_destroy(struct table_t *table){
 int table_put(struct table_t *table, char *key, struct data_t *value){
     char *key_copy = malloc(strlen(key)+1);
     strcpy(key_copy, key);
-    if(value == NULL || key == NULL || key == ""){
+    if(value == NULL || key == NULL || key == "" || table == NULL){
         printf("[WARN] some argument provided is NULL, can't proceed\n");
         return -1;
     }

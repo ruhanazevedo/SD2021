@@ -32,6 +32,23 @@ struct data_t *buffer_to_data(char *data_buf, int data_buf_size){
     
 }
 
-int entry_to_buffer(struct entry_t *data, char **entry_buf);
+// TODO: TREAT NULL CASE
+int entry_to_buffer(struct entry_t *data, char **entry_buf){
+    int size = data->value->datasize;
+    memcpy(entry_buf, &size, sizeof(int)); //serialize to address
+    memcpy(entry_buf+size, data->value->data, size);
+}
 
-struct entry_t *buffer_to_entry(char *entry_buf, int entry_buf_size);
+struct entry_t *buffer_to_entry(char *entry_buf, int entry_buf_size){
+    if(entry_buf == NULL){
+        printf("[ERROR] entry_buf received in NULL, can't proceed");
+        return NULL;
+    }
+    else{
+        struct entry_t *entry;
+        void *aux = malloc(entry_buf_size);
+        memcpy(aux, &entry_buf, entry_buf_size);
+        entry = data_create2(entry_buf_size, aux);
+        return entry;
+    }
+}
