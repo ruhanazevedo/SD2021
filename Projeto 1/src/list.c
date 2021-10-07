@@ -16,7 +16,7 @@ void list_destroy(struct list_t *list){
     free(list);
 }
 
-int list_add(struct list_t *list, struct entry_t *entry){ //*
+int list_add(struct list_t *list, struct entry_t *entry){ 
     if(entry != NULL){
         struct node_t *comparable = getNodeIfKeyExist(list->nodes, entry->key);
         struct node_t *node = getNodeWithoutChild(list->nodes); //tail
@@ -82,6 +82,10 @@ int list_size(struct list_t *list){
 }
 
 char **list_get_keys(struct list_t *list){
+    if(list == NULL){
+        printf("[WARN] list received is NULL");
+        return NULL;
+    }
     char **array = malloc(sizeof(char)*list->size);
     struct node_t *nodesList = getNodeHead(list->nodes);
     int i = 0;
@@ -98,12 +102,17 @@ void list_free_keys(char **keys){
 }
 
 void list_print(struct list_t *list){
-    struct node_t *nodesList = getNodeHead(list->nodes);
-    
-    printf("{");
-    while(nodesList->child != NULL){
-        printf("%s\n",nodesList->current_entry->key);
-        nodesList = nodesList->child;
+    if(list == NULL){
+        printf("NULL_LIST");
     }
-    printf("}");
+    //struct node_t *nodesList = getNodeHead(list->nodes); //isn't necessary, we supose that list have the HEAD
+    struct node_t *node = list->nodes;
+    printf("list_t["); 
+    while(node != NULL){
+        printf("current_entry[key: %s, ", node->current_entry->key);
+        data_print(node->current_entry->value);
+        printf("]");
+        node = node->child;
+    }
+    printf("]");
 }

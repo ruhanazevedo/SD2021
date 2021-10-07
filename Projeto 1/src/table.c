@@ -100,23 +100,20 @@ int table_size(struct table_t *table){
 
 char **table_get_keys(struct table_t *table){
     char **keys = malloc(sizeof(char)*table->size + sizeof(NULL)); 
-    int j = 0;
+    int k = 0;
     for(int i=0 ; i<table->size ; i++){
-        if(table->list[i]->nodes != NULL){
-            int size = table->list[i]->size;
-            char **str = getAllKeys(table->list[i]); // this method returns all keys into a list, even if exist node's key connected to another node
-            int k = 0;                              // the function getAllKeys put NULL in the final
-            while(size > 0){ 
-                char *key_copy = malloc(strlen(str[k])+1);
-                strcpy(key_copy, str[k]);
-                keys[j] = key_copy;
-                free(key_copy);
-                ++j;
-                ++k;  
-                --size; 
+        if(table->list[i] != NULL){
+            int listSize = list_size(table->list[i]); 
+            char **list_keys = list_get_keys(table->list[i]); //check if malloc of char** is necessary here
+            for(int j=0 ; j<listSize ; j++){
+                if(list_keys[j] != NULL){
+                    keys[k] =  list_keys[j];
+                    ++k;
+                }
             }
         }
     }
+    keys[k] = NULL;
     return keys;
 }
 
@@ -127,13 +124,19 @@ void table_free_keys(char **keys){
 }
 
 void table_print(struct table_t *table){
-    printf("[");
-    printf("table:");
-    printf("size = %d", table->size);
-    printf("list = ");
-    for(int i=0 ; i<table->size ; i++){
-        list_print(table->list[i]);
+    if(table == NULL){
+        printf("NULL_TABLE");
+        return;
     }
-    printf("]");
+
+    printf("table_t[");
+    printf("size: %d ; ", table->size);
+    printf("list[");
+    for(int i=0 ; i<table->size ; i++){
+        if(table->list[i] != NULL){
+            list_print(table->list[i]);
+        }
+    }
+    printf("]\n");
     
 }

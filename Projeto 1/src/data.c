@@ -46,3 +46,17 @@ void data_replace(struct data_t *data, int new_size, void *new_data){
     data->datasize = new_size;
     // CASE NULL TO BE TREATED
 }
+
+/*******************************
+****** FUNÇÕES AUXILIARES ******
+********************************/
+
+void data_print(struct data_t *data){
+    if(data == NULL){
+        printf("NULL_DATA");
+        return;
+    }
+    else {
+        printf("data_t[ datasize: %d, data: %p]", data->datasize, data->data);
+    }
+}

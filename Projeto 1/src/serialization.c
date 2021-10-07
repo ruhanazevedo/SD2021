@@ -2,9 +2,7 @@
 #include "../headers/entry.h"
 #include <stddef.h> //NULLS
 
-//TREAT NULL CASE
 int data_to_buffer(struct data_t *data, char **data_buf){
-    //OPTION 1
     if(data == NULL || data_buf == NULL){
         printf("[WARN] invalid arguments");
         return -1;
@@ -16,11 +14,6 @@ int data_to_buffer(struct data_t *data, char **data_buf){
     memcpy(buff, &size, sizeof(int)); //serialize to address
     memcpy(buff+sizeof(int), data->data, size);
     return sizeof(int) + size;
-    /*
-    //OPTION 2
-    int size = data->datasize;
-    memcpy(data_buf, &size, sizeof(int)); //serialize to address
-    memcpy(data_buf+size, data->data, size);*/
 }
 
 struct data_t *buffer_to_data(char *data_buf, int data_buf_size){
@@ -39,7 +32,6 @@ struct data_t *buffer_to_data(char *data_buf, int data_buf_size){
     
 }
 
-// TODO: TREAT NULL CASE
 int entry_to_buffer(struct entry_t *data, char **entry_buf){
     if(data == NULL || entry_buf == NULL){
         printf("[WARN] Invalid NULL argument!");

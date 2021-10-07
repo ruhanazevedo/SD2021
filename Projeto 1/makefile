@@ -9,4 +9,3 @@ main.o: main.c headers/data.h
 
 clean:
 	rm -rf output/*
-	rm main.exe 
