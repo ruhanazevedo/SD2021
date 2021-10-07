@@ -131,7 +131,6 @@ void table_print(struct table_t *table){
 
     printf("table_t[");
     printf("size: %d ; ", table->size);
-    printf("list[");
     for(int i=0 ; i<table->size ; i++){
         if(table->list[i] != NULL){
             list_print(table->list[i]);

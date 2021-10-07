@@ -9,7 +9,6 @@ struct data_t *data_create(int size){
     return new_data;
 }
 
-// DUVIDA: Como criar um data sem reservar memoria?
 struct data_t *data_create2(int size, void *data){
     struct data_t *new_data2;
     new_data2 = malloc(sizeof(struct data_t));

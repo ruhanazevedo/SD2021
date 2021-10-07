@@ -114,5 +114,5 @@ void list_print(struct list_t *list){
         printf("]");
         node = node->child;
     }
-    printf("]");
+    printf("] ");
 }
