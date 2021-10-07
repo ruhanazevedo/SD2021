@@ -28,9 +28,7 @@ void initializeNode(struct node_t *node){
     node->child = malloc(sizeof(struct node_t));
     node->current_entry = entry_create(NULL, NULL); //initializing entry without values
 
-    node->parent = NULL;
-
-    //node->child = NULL;       // this fields, only parent 
+    node->child = NULL;    
 }
 
 int thisNodeIsHead(struct node_t *node){
@@ -81,7 +79,19 @@ struct node_t *getNodeWithoutChild(struct node_t *node){
         getNodeWithoutChild(node->child);
     }
 }
-#endif
+
+struct node_t *addNewNode(struct node_t *node){
+    if(node->child == NULL){
+        node->child = malloc(sizeof(struct node_t));
+        initializeNode(node->child);
+        node->child->parent = node;
+        return node->child;
+    }
+    else {
+        printf("[WARN] this node is not the tail");
+        return NULL;
+    }   
+}
 
 char **getAllKeys(struct list_t *list){
     if(list == NULL || list->nodes == NULL){
@@ -106,3 +116,5 @@ char **getAllKeysRecursiveAux(struct node_t *node, char **acumulated, int i){
         getAllKeysRecursiveAux(node->child, acumulated, ++i);
     }
 }
+
+#endif

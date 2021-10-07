@@ -8,7 +8,7 @@ struct list_t *list_create(){
     new_list->size = 1; //does have at least 1 node (head)
     new_list->nodes = malloc(sizeof(struct node_t));
     initializeNode(new_list->nodes);
-
+    new_list->nodes->parent = NULL; //first node don't have parent, is the HEAD
     return new_list;
 }
 
@@ -16,14 +16,17 @@ void list_destroy(struct list_t *list){
     free(list);
 }
 
-int list_add(struct list_t *list, struct entry_t *entry){
+int list_add(struct list_t *list, struct entry_t *entry){ //*
     if(entry != NULL){
         struct node_t *comparable = getNodeIfKeyExist(list->nodes, entry->key);
-        struct node_t *node = getNodeWithoutChild(list->nodes);
+        struct node_t *node = getNodeWithoutChild(list->nodes); //tail
         if(comparable == NULL){
-            if(node->current_entry == NULL){
-                node->current_entry = malloc(sizeof(struct entry_t)); //check if this was allocated before
+            if(node->current_entry->key != NULL){ //key received do not exist but this node don't have childs but have a key
+                node = addNewNode(node); //create another node connected
             }
+            /*if(node->current_entry == NULL){ //pode nao ser o primeiro
+                node->current_entry = malloc(sizeof(struct entry_t)); //check if this was allocated before
+            }*///  <------ this if is already treated in addNewNode sub function
             node->current_entry = entry;
         }
         else { //void entry_replace(struct entry_t *entry, char *new_key, struct data_t *new_value){
