@@ -5,16 +5,22 @@
 //TREAT NULL CASE
 int data_to_buffer(struct data_t *data, char **data_buf){
     //OPTION 1
-    /*int size = data->datasize; //data's length
-    char *buff = malloc(sizeof(int) + size);
-    memcpy(buff, &size, sizeof(int)); //serialize to address
-    memcpy(buff+size, data->data, size);
-    return 0;*/
+    if(data == NULL || data_buf == NULL){
+        printf("[WARN] invalid arguments");
+        return -1;
+    }
 
+    int size = data->datasize; //data's length
+    char *buff = malloc(sizeof(int) + size);
+    *data_buf = buff;
+    memcpy(buff, &size, sizeof(int)); //serialize to address
+    memcpy(buff+sizeof(int), data->data, size);
+    return sizeof(int) + size;
+    /*
     //OPTION 2
     int size = data->datasize;
     memcpy(data_buf, &size, sizeof(int)); //serialize to address
-    memcpy(data_buf+size, data->data, size);
+    memcpy(data_buf+size, data->data, size);*/
 }
 
 struct data_t *buffer_to_data(char *data_buf, int data_buf_size){
@@ -24,9 +30,10 @@ struct data_t *buffer_to_data(char *data_buf, int data_buf_size){
     }
     else{
         struct data_t *data;
-        void *aux = malloc(data_buf_size);
-        memcpy(aux, &data_buf, data_buf_size);
-        data = data_create2(data_buf_size, aux);
+        int dataSize = data_buf_size-sizeof(int);
+        void *aux = malloc(dataSize);
+        memcpy(aux, data_buf+sizeof(int), dataSize);
+        data = data_create2(dataSize, aux);
         return data;
     }
     
@@ -34,9 +41,25 @@ struct data_t *buffer_to_data(char *data_buf, int data_buf_size){
 
 // TODO: TREAT NULL CASE
 int entry_to_buffer(struct entry_t *data, char **entry_buf){
-    int size = data->value->datasize;
-    memcpy(entry_buf, &size, sizeof(int)); //serialize to address
-    memcpy(entry_buf+size, data->value->data, size);
+    if(data == NULL || entry_buf == NULL){
+        printf("[WARN] Invalid NULL argument!");
+        return -1;
+    }
+
+    char **dataBuff = malloc(sizeof(int) + data->value->datasize);
+    int dataBuffSize = data_to_buffer(data->value, dataBuff);
+    
+    int keyBuffSize = sizeof(char)*strlen(data->key)+1;
+    char *keyBuff = malloc(sizeof(int) + keyBuffSize);
+    memcpy(keyBuff, &keyBuffSize, sizeof(int)); 
+    memcpy(keyBuff+sizeof(int), data->key, keyBuffSize);
+
+    char *entryBuff = malloc(dataBuffSize + (sizeof(int)+keyBuffSize));
+    memcpy(entryBuff, keyBuff, (sizeof(int)+keyBuffSize));
+    memcpy(entryBuff+(sizeof(int)+keyBuffSize), dataBuff, dataBuffSize);
+;    
+    entry_buf = *entryBuff;
+    return dataBuffSize + (sizeof(int)+keyBuffSize);
 }
 
 struct entry_t *buffer_to_entry(char *entry_buf, int entry_buf_size){
@@ -45,10 +68,17 @@ struct entry_t *buffer_to_entry(char *entry_buf, int entry_buf_size){
         return NULL;
     }
     else{
+        char *key;
+        struct data_t *data;
         struct entry_t *entry;
-        void *aux = malloc(entry_buf_size);
-        memcpy(aux, &entry_buf, entry_buf_size);
-        entry = data_create2(entry_buf_size, aux);
+
+        int *keySize; 
+        memcpy(keySize, entry_buf, sizeof(int));
+
+        memcpy(key, entry_buf+sizeof(int), keySize);
+        data = buffer_to_data(entry_buf+sizeof(int)+*keySize, entry_buf_size-sizeof(int)-*keySize);
+
+        entry = entry_create(key, data);
         return entry;
     }
 }
