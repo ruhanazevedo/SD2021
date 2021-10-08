@@ -5,9 +5,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include "data.h"
-#include "entry.h"
-#include "table.h"
+#include "../headers/data.h"
+#include "../headers/entry.h"
+#include "../headers/table.h"
 
 /**************************************************************/
 int testTabelaVazia() {

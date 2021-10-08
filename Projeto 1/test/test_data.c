@@ -5,6 +5,7 @@
 #include <assert.h>
 
 #include "../headers/data.h"
+#include "../source/data.c"
 
 void pee(const char *msg)
 {

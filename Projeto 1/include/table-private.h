@@ -2,6 +2,8 @@
 #define _TABLE_PRIVATE_H
 
 #include "list.h"
+#include <stdlib.h>
+#include <stdlib.h>
 
 struct table_t {
     int size;

@@ -1,6 +1,7 @@
-#include "../headers/list.h"
-#include "../headers/list-private.h"
+#include "../include/list.h"
+#include "../include/list-private.h"
 #include <stddef.h> //NULLS
+#include <stdlib.h>
 
 struct list_t *list_create(){
     struct list_t *new_list;

@@ -1,7 +1,9 @@
 //#include "../headers/data.h"
-#include "../headers/entry.h"
+#include "../include/entry.h"
 #include <stddef.h> //NULLS
 #include <string.h> //strcmp
+#include <stdlib.h>
+#include <stdio.h>
 
 struct entry_t *entry_create(char *key, struct data_t *data){
     struct entry_t *new_entry;

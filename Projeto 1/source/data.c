@@ -1,12 +1,20 @@
 #include <stdlib.h>
-#include "../headers/data.h"
+#include <stdio.h>
+#include "../include/data.h"
+//#include "data.h"
 
 struct data_t *data_create(int size){
-    struct data_t *new_data;
-    new_data = malloc(sizeof(struct data_t));
-    new_data->data = malloc(size);
-    new_data->datasize = size;
-    return new_data;
+    if(size > 0){
+        struct data_t *new_data;
+        new_data = malloc(sizeof(struct data_t));
+        new_data->data = malloc(size);
+        new_data->datasize = size;
+        return new_data;
+    }
+    else {
+        return NULL;
+    }
+    
 }
 
 struct data_t *data_create2(int size, void *data){
