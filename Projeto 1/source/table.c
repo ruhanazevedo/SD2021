@@ -1,8 +1,10 @@
-#include "../headers/table.h"
-#include "../headers/table-private.h" 
-#include "../headers/data.h" 
-#include "../headers/list.h" 
-#include "../headers/list-private.h" 
+#include "../include/table.h"
+#include "../include/table-private.h" 
+//#include "../include/data.h" 
+//#include "../include/list.h" 
+//#include "../include/list-private.h" 
+#include "list.c"
+#include <string.h> //strcmp
 
 
 struct table_t *table_create(int n){
@@ -30,12 +32,12 @@ void table_destroy(struct table_t *table){
 int table_put(struct table_t *table, char *key, struct data_t *value){
     char *key_copy = malloc(strlen(key)+1);
     strcpy(key_copy, key);
-    if(value == NULL || key == NULL || key == "" || table == NULL){
+    if(value == NULL || key == NULL || table == NULL || (strcmp(key, "")!= 0)){
         printf("[WARN] some argument provided is NULL, can't proceed\n");
         return -1;
     }
     struct data_t *data_copy = data_dup(value);
-    int index = hash(key) % table->size;
+    int index = hash((unsigned char *) key) % table->size;
     struct entry_t *new_entry = entry_create(key_copy, data_copy);
     free(key_copy); //isn't used anymore
     free(data_copy);
@@ -52,11 +54,11 @@ int table_put(struct table_t *table, char *key, struct data_t *value){
 }
 
 struct data_t *table_get(struct table_t *table, char *key){
-    if(table == NULL || key == NULL || key == ""){
+    if(table == NULL || key == NULL || strcmp(key, "") != 0){
         printf("[ERROR] the argument received is invalid");
         return NULL;
     }
-    int index = hash(key) % table->size;
+    int index = hash((unsigned char *) key) % table->size;
     if(table->list[index] != NULL){
         struct node_t *node = getNodeIfKeyExist(table->list[index]->nodes, key);
         return node->current_entry->value;
@@ -66,12 +68,12 @@ struct data_t *table_get(struct table_t *table, char *key){
 }
 
 int table_del(struct table_t *table, char *key){
-    if(table == NULL || key == NULL || key == ""){
+    if(table == NULL || key == NULL || strcmp(key, "") != 0){
         printf("[ERROR] Unexpected NULL argument");
         return -1;
     }
 
-    int index = hash(key) % table->size;
+    int index = hash((unsigned char *) key) % table->size;
     
     if(table->list[index] == NULL){
         printf("[WARN] key not found");

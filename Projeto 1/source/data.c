@@ -32,9 +32,7 @@ void data_destroy(struct data_t *data){
             free(data->data);
         }
         free(data);
-    }
-    
-    
+    } 
 }
 
 struct data_t *data_dup(struct data_t *data){

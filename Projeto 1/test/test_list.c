@@ -1,13 +1,13 @@
 #define NDEBUG
 
+#include "../include/data.h"
+#include "../include/entry.h"
+#include "../include/list.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-
-#include "../headers/data.h"
-#include "../headers/entry.h"
-#include "../headers/list.h"
 
 /**************************************************************/
 int testListaVazia() {

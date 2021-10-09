@@ -1,6 +1,9 @@
-#include "../headers/data.h"
-#include "../headers/entry.h"
+#include "../include/data.h"
+#include "../include/entry.h"
 #include <stddef.h> //NULLS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int data_to_buffer(struct data_t *data, char **data_buf){
     if(data == NULL || data_buf == NULL){
@@ -50,7 +53,7 @@ int entry_to_buffer(struct entry_t *data, char **entry_buf){
     memcpy(entryBuff, keyBuff, (sizeof(int)+keyBuffSize));
     memcpy(entryBuff+(sizeof(int)+keyBuffSize), dataBuff, dataBuffSize);
 ;    
-    entry_buf = *entryBuff;
+    *entry_buf = entryBuff;
     return dataBuffSize + (sizeof(int)+keyBuffSize);
 }
 
@@ -60,17 +63,19 @@ struct entry_t *buffer_to_entry(char *entry_buf, int entry_buf_size){
         return NULL;
     }
     else{
-        char *key;
+        char *key = malloc(sizeof(char));
         struct data_t *data;
         struct entry_t *entry;
 
-        int *keySize; 
+        int *keySize = malloc(sizeof(int)); 
         memcpy(keySize, entry_buf, sizeof(int));
 
-        memcpy(key, entry_buf+sizeof(int), keySize);
+        memcpy(key, entry_buf+sizeof(int), *keySize); //TODO: check if *keySize is correct instead of keySize
         data = buffer_to_data(entry_buf+sizeof(int)+*keySize, entry_buf_size-sizeof(int)-*keySize);
 
+        free(keySize);
         entry = entry_create(key, data);
+        free(key);
         return entry;
     }
 }

@@ -1,5 +1,8 @@
 #include "../include/list.h"
 #include "../include/list-private.h"
+#include "../include/data.h"
+#include "data.c"
+
 #include <stddef.h> //NULLS
 #include <stdlib.h>
 

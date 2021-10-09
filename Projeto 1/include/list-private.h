@@ -3,8 +3,9 @@
 
 #include "list.h"
 #include <stddef.h> //NULLS
-#include <string.h>
 #include <stdio.h>
+#include <string.h> //strcmp
+#include <stdlib.h>
 
 struct node_t {
     struct node_t *parent;
@@ -41,8 +42,6 @@ int thisNodeIsHead(struct node_t *node){
 }
 
 struct node_t *getNodeIfKeyExist(struct node_t *node, char *key){
-    //strcmp(node->current_entry->key, key) == 0
-    //node->current_entry->key == key
     if(node->current_entry->key != NULL){ 
         if(strcmp(node->current_entry->key, key) == 0){ //the node received have the same key as the argument
             return node;
@@ -58,8 +57,8 @@ struct node_t *getNodeIfKeyExist(struct node_t *node, char *key){
     }
     else {
         return NULL; //if this node doesn't have a key, the next won't have
-    }
-    
+    } 
+    return NULL; // this is unnecessary but we need to use just to dont caught warning
 }
 
 struct node_t *getNodeHead(struct node_t *nodes){
@@ -69,6 +68,7 @@ struct node_t *getNodeHead(struct node_t *nodes){
     else {
         getNodeHead(nodes->parent);
     }
+    return NULL; // this is unnecessary but we need to use just to dont caught warning
 }
 
 struct node_t *getNodeWithoutChild(struct node_t *node){
@@ -78,6 +78,7 @@ struct node_t *getNodeWithoutChild(struct node_t *node){
     else {
         getNodeWithoutChild(node->child);
     }
+    return NULL; // this is unnecessary but we need to use just to dont caught warning
 }
 
 struct node_t *addNewNode(struct node_t *node){

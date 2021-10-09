@@ -4,9 +4,9 @@
 #include <errno.h>
 #include <assert.h>
 
-#include "../headers/data.h"
-#include "../headers/entry.h"
-#include "../headers/serialization.h"
+#include "../include/data.h"
+#include "../include/entry.h"
+#include "../include/serialization.h"
 
 void pee(const char *msg)
 {
