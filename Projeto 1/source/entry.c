@@ -24,8 +24,10 @@ void entry_initialize(struct entry_t *entry){
 }
 
 void entry_destroy(struct entry_t *entry){
-    data_destroy(entry->value); //can't be removed if isn't necessary
-    free(entry);
+    if(entry != NULL){
+        data_destroy(entry->value); //can't be removed if isn't necessary
+        free(entry);
+    }
 }
 
 struct entry_t *entry_dup(struct entry_t *entry){

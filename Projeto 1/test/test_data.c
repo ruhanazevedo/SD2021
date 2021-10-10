@@ -85,13 +85,14 @@ int testDup() {
 	printf("Módulo data -> teste data_dup: ");
 
 	assert(data_dup(NULL) == NULL);
+	
 	result = (data_dup(NULL) == NULL);
-
+	
 	if ((data = data_create(1)) == NULL)
 		pee("  O teste não pode prosseguir");
-
+	
 	data->datasize = -1;
-
+	
 	assert(data_dup(data) == NULL);
 	result = result && (data_dup(data) == NULL);
 
@@ -106,18 +107,14 @@ int testDup() {
 	result = result && (data_dup(data) == NULL);
 
 	free(data);
-
 	if ((data = data_create2(data_size,data_s)) == NULL)
 		pee("  O teste não pode prosseguir");
-	
 	data2 = data_dup(data);
-	
 	result = result && (data2 != data);
 
 	result = result && (data->data != data2->data) && 
                  (data->datasize == data2->datasize) &&
                  (memcmp(data->data, data2->data, data->datasize) == 0);
-
 	data_destroy(data);
 	data_destroy(data2);
 

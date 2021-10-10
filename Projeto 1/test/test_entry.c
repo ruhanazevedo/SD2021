@@ -1,6 +1,5 @@
 #include "../include/data.h"
 #include "../include/entry.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

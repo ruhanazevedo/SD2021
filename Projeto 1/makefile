@@ -39,7 +39,7 @@ test_serialization.o: $(INCLUDE)data.h $(INCLUDE)entry.h $(INCLUDE)serialization
 	$(FLAG) $(TEST)test_serialization.c -o $(OBJ)test_serialization.o
 
 test_data: $(OBJ)test_data.o $(OBJ)data.o
-	$(CC) $(OBJ)test_data.o $(OBJ)data.o -o $(BIN)test_data
+	$(CC) -g $(OBJ)test_data.o $(OBJ)data.o -o $(BIN)test_data
 
 test_entry: $(OBJ)test_entry.o $(OBJ)data.o $(OBJ)entry.o
 	$(CC) $(OBJ)test_entry.o $(OBJ)data.o $(OBJ)entry.o -o $(BIN)test_entry
