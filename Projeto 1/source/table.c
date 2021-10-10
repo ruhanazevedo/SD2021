@@ -10,7 +10,7 @@
 struct table_t *table_create(int n){
     struct table_t *new_table;
     new_table = malloc(sizeof(struct table_t));
-    new_table->size = n;
+    new_table->size = 0;
     new_table->list = malloc(n * sizeof(struct list_t));
     for(int i=0 ; i<n ; i++){
         //new_table->list[i] = malloc(sizeof(struct list_t));
@@ -32,17 +32,28 @@ void table_destroy(struct table_t *table){
 int table_put(struct table_t *table, char *key, struct data_t *value){
     char *key_copy = malloc(strlen(key)+1);
     strcpy(key_copy, key);
-    if(value == NULL || key == NULL || table == NULL || (strcmp(key, "")!= 0)){
+    if(value == NULL || key == NULL || table == NULL || (strcmp(key, "") == 0)){
         printf("[WARN] some argument provided is NULL, can't proceed\n");
         return -1;
     }
     struct data_t *data_copy = data_dup(value);
-    int index = hash((unsigned char *) key) % table->size;
-    struct entry_t *new_entry = entry_create(key_copy, data_copy);
-    free(key_copy); //isn't used anymore
-    free(data_copy);
-    list_add(table->list[index], new_entry);
     ++table->size;
+    int index = hash((unsigned char *) key) % table->size;
+    /*if(table->size < 1){ //case of table->size = 0
+        index = hash((unsigned char *) key) % 1;
+    }
+    else{
+        index = hash((unsigned char *) key) % table->size;
+    }*/
+    struct entry_t *new_entry = entry_create(key_copy, data_copy);
+    //free(key_copy); //isn't used anymore
+    //free(data_copy);
+    /*if(table->list[index] == NULL || table->list[index]->nodes == NULL){
+        table->list[index] = list_create();
+    }*/
+    table->list[index] = list_create();
+    list_add(table->list[index], new_entry);
+    //++table->size;
     return 0;
     
      //maybe isn't necessary use the copy of value
@@ -54,14 +65,16 @@ int table_put(struct table_t *table, char *key, struct data_t *value){
 }
 
 struct data_t *table_get(struct table_t *table, char *key){
-    if(table == NULL || key == NULL || strcmp(key, "") != 0){
+    if(table == NULL || key == NULL || strcmp(key, "") == 0){
         printf("[ERROR] the argument received is invalid");
         return NULL;
     }
     int index = hash((unsigned char *) key) % table->size;
     if(table->list[index] != NULL){
         struct node_t *node = getNodeIfKeyExist(table->list[index]->nodes, key);
-        return node->current_entry->value;
+        if(node != NULL){
+            return node->current_entry->value;
+        }
     }
     printf("[ERROR] internal_error: If this was hitted, something is wrong");
     return NULL;

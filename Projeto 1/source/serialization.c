@@ -7,7 +7,7 @@
 
 int data_to_buffer(struct data_t *data, char **data_buf){
     if(data == NULL || data_buf == NULL){
-        printf("[WARN] invalid arguments");
+        printf("[WARN] invalid arguments\n");
         return -1;
     }
 
@@ -20,8 +20,8 @@ int data_to_buffer(struct data_t *data, char **data_buf){
 }
 
 struct data_t *buffer_to_data(char *data_buf, int data_buf_size){
-    if(data_buf == NULL){
-        printf("[ERROR] data_buf received in NULL, can't proceed");
+    if(data_buf == NULL || data_buf_size < 1){
+        printf("[ERROR] data_buf received is NULL or size is invalid, can't proceed\n");
         return NULL;
     }
     else{
@@ -30,6 +30,7 @@ struct data_t *buffer_to_data(char *data_buf, int data_buf_size){
         void *aux = malloc(dataSize);
         memcpy(aux, data_buf+sizeof(int), dataSize);
         data = data_create2(dataSize, aux);
+        printf("data = %s\n",data->data);
         return data;
     }
     
@@ -37,7 +38,7 @@ struct data_t *buffer_to_data(char *data_buf, int data_buf_size){
 
 int entry_to_buffer(struct entry_t *data, char **entry_buf){
     if(data == NULL || entry_buf == NULL){
-        printf("[WARN] Invalid NULL argument!");
+        printf("[WARN] Invalid NULL argument!\n");
         return -1;
     }
 
@@ -52,14 +53,14 @@ int entry_to_buffer(struct entry_t *data, char **entry_buf){
     char *entryBuff = malloc(dataBuffSize + (sizeof(int)+keyBuffSize));
     memcpy(entryBuff, keyBuff, (sizeof(int)+keyBuffSize));
     memcpy(entryBuff+(sizeof(int)+keyBuffSize), dataBuff, dataBuffSize);
-;    
+    
     *entry_buf = entryBuff;
     return dataBuffSize + (sizeof(int)+keyBuffSize);
 }
 
 struct entry_t *buffer_to_entry(char *entry_buf, int entry_buf_size){
-    if(entry_buf == NULL){
-        printf("[ERROR] entry_buf received in NULL, can't proceed");
+    if(entry_buf == NULL || entry_buf_size < 1){
+        printf("[ERROR] entry_buf received in NULL, can't proceed\n");
         return NULL;
     }
     else{
@@ -70,12 +71,19 @@ struct entry_t *buffer_to_entry(char *entry_buf, int entry_buf_size){
         int *keySize = malloc(sizeof(int)); 
         memcpy(keySize, entry_buf, sizeof(int));
 
-        memcpy(key, entry_buf+sizeof(int), *keySize); //TODO: check if *keySize is correct instead of keySize
-        data = buffer_to_data(entry_buf+sizeof(int)+*keySize, entry_buf_size-sizeof(int)-*keySize);
+        memcpy(key, entry_buf+sizeof(int), *keySize); //TODO: check if *keySize is correct innstead of keySize
+
+    
+        int dataSize = entry_buf_size-sizeof(int)-*keySize;
+
+        char *splitedBuffer = malloc(dataSize);
+        memcpy(splitedBuffer, entry_buf+sizeof(int)+*keySize, dataSize);
+        data = buffer_to_data(splitedBuffer, dataSize);
+        //data = buffer_to_data(entry_buf+sizeof(int)+*keySize, entry_buf_size-sizeof(int)-*keySize);
 
         free(keySize);
         entry = entry_create(key, data);
-        free(key);
+        //free(key); if this free happen the entry will have key = ""
         return entry;
     }
 }

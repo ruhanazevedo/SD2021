@@ -32,7 +32,7 @@ void entry_destroy(struct entry_t *entry){
 
 struct entry_t *entry_dup(struct entry_t *entry){
     struct entry_t *new_entry;
-    new_entry = entry_create(entry->key, entry->value);
+    new_entry = entry_create(strdup(entry->key), data_dup(entry->value));
     if(new_entry != NULL){
         return new_entry;
     }
@@ -45,6 +45,7 @@ struct entry_t *entry_dup(struct entry_t *entry){
 
 void entry_replace(struct entry_t *entry, char *new_key, struct data_t *new_value){
     data_destroy(entry->value);
+    //entry = entry_create(new_key, new_value);
     entry->key = new_key;
     entry->value = new_value;
 }

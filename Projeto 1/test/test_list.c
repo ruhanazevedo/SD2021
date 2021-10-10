@@ -152,18 +152,17 @@ int testInsereMesmaKey() {
 	memcpy(e6->value->data,"def2",5);
 
 	list_add(list,e1);
-	list_add(list,e2);
 
+	list_add(list,e2);
+	
 	result = list_get(list, "abc") == e1 && list_get(list, "def") == e2;
 
 	list_add(list,e3);
-
 	result = result && list_get(list, "abc") == e3;
 
 	list_add(list,e4);
-
 	result = result && list_get(list, "abc") == e4;
-
+	
 	list_add(list,e5);
 	list_add(list,e6);
 

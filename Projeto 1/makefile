@@ -39,7 +39,7 @@ test_serialization.o: $(INCLUDE)data.h $(INCLUDE)entry.h $(INCLUDE)serialization
 	$(FLAG) $(TEST)test_serialization.c -o $(OBJ)test_serialization.o
 
 test_data: $(OBJ)test_data.o $(OBJ)data.o
-	$(CC) -g $(OBJ)test_data.o $(OBJ)data.o -o $(BIN)test_data
+	$(CC) $(OBJ)test_data.o $(OBJ)data.o -o $(BIN)test_data
 
 test_entry: $(OBJ)test_entry.o $(OBJ)data.o $(OBJ)entry.o
 	$(CC) $(OBJ)test_entry.o $(OBJ)data.o $(OBJ)entry.o -o $(BIN)test_entry
@@ -48,10 +48,10 @@ test_list: $(OBJ)test_list.o $(OBJ)list.o $(OBJ)entry.o
 	$(CC) $(OBJ)test_list.o $(OBJ)list.o $(OBJ)entry.o -o $(BIN)test_list
 
 test_table: $(OBJ)test_table.o $(OBJ)table.o $(OBJ)entry.o
-	$(CC) $(OBJ)test_table.o $(OBJ)table.o $(OBJ)entry.o -o $(BIN)test_table
+	$(CC) -g $(OBJ)test_table.o $(OBJ)table.o $(OBJ)entry.o -o $(BIN)test_table
 
 test_serialization: $(OBJ)test_serialization.o $(OBJ)data.o $(OBJ)entry.o $(OBJ)serialization.o
-	$(CC) $(OBJ)test_serialization.o $(OBJ)data.o $(OBJ)entry.o $(OBJ)serialization.o -o $(BIN)test_serialization
+	$(CC) -g $(OBJ)test_serialization.o $(OBJ)data.o $(OBJ)entry.o $(OBJ)serialization.o -o $(BIN)test_serialization
 
 clean:	
 	rm -rf $(BIN)/*

@@ -27,7 +27,7 @@ void list_print(struct list_t* list); //check if this function really belongs he
 void initializeNode(struct node_t *node){
     node->parent = malloc(sizeof(struct node_t));
     node->child = malloc(sizeof(struct node_t));
-    node->current_entry = entry_create(NULL, NULL); //initializing entry without values
+    node->current_entry = malloc(sizeof(struct entry_t));//entry_create(NULL, NULL); //initializing entry without values
 
     node->child = NULL;    
 }
@@ -48,7 +48,7 @@ struct node_t *getNodeIfKeyExist(struct node_t *node, char *key){
         }
         else {
             if(node->child != NULL){ //check if the node received have child
-                getNodeIfKeyExist(node->child, key); //try call function again with child instead
+                return getNodeIfKeyExist(node->child, key); //try call function again with child instead
             }
             else {
                 return NULL; //if doesn't have child and dont have kill, this key doesn't exist, return NULL
@@ -66,7 +66,7 @@ struct node_t *getNodeHead(struct node_t *nodes){
         return nodes;
     }
     else {
-        getNodeHead(nodes->parent);
+        return getNodeHead(nodes->parent);
     }
     return NULL; // this is unnecessary but we need to use just to dont caught warning
 }
@@ -76,7 +76,7 @@ struct node_t *getNodeWithoutChild(struct node_t *node){
         return node;
     }
     else {
-        getNodeWithoutChild(node->child);
+        return getNodeWithoutChild(node->child);
     }
     return NULL; // this is unnecessary but we need to use just to dont caught warning
 }

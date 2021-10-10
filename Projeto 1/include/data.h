@@ -5,7 +5,7 @@
  */
 struct data_t {
 	int datasize; /* Tamanho do bloco de dados */
-	void *data;   /* Conteúdo arbitrário */
+	char *data;   /* Conteúdo arbitrário */
 };
 
 /* Função que cria um novo elemento de dados data_t e reserva a memória

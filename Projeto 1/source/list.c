@@ -1,15 +1,13 @@
 #include "../include/list.h"
 #include "../include/list-private.h"
-#include "../include/data.h"
 #include "data.c"
-
 #include <stddef.h> //NULLS
-#include <stdlib.h>
 
 struct list_t *list_create(){
+
     struct list_t *new_list;
     new_list = malloc(sizeof(struct list_t));
-    new_list->size = 1; //does have at least 1 node (head)
+    new_list->size = 0; //does have at least 1 node (head)
     new_list->nodes = malloc(sizeof(struct node_t));
     initializeNode(new_list->nodes);
     new_list->nodes->parent = NULL; //first node don't have parent, is the HEAD
@@ -28,22 +26,18 @@ int list_add(struct list_t *list, struct entry_t *entry){
             if(node->current_entry->key != NULL){ //key received do not exist but this node don't have childs but have a key
                 node = addNewNode(node); //create another node connected
             }
-            /*if(node->current_entry == NULL){ //pode nao ser o primeiro
-                node->current_entry = malloc(sizeof(struct entry_t)); //check if this was allocated before
-            }*///  <------ this if is already treated in addNewNode sub function
+            free(node->current_entry);
             node->current_entry = entry;
+            ++list->size;
         }
         else { //void entry_replace(struct entry_t *entry, char *new_key, struct data_t *new_value){
-            entry_replace(comparable->current_entry, 
+            free(comparable->current_entry);
+            comparable->current_entry = entry;
+            /*entry_replace(comparable->current_entry, 
                           entry->key,
-                          entry->value);  
+                          entry->value);  */
         }
                     
-        //entry_destroy(entry); //values already copied, so we can kill this entry
-        //list->nodes->child->current_entry = entry;
-        //initializeNode(list->nodes->child->parent);
-        //list->nodes->child->child = NULL; // already done in intializeNode()
-        ++list->size;
         return 0;
     }
     else {
@@ -52,10 +46,24 @@ int list_add(struct list_t *list, struct entry_t *entry){
 }
 
 int list_remove(struct list_t *list, char *key){
+
     struct node_t *node = getNodeIfKeyExist(list->nodes, key);
     if(node != NULL){
-        //node->current_entry = NULL;
-        free(node->current_entry);
+        if(node->parent == NULL){
+            node->child->parent = NULL;
+            free(node->current_entry);
+        }
+        else if(node->child == NULL){
+            node->parent->child = NULL;
+            free(node->current_entry);
+        }
+        else if(node->parent != NULL){
+            node->parent->child = node->child;
+            free(node->current_entry);
+        }
+        
+        
+        --list->size;
         return 0;
     }
     else {
@@ -86,18 +94,24 @@ int list_size(struct list_t *list){
 }
 
 char **list_get_keys(struct list_t *list){
+    
     if(list == NULL){
         printf("[WARN] list received is NULL");
         return NULL;
     }
-    char **array = malloc(sizeof(char)*list->size);
+
+    char **array = malloc(sizeof(char)*(list->size)+1);
     struct node_t *nodesList = getNodeHead(list->nodes);
     int i = 0;
-    while(nodesList->child != NULL){
+    
+    while(i < list->size){
         array[i] = nodesList->current_entry->key;
         ++i;
         nodesList = nodesList->child;
     }
+    printf("%d", list->size);
+    array[list->size] = NULL;
+    
     return array;
 }
 

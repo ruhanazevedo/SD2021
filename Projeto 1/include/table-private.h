@@ -1,5 +1,6 @@
 #ifndef _TABLE_PRIVATE_H
 #define _TABLE_PRIVATE_H
+#define CAPACITY 5000 // Size of the Hash Table
 
 #include "list.h"
 #include <stdlib.h>
@@ -11,12 +12,10 @@ struct table_t {
 };
 
 int hash(unsigned char *str){
-    unsigned long hash = 1;
-    int c;
-
-    while ((c = *str++))
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-    return hash;
+    unsigned long i = 0;
+    for (int j=0; str[j]; j++)
+        i += str[j];
+    return abs(i % CAPACITY);
 }
 
 #endif
