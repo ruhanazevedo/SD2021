@@ -105,7 +105,7 @@ char **list_get_keys(struct list_t *list){
     int i = 0;
     
     while(i < list->size){
-        array[i] = nodesList->current_entry->key;
+        array[i] = entry_dup(nodesList->current_entry)->key; //nodesList->current_entry->key;
         ++i;
         nodesList = nodesList->child;
     }
