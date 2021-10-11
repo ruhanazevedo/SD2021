@@ -123,39 +123,24 @@ int testDeserializeEntry() {
     char *entry_buf;
 
     printf("Módulo serialize -> teste deserialize_entry:");
-    printf("[RH 1]\n");  
     key = strdup("123abc");
     if ((value = data_create2(strlen("1234567890abc")+1, strdup("1234567890abc"))) == NULL)
         pee("data_create failed - O teste não pode prosseguir");
-    printf("[RH 2]\n"); 
     if ((entry = entry_create(key, value)) == NULL)
         pee("entry_create failed - O teste não pode prosseguir");
-    printf("[RH 3]\n");
     int buf_size = entry_to_buffer(entry, &entry_buf);
     if (buf_size <= 0)
         pee("entry_to_buffer failed - O teste não pode prosseguir");
-    printf("[RH 4]\n");
     assert(buffer_to_entry(NULL,-1) == NULL);
+
     result = (buffer_to_entry(NULL,-1) == NULL);
-    printf("[RH 5]\n");
     assert(buffer_to_entry(entry_buf,-1) == NULL);
+
     result = result & (buffer_to_entry(entry_buf,-1) == NULL);
-    printf("[RH 6]\n");
     entry2 = buffer_to_entry(entry_buf, buf_size);
     
-    if(memcmp(entry->key, entry2->key, strlen(key)) == 0){
-        printf("[RH 7]\n");
-    }
-    if(entry->value->datasize == entry2->value->datasize){
-        printf("[RH 8]\n");
-    }
-    if(memcmp(entry->value->data, entry2->value->data, entry->value->datasize) == 0){
-        printf("[RH 9]\n");
-    }
-    //assert(memcmp(entry->key, entry2->key, strlen(key)) == 0 && entry->value->datasize == entry2->value->datasize && memcmp(entry->value->data, entry2->value->data, entry->value->datasize) == 0);
-    printf("[RH 10]\n");
+    assert(memcmp(entry->key, entry2->key, strlen(key)) == 0 && entry->value->datasize == entry2->value->datasize && memcmp(entry->value->data, entry2->value->data, entry->value->datasize) == 0);
     result = result && memcmp(entry->key, entry2->key, strlen(key)) == 0 && entry->value->datasize == entry2->value->datasize && memcmp(entry->value->data, entry2->value->data, entry->value->datasize) == 0;
-    printf("[RH 11]\n");
     entry_destroy(entry);
     entry_destroy(entry2);
     free(entry_buf);

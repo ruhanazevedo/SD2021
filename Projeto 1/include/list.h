@@ -1,3 +1,9 @@
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #ifndef _LIST_H
 #define _LIST_H /* Módulo list */
 

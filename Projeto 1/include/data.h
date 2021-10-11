@@ -1,3 +1,9 @@
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #ifndef _DATA_H
 #define _DATA_H /* Módulo data */
 
@@ -5,7 +11,7 @@
  */
 struct data_t {
 	int datasize; /* Tamanho do bloco de dados */
-	char *data;   /* Conteúdo arbitrário */
+	void *data;   /* Conteúdo arbitrário */
 };
 
 /* Função que cria um novo elemento de dados data_t e reserva a memória

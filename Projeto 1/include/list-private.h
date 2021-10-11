@@ -1,3 +1,9 @@
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #ifndef _LIST_PRIVATE_H
 #define _LIST_PRIVATE_H
 
@@ -18,81 +24,38 @@ struct list_t {
     struct node_t *nodes;
 };
 
-void list_print(struct list_t* list); //check if this function really belongs here
+void list_print(struct list_t* list); 
 
 
 /**
- * alocate memory to node and initialize parent and child with NULL value
- **/
-void initializeNode(struct node_t *node){
-    node->parent = malloc(sizeof(struct node_t));
-    node->child = malloc(sizeof(struct node_t));
-    node->current_entry = malloc(sizeof(struct entry_t));//entry_create(NULL, NULL); //initializing entry without values
+ * Inicializa o nó e suas devidas dependencias
+ */
+void initializeNode(struct node_t *node);
 
-    node->child = NULL;    
-}
+/*
+* Função que verifica se o nó recebido é HEAD
+*/
+int thisNodeIsHead(struct node_t *node);
 
-int thisNodeIsHead(struct node_t *node){
-    if(node->parent == NULL){
-        return 1; //true
-    }    
-    else {
-        return 0; //false
-    }
-}
+/*
+* Devolve o node_t que está relacionado a key ou NULL caso não exista
+*/
+struct node_t *getNodeIfKeyExist(struct node_t *node, char *key);
 
-struct node_t *getNodeIfKeyExist(struct node_t *node, char *key){
-    if(node->current_entry->key != NULL){ 
-        if(strcmp(node->current_entry->key, key) == 0){ //the node received have the same key as the argument
-            return node;
-        }
-        else {
-            if(node->child != NULL){ //check if the node received have child
-                return getNodeIfKeyExist(node->child, key); //try call function again with child instead
-            }
-            else {
-                return NULL; //if doesn't have child and dont have kill, this key doesn't exist, return NULL
-            }
-        }
-    }
-    else {
-        return NULL; //if this node doesn't have a key, the next won't have
-    } 
-    return NULL; // this is unnecessary but we need to use just to dont caught warning
-}
+/*
+* Retorna o nó HEAD
+*/
+struct node_t *getNodeHead(struct node_t *nodes);
 
-struct node_t *getNodeHead(struct node_t *nodes){
-    if(nodes->parent == NULL && nodes != NULL){
-        return nodes;
-    }
-    else {
-        return getNodeHead(nodes->parent);
-    }
-    return NULL; // this is unnecessary but we need to use just to dont caught warning
-}
+/*
+* Devolve o tail do node_t recebido
+*/
+struct node_t *getNodeWithoutChild(struct node_t *node);
 
-struct node_t *getNodeWithoutChild(struct node_t *node){
-    if(node->child == NULL){
-        return node;
-    }
-    else {
-        return getNodeWithoutChild(node->child);
-    }
-    return NULL; // this is unnecessary but we need to use just to dont caught warning
-}
-
-struct node_t *addNewNode(struct node_t *node){
-    if(node->child == NULL){
-        node->child = malloc(sizeof(struct node_t));
-        initializeNode(node->child);
-        node->child->parent = node;
-        return node->child;
-    }
-    else {
-        printf("[WARN] this node is not the tail");
-        return NULL;
-    }   
-}
+/*
+* Adiciona um novo nó ao node_t recebido
+*/
+struct node_t *addNewNode(struct node_t *node);
 
 
 #endif

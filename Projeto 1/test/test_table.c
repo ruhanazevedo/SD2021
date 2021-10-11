@@ -5,9 +5,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include "../include/data.h"
-#include "../include/entry.h"
-#include "../include/table.h"
+#include "data.h"
+#include "entry.h"
+#include "table.h"
 
 /**************************************************************/
 int testTabelaVazia() {
@@ -26,21 +26,20 @@ int testTabelaVazia() {
 int testPutInexistente() {
 	int result, i;
 	struct table_t *table = table_create(5);
-	char *key[12];
-	struct data_t *data[12], *d;
+	char *key[1024];
+	struct data_t *data[1024], *d;
 
-	for(i=0; i<12; i++) {
+	for(i=0; i<1024; i++) {
 		key[i] = (char*)malloc(16*sizeof(char));
 		sprintf(key[i],"a/key/b-%d",i);
 		data[i] = data_create2(strlen(key[i])+1,strdup(key[i]));
-		printf("\n\n%d\n\n",i);
+
 		table_put(table,key[i],data[i]);
-	}printf("\n\n");
-	table_print(table);
-	printf("\n\n[RH 1]\n");
+	}
+
 	assert(table_size(table) == 1024);
 	result = (table_size(table) == 1024);
-	printf("[RH 2]\n");
+
 	for(i=0; i<1024; i++) {
 		d = table_get(table,key[i]);
 
@@ -53,7 +52,7 @@ int testPutInexistente() {
                            d->data != data[i]->data);
 		data_destroy(d);
 	}
-	printf("[RH 3]\n");
+
 	for(i=0; i<1024; i++) {
 		free(key[i]);
 		data_destroy(data[i]);
@@ -242,17 +241,17 @@ int main() {
 
 	printf("iniciando teste table bin\n");
 
+	score += testGetKeys();
+
 	score += testTabelaVazia();
 
 	score += testPutInexistente();
 
-	//score += testPutExistente();
+	score += testPutExistente();
 
-	//score += testDelInexistente();
+	score += testDelInexistente();
 
-	//score += testDelExistente();
-
-	//score += testGetKeys();
+	score += testDelExistente();
 
 	printf("teste table bin: %d/6\n",score);
 

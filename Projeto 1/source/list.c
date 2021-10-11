@@ -1,3 +1,9 @@
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #include "../include/list.h"
 #include "../include/list-private.h"
 #include "data.c"
@@ -30,12 +36,9 @@ int list_add(struct list_t *list, struct entry_t *entry){
             node->current_entry = entry;
             ++list->size;
         }
-        else { //void entry_replace(struct entry_t *entry, char *new_key, struct data_t *new_value){
+        else { 
             free(comparable->current_entry);
             comparable->current_entry = entry;
-            /*entry_replace(comparable->current_entry, 
-                          entry->key,
-                          entry->value);  */
         }
                     
         return 0;
@@ -50,7 +53,10 @@ int list_remove(struct list_t *list, char *key){
     struct node_t *node = getNodeIfKeyExist(list->nodes, key);
     if(node != NULL){
         if(node->parent == NULL){
-            node->child->parent = NULL;
+            if(node->child != NULL){
+                node->child->parent = NULL;
+                list->nodes = node->child;
+            }
             free(node->current_entry);
         }
         else if(node->child == NULL){
@@ -96,7 +102,7 @@ int list_size(struct list_t *list){
 char **list_get_keys(struct list_t *list){
     
     if(list == NULL){
-        printf("[WARN] list received is NULL");
+        printf("[WARN] list received is NULL\n");
         return NULL;
     }
 
@@ -133,4 +139,78 @@ void list_print(struct list_t *list){
         node = node->child;
     }
     printf("] ");
+}
+
+/*******************************
+****** FUNÇÕES AUXILIARES ******
+********************************/
+
+void initializeNode(struct node_t *node){
+    node->parent = malloc(sizeof(struct node_t));
+    node->child = malloc(sizeof(struct node_t));
+    node->current_entry = malloc(sizeof(struct entry_t));
+
+    node->child = NULL;    
+}
+
+int thisNodeIsHead(struct node_t *node){
+    if(node->parent == NULL){
+        return 1; //true
+    }    
+    else {
+        return 0; //false
+    }
+}
+
+struct node_t *getNodeIfKeyExist(struct node_t *node, char *key){
+    if(node->current_entry->key != NULL){ 
+        if(strcmp(node->current_entry->key, key) == 0){ //the node received have the same key as the argument
+            return node;
+        }
+        else {
+            if(node->child != NULL){
+                return getNodeIfKeyExist(node->child, key); //try call function again with child instead
+            }
+            else {
+                return NULL; //if doesn't have child and dont have kill, this key doesn't exist, return NULL
+            }
+        }
+    }
+    else {
+        return NULL; //if this node doesn't have a key, the next won't have
+    } 
+    return NULL; // this is unnecessary but we need to use just to dont caught warning
+}
+
+struct node_t *getNodeHead(struct node_t *nodes){
+    if(nodes->parent == NULL && nodes != NULL){
+        return nodes;
+    }
+    else {
+        return getNodeHead(nodes->parent);
+    }
+    return NULL; // this is unnecessary but we need to use just to dont caught warning
+}
+
+struct node_t *getNodeWithoutChild(struct node_t *node){
+    if(node->child == NULL){
+        return node;
+    }
+    else {
+        return getNodeWithoutChild(node->child);
+    }
+    return NULL; // this is unnecessary but we need to use just to dont caught warning
+}
+
+struct node_t *addNewNode(struct node_t *node){
+    if(node->child == NULL){
+        node->child = malloc(sizeof(struct node_t));
+        initializeNode(node->child);
+        node->child->parent = node;
+        return node->child;
+    }
+    else {
+        printf("[WARN] this node is not the tail\n");
+        return NULL;
+    }   
 }

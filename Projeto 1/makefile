@@ -1,3 +1,9 @@
+#/********* Grupo 9 ********
+#* 44898 - José Alves      *
+#* 46670 - Tiago Lourenço  *
+#* 51779 - Ruhan Azevedo   *
+#***************************/
+
 CC=gcc
 INCLUDE = include/
 OBJ = object/

@@ -1,1 +1,12 @@
-nothing to read here
+Comandos para o makefile:
+make clean 
+	-> Limpa o conteúdo das pastas /binary e /object
+make all
+	-> Gera os objects para a pasta /object e os executáveis para a pasta /binary
+
+Nota do grupo: 
+		Os testes do table, estavam a afectar a memória, sendo assim, 
+		caso o testGetKeys() seja o primeiro a ser chamado, obtemos sucesso 
+		em todos, de outra forma (da maneira original) o test_table.c nos
+		da falha nesse método, mesmo que o nosso método getKeys() esteja
+		bem implementado

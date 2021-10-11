@@ -1,8 +1,14 @@
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "../include/data.h"
-//#include "data.h"
+#include "../include/data-private.h"
 
 struct data_t *data_create(int size){
     if(size > 0){
@@ -57,10 +63,11 @@ struct data_t *data_dup(struct data_t *data){
 }
 
 void data_replace(struct data_t *data, int new_size, void *new_data){
-    free(data->data);
-    data->data = new_data;
-    data->datasize = new_size;
-    // CASE NULL TO BE TREATED
+    if(data != NULL){
+        free(data->data);
+        data->data = new_data;
+        data->datasize = new_size;
+    }
 }
 
 /*******************************

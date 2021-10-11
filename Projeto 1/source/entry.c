@@ -1,4 +1,9 @@
-//#include "../headers/data.h"
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #include "../include/entry.h"
 #include <stddef.h> //NULLS
 #include <string.h> //strcmp
@@ -25,7 +30,7 @@ void entry_initialize(struct entry_t *entry){
 
 void entry_destroy(struct entry_t *entry){
     if(entry != NULL){
-        data_destroy(entry->value); //can't be removed if isn't necessary
+        data_destroy(entry->value); 
         free(entry);
     }
 }
@@ -45,7 +50,6 @@ struct entry_t *entry_dup(struct entry_t *entry){
 
 void entry_replace(struct entry_t *entry, char *new_key, struct data_t *new_value){
     data_destroy(entry->value);
-    //entry = entry_create(new_key, new_value);
     entry->key = new_key;
     entry->value = new_value;
 }

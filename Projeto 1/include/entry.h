@@ -1,3 +1,9 @@
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #ifndef _ENTRY_H
 #define _ENTRY_H /* Módulo entry */
 
