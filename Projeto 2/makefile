@@ -1,0 +1,1 @@
+protoc --c_out=.sdmessage.proto
