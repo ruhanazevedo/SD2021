@@ -5,14 +5,14 @@
 #***************************/
 
 CC=gcc
-INCLUDE = include/
+INCLUDE = Projeto\ 1/include/
 OBJ = object/
 SRC = source/
 BIN = binary/
 TEST = test/
 FLAG = gcc -g -Wall -I include/ -c
 
-all : data.o entry.o list.o table.o serialization.o test_data.o test_entry.o test_list.o test_table.o test_serialization.o test_data test_entry test_list test_table test_serialization
+all : data.o entry.o list.o table.o serialization.o test_data.o test_entry.o test_list.o test_table.o test_serialization.o main.o test_data test_entry test_list test_table test_serialization main
 
 data.o: $(INCLUDE)data.h
 	$(FLAG) $(SRC)data.c -o $(OBJ)data.o
@@ -44,6 +44,10 @@ test_table.o: $(INCLUDE)table-private.h $(INCLUDE)table.h $(INCLUDE)data.h $(INC
 test_serialization.o: $(INCLUDE)data.h $(INCLUDE)entry.h $(INCLUDE)serialization.h
 	$(FLAG) $(TEST)test_serialization.c -o $(OBJ)test_serialization.o
 
+#this is temporary
+main.o: $(INCLUDE)table-private.h $(INCLUDE)table.h $(INCLUDE)data.h $(INCLUDE)entry.h
+	$(FLAG) $(TEST)main.c -o $(OBJ)main.o
+
 test_data: $(OBJ)test_data.o $(OBJ)data.o
 	$(CC) $(OBJ)test_data.o $(OBJ)data.o -o $(BIN)test_data
 
@@ -59,6 +63,10 @@ test_table: $(OBJ)test_table.o $(OBJ)table.o $(OBJ)entry.o
 test_serialization: $(OBJ)test_serialization.o $(OBJ)data.o $(OBJ)entry.o $(OBJ)serialization.o
 	$(CC) -g $(OBJ)test_serialization.o $(OBJ)data.o $(OBJ)entry.o $(OBJ)serialization.o -o $(BIN)test_serialization
 
+#this is temporary
+main: $(OBJ)main.o $(OBJ)table.o $(OBJ)entry.o
+	$(CC) -g $(OBJ)main.o $(OBJ)table.o $(OBJ)entry.o -o $(BIN)main	
+
 clean:	
-	rm -rf $(BIN)/*
+	rm -rf $(BIN)*
 	rm $(OBJ)*.o

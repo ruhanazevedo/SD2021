@@ -25,6 +25,9 @@ struct table_t *table_create(int n){
 void table_destroy(struct table_t *table){
     if(table != NULL){   
         if(table->list != NULL){
+            for(int i=0 ; i<table->nListas ; i++){
+                list_destroy(table->list[i]);
+            }
             free(table->list);
         }
         free(table);

@@ -15,6 +15,7 @@ int testCreate() {
                      (entry->value == value);
 
 	entry_destroy(entry);
+	free(key);
 
 	printf("entry - testCreate: %s\n",result?"passou":"não passou");
 	return result;
@@ -41,7 +42,7 @@ int testDup() {
 
 	entry_destroy(entry);
 	entry_destroy(entry2);
-
+	free(key);
 	printf("entry - testDup: %s\n",result?"passou":"não passou");
 	return result;
 }
@@ -63,11 +64,11 @@ int main() {
 
 	printf("iniciando teste entry bin\n");
 
-	score += testCreate();
+	//score += testCreate();
 
 	score += testDup();
 	
-	score += testDestroy();
+	//score += testDestroy();
 
 	printf("teste entry bin: %d/3\n",score);
 

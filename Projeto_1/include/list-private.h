@@ -32,6 +32,11 @@ void list_print(struct list_t* list);
  */
 void initializeNode(struct node_t *node);
 
+/**
+ * Destrói o nó e suas devidas dependencias
+*/
+void neutralizeNode(struct node_t *node);
+
 /*
 * Função que verifica se o nó recebido é HEAD
 */

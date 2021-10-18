@@ -183,6 +183,8 @@ int main() {
 
 	printf("iniciando teste list bin\n");
 
+	score += testGetKeys();
+
 	score += testListaVazia();
 
 	score += testAddCauda();
@@ -192,8 +194,6 @@ int main() {
 	score += testRemoveCabeca();
 
 	score += testRemoveCauda();
-
-	score += testGetKeys();
 
 	printf("teste list bin: %d/6\n",score);
 

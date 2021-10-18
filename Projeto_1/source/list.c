@@ -21,7 +21,14 @@ struct list_t *list_create(){
 }
 
 void list_destroy(struct list_t *list){
-    free(list);
+    if(list != NULL){
+        if(list->nodes != NULL){
+            neutralizeNode(list->nodes);
+            free(list->nodes);
+        }
+        free(list);
+    }
+    
 }
 
 int list_add(struct list_t *list, struct entry_t *entry){ 
@@ -150,7 +157,16 @@ void initializeNode(struct node_t *node){
     node->child = malloc(sizeof(struct node_t));
     node->current_entry = malloc(sizeof(struct entry_t));
 
-    node->child = NULL;    
+    node->child = NULL;
+}
+
+void neutralizeNode(struct node_t *node){
+    if(node != NULL){
+        free(node->parent);
+        free(node->child);
+        free(node->current_entry); //call entry_destroy 
+    }
+    
 }
 
 int thisNodeIsHead(struct node_t *node){
