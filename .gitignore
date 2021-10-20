@@ -82,4 +82,5 @@ Projeto_1/output/*
 #Ruhan: para ignorar o que esta dentro de proto para não haver replaces das nossas maquinas locais
 Projeto_2/proto/
 Projeto_2/protobuf/
+Projeto_2/output/
 
