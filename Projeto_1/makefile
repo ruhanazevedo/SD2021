@@ -5,7 +5,7 @@
 #***************************/
 
 CC=gcc
-INCLUDE = Projeto\ 1/include/
+INCLUDE = include/
 OBJ = object/
 SRC = source/
 BIN = binary/

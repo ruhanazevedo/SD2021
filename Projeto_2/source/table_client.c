@@ -5,7 +5,7 @@
 #include "../../Projeto_1/source/entry.c"
 
 #define BUFFERSIZE 50
-
+/*
 int main(int argc, char** argv) { 
     char *text = calloc(1,1), buffer[BUFFERSIZE];
     printf("Enter a message: \n");
@@ -42,11 +42,5 @@ int main(int argc, char** argv) {
         else if(strcmp(split, "getkeys") == 0);
         else if(strcmp(split, "size") == 0);
     }
-    //printf("\n%d\n",argc);
-    //printf("%s ", argv[0]);
-    /*for(int i=0 ; i<argc ; i++){
-        printf("%s ", argv[i]);
-    }*/
-    printf("\n");
-    return 0;
- }
+
+ }*/
