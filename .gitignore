@@ -75,9 +75,11 @@ dkms.conf
 # End of https://www.toptal.com/developers/gitignore/api/c,visualstudiocode
 
 
-# Ruhan: Makefile_temp => template do Makefile localmente
-Projeto 1/Makefile_temp
-
 # Ruhan: para não mandarmos os output gerados para o git, assim cada os gera na propria maquina
-Projeto 1/output/*
+Projeto_1/output/*
 *.json
+
+#Ruhan: para ignorar o que esta dentro de proto para não haver replaces das nossas maquinas locais
+Projeto_2/proto/
+Projeto_2/protobuf/
+
