@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "../include/client/network_client.h"
-//#include "../include/inet.h"
 #include "../include/extra/inet.h"
 #include <errno.h>
 #include "../include/client/client_stub-private.h"

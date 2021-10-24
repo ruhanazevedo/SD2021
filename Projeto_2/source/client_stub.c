@@ -1,10 +1,12 @@
 #include "../include/client/client_stub.h"
 #include "../include/client/client_stub-private.h"
+#include "../proto/sdmessage.pb-c.h"
 #include <stddef.h> //NULLS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+//"19012392103921:0909"
 struct rtable_t *rtable_connect(const char *address_port){
     struct rtable_t *remote_table = malloc(sizeof(struct rtable_t));
     char *endpoint = malloc(sizeof(char)*strlen(address_port));
@@ -13,34 +15,43 @@ struct rtable_t *rtable_connect(const char *address_port){
     remote_table->address = malloc(sizeof(char)); // can be necessary to *strlen(hostname) (=) strlen(strtok(address_port, ":"))
     remote_table->address = endpoint;
     remote_table->port = strtol(strtok(NULL,""), NULL, 10);
-    remote_table->table = table_create(1); //criar a table com 1 lista
+    //remote_table->table = table_create(1); //criar a table com 1 lista
+    remote_table->server = malloc(sizeof(struct sockaddr_in));
+
+    char str[MAX_MSG];
+    int count, nbytes;
+
+    if ((remote_table->sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        perror("Erro ao criar socket TCP");
+        return -1;
+    }
+    struct sockaddr_in server_aux;
+    server_aux.sin_family = AF_INET;
+    server_aux.sin_port = htons(remote_table->port);
+    if (inet_pton(AF_INET, remote_table->address, &server_aux.sin_addr) < 1) {
+        printf("Erro ao converter IP\n");
+        close(remote_table->sockfd);
+        return -1;
+    }
+    remote_table->server = &server_aux;
     return remote_table;
 }
 
 int rtable_disconnect(struct rtable_t *rtable){
     if(rtable != NULL){
-        if(rtable->address != NULL){
-            free(rtable->address);
-        }
-        if(rtable->table != NULL){
-            table_destroy(rtable->table);
-        }
-        free(rtable);
+        network_close(rtable);
         return 0;
     }
     return -1;
 }
 
 int rtable_put(struct rtable_t *rtable, struct entry_t *entry){
-    if(rtable != NULL && entry != NULL){
-        if(rtable->table != NULL && entry->value != NULL && strcmp(entry->key,NULL) != 0 ){
-            table_put(rtable->table, entry->key, entry->value);
-            return 0;
-        }
-        printf("[ERROR] if this was hit, something can be wrong");
-    }
+    struct MessageT *msg;
+    //msg = malloc(sizeof(struct MessageT)); //may be necessary alocate memory before message_t_init()
+    message_t__init(msg); 
+    //msg->base = NULL; // ???????
+    msg->opcode = MESSAGE_T__OPCODE__OP_PUT;
     
-    return -1;
 }
 
 struct data_t *rtable_get(struct rtable_t *rtable, char *key){
@@ -91,9 +102,13 @@ void rtable_free_keys(char **keys){
 }
 
 void rtable_print(struct rtable_t *rtable){
-    if(rtable != NULL){
-        if(rtable->table != NULL){
-            table_print(rtable->table);
-        }
-    }
+    struct MessageT *msg;
+    //msg = malloc(sizeof(struct MessageT)); //may be necessary alocate memory before message_t_init()
+    message_t__init(msg); 
+    //msg->base = NULL; // ???????
+    msg->opcode = MESSAGE_T__OPCODE__OP_PRINT;
+    msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
+    msg->data_size = 0;
+    msg->data = NULL;
+    network_send_receive(rtable, msg);
 }
