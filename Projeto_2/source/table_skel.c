@@ -1,7 +1,8 @@
-#include "sdmessage.pb-c.h"
+#include "../proto/sdmessage.proto"
 #include "table.h"
 #include "table_skel.h"
 #include "../include/message.h"
+#include <stddef.h> //NULLS
 
 struct table_t *table;
 

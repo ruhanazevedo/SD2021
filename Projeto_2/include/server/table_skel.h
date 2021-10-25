@@ -1,7 +1,7 @@
 #ifndef _TABLE_SKEL_H
 #define _TABLE_SKEL_H
 
-#include "sdmessage.pb-c.h"
+#include "../proto/sdmessage.proto"
 #include "table.h"
 
 /* Inicia o skeleton da tabela.

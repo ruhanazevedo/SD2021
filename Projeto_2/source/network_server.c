@@ -1,4 +1,4 @@
-#include "table_skel.h"
+#include "../include/server/table_skel.h"
 #include "network_server.h"
 #include "inet.h"
 

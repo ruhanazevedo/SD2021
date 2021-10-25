@@ -1,5 +1,5 @@
 syntax = "proto3";
-message message_t
+message Message_T
  {
         enum Opcode {
                 OP_BAD     = 0;
