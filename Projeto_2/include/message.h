@@ -1,13 +1,14 @@
 #ifndef _MESSAGE_H
 #define _MESSAGE_H
 
-#include "entry.h"
-#include "../proto/sdmessage.pb-c.h"
+#include "../include/entry.h"
+#include "../proto/sdmessage.proto"
 #include "message-private.h"
 
 
 struct message_t {
-	struct _MessageT *m;
+
+	struct Message_T *m;
 };
 
 
