@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../include/serialization.h"
 
 //"19012392103921:0909"
 struct rtable_t *rtable_connect(const char *address_port){
@@ -34,11 +35,15 @@ struct rtable_t *rtable_connect(const char *address_port){
         return -1;
     }
     remote_table->server = &server_aux;
+    free(endpoint);//look if this modify the remote_table
     return remote_table;
 }
 
 int rtable_disconnect(struct rtable_t *rtable){
     if(rtable != NULL){
+        if(rtable->address != NULL){
+            free(rtable->address);
+        }
         network_close(rtable);
         return 0;
     }
@@ -47,11 +52,35 @@ int rtable_disconnect(struct rtable_t *rtable){
 
 int rtable_put(struct rtable_t *rtable, struct entry_t *entry){
     struct MessageT *msg;
+    char *buf;
+    unsigned len;
     //msg = malloc(sizeof(struct MessageT)); //may be necessary alocate memory before message_t_init()
-    message_t__init(msg); 
-    //msg->base = NULL; // ???????
+    message_t__init(&msg); 
+
+    //msg->base = NULL; // ??????? not necessary as the professor example
     msg->opcode = MESSAGE_T__OPCODE__OP_PUT;
+    msg->c_type = MESSAGE_T__C_TYPE__CT_ENTRY;
+    msg->data_size = sizeof(entry);//tamanho da entry
     
+    char *entry_buf; //falta inicializar, mas talvez nao seja necessario
+
+    entry_to_buffer(entry, &entry_buf);
+
+    msg->data = entry_buf;
+
+    len = message_t__get_packed_size(&msg);
+    buf = malloc(len);
+
+    message_t__pack(&msg, buf);
+
+    if(network_send_receive(rtable, msg)!= NULL){
+        //n falhou
+        return 0;
+    }
+    else {
+        //falhou
+        return -1;
+    }
 }
 
 struct data_t *rtable_get(struct rtable_t *rtable, char *key){
