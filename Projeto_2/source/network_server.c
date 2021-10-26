@@ -58,7 +58,7 @@ int network_main_loop(int listening_socket) {
 			free(msg);
    			return -1;
    		}
-        	// Fecha socket referente a esta conexão
+        // Fecha socket referente a esta conexão
 		close(connsockfd);
     	}
     	return 0;
@@ -85,7 +85,7 @@ struct message_t *network_receive(int client_socket) {
 
 	// recebe a mensagem e coloca no buf
 	if ((res = read_all(client_socket, buf, msgsize)) != msgsize) {
-		perror("Erro in read_all\n");
+		perror("Error in read_all\n");
 		close(client_socket);
 		free(buf);
 		free(msg);
@@ -93,7 +93,7 @@ struct message_t *network_receive(int client_socket) {
 	}
 
 	// De-serializar a mensagem do pedido
-	msg = buf_to_message(buf, msgsize);
+	msg = buffer_to_message(buf, msgsize);
 
 	// Verificar se a de-serializacao teve sucesso 
 	if (msg == NULL) {
@@ -112,8 +112,8 @@ int network_send(int client_socket, struct message_t *msg) {
 	char *buf;
 	int msgsize, result, msgsizeAux;
 
-    	//Serializa a mensagem 
-	msgsizeAux = message_to_buf(msg, &buf);
+    //Serializa a mensagem 
+	msgsizeAux = message_to_buffer(msg, &buf);
 
 	//Verifica se a serializacao teve sucesso 
 	if (msgsizeAux < 0) {

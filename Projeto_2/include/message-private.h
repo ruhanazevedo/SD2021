@@ -2,7 +2,7 @@
 #define _MESSAGE_PRIVATE_H
 
 #include "../include/entry.h"
-#include "../proto/sdmessage.proto"
+#include "../proto/sdmessage.pb-c.h"
 
 
 /* Função que garante a leitura de len bytes armazenados em buf

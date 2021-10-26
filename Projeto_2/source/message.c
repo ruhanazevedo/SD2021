@@ -1,5 +1,5 @@
 #include "message.h"
-#include "../include/extra/inet.h"
+#include "../include/inet.h"
 #include "sdmessage.pb-c.h"
 #include <errno.h>
 
@@ -17,7 +17,7 @@ struct message_t *message_create() {
 	return msg;
 }
 
-int message_to_buf(struct message_t *msg, char **msg_buf) {
+int message_to_buffer(struct message_t *msg, char **msg_buf) {
 	//TODO
 	return -1;
 }
@@ -25,7 +25,7 @@ int message_to_buf(struct message_t *msg, char **msg_buf) {
 /* Transforma uma mensagem no array de bytes, buffer, para
  * uma struct message_t*
  */
-struct message_t *buf_to_message(char *msg_buf, int msg_size) {
+struct message_t *buffer_to_message(char *msg_buf, int msg_size) {
 	//TODO
 	return NULL;
 }

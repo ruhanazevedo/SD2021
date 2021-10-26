@@ -1,4 +1,4 @@
-#include "../proto/sdmessage.proto"
+#include "../proto/sdmessage.pb-c.h"
 #include "table.h"
 #include "table_skel.h"
 #include "../include/message.h"
@@ -32,13 +32,13 @@ int invoke(struct message_t *msg) {
 	if (msg->m->opcode == MESSAGE_T__OPCODE__OP_SIZE && msg->m->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
 		msg->m->opcode += 1;
 		msg->m->c_type = MESSAGE_T__C_TYPE__CT_RESULT;
-		msg->m->content->result = table_size(table);
+		msg->m->result = table_size(table);
 		return 0;
 	}
 
 	else if (msg->m->opcode == MESSAGE_T__OPCODE__OP_DEL && msg->m->c_type == MESSAGE_T__C_TYPE__CT_KEY) {	
 		msg->m->c_type = MESSAGE_T__C_TYPE__CT_NONE;
-		if ((table_del(table, msg->m->content->key)) == 0) {
+		if ((table_del(table, msg->m->key)) == 0) {
 			msg->m->opcode += 1;
 			return 0;
 		} else {
@@ -51,7 +51,7 @@ int invoke(struct message_t *msg) {
 
 	else if (msg->m->opcode == MESSAGE_T__OPCODE__OP_GET && msg->m->c_type == MESSAGE_T__C_TYPE__CT_KEY) {
 
-		struct data_t *data = table_get(table, msg->m->content->key);
+		struct data_t *data = table_get(table, msg->m->key);
 		if (data == NULL) {
 			msg->m->opcode = MESSAGE_T__OPCODE__OP_ERROR;
 			msg->m->c_type = MESSAGE_T__C_TYPE__CT_NONE;
@@ -59,8 +59,8 @@ int invoke(struct message_t *msg) {
 		} else {
 			msg->m->opcode += 1;
 			msg->m->c_type = MESSAGE_T__C_TYPE__CT_VALUE;
-			msg->m->content->data = data->data;
-			msg->m->content->datasize = data->datasize;
+			msg->m->data = data->data;
+			msg->m->data_size = data->datasize;
 			return 0;
 
 		}
@@ -68,7 +68,7 @@ int invoke(struct message_t *msg) {
 
 	else if (msg->m->opcode == MESSAGE_T__OPCODE__OP_PUT && msg->m->c_type == MESSAGE_T__C_TYPE__CT_ENTRY) {
 		
-		if ((table_put(table, msg->m->content->key, data_create2(msg->m->content->datasize,msg->m->content->data))) == 0) {
+		if ((table_put(table, msg->m->key, data_create2(msg->m->data_size,msg->m->data))) == 0) {
 			msg->m->opcode += 1;
 			msg->m->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 			return 0;
@@ -82,17 +82,17 @@ int invoke(struct message_t *msg) {
 
 	else if (msg->m->opcode == MESSAGE_T__OPCODE__OP_GETKEYS && msg->m->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
 		msg->m->opcode += 1;
-		msg->m->c_type = MESSAGE_T__C_TYPE__CT_GETKEYS;
-		msg->m->content->keys = table_get_keys(table);
+		msg->m->c_type = MESSAGE_T__C_TYPE__CT_KEYS;
+		msg->m->keys = table_get_keys(table);
 		return 0;
 	} 
 
 	else if (msg->m->opcode == MESSAGE_T__OPCODE__OP_PRINT && msg->m->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
 		msg->m->opcode += 1;
 		msg->m->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
-		msg->m->content->keys = table_print(table);
+		table_print(table);
 		return 0;
 	}
 
-	return -1; // quando a combinacao dos codigos fornecidos e errada
+	return -1;
 }

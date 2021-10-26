@@ -1,5 +1,5 @@
 syntax = "proto3";
-message Message_T
+message message_t
  {
         enum Opcode {
                 OP_BAD     = 0;
@@ -26,5 +26,8 @@ message Message_T
         C_type c_type = 2;
         sint32 data_size = 3;
         string data = 4;
+	int32 result = 5;
+	string key = 6;
+        repeated string keys = 7;
 
 };

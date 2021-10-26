@@ -2,13 +2,13 @@
 #define _MESSAGE_H
 
 #include "../include/entry.h"
-#include "../proto/sdmessage.proto"
+#include "../proto/sdmessage.pb-c.h"
 #include "message-private.h"
 
 
 struct message_t {
 
-	struct Message_T *m;
+	MessageT *m;
 };
 
 
@@ -40,12 +40,12 @@ struct message_t *message_create();
  * Notar que o `\0´ no fim da string e o NULL no fim do array de
  * chaves não são enviados nas mensagens.
  */
-int message_to_buf(struct message_t *msg, char **msg_buf);
+int message_to_buffer(struct message_t *msg, char **msg_buf);
 
 /* Transforma uma mensagem no array de bytes, buffer, para
  * uma struct message_t*
  */
-struct message_t *buf_to_message(char *msg_buf, int msg_size);
+struct message_t *buffer_to_message(char *msg_buf, int msg_size);
 
 /* Liberta a memoria alocada na função buffer_to_message
  */
