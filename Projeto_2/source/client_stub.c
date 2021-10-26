@@ -102,7 +102,7 @@ struct data_t *rtable_get(struct rtable_t *rtable, char *key){
 
         if(msg_received = network_send_receive(rtable, &msg) != NULL){
             char *received_buf;
-            message_t__pack_to_buffer(msg_received, buf);
+            message_t__pack_to_buffer(msg_received, received_buf); 
             if(data = buffer_to_data(received_buf, sizeof(received_buf)) == 0){ //putting message response of network into a buffer to use buffer_to_data, comparing with 0 suposing that return 0 is OK
                 return data;
             }
@@ -127,6 +127,7 @@ int rtable_del(struct rtable_t *rtable, char *key){
         if(network_send_receive(rtable, &msg) != NULL){
             return 0;
         }
+        return -1;
     }
     return -1;
 }
@@ -145,7 +146,14 @@ int rtable_size(struct rtable_t *rtable){
 
         if(msg_received = network_send_receive(rtable, &msg) != NULL){
             //im waiting for size into msg_received->data_size
-            return msg_received->data_size;
+            //return msg_received->data_size;
+
+            //treating msg_received as a buffer
+            int dataSize = msg_received->data_size;
+            int *res = malloc(dataSize);
+            memcpy(res, msg_received->data, dataSize);
+
+            return &res;
         }
     }
     return -1;
@@ -164,8 +172,12 @@ char **rtable_get_keys(struct rtable_t *rtable){
         msg->data_size = 0; //don't need to send table in the msg, just the network need's to know
         msg->data = NULL;
 
-        if(network_send_receive() != NULL){
-            //unpack the result and get the char**
+        if(msg_received = network_send_receive() != NULL){
+            int dataSize = msg_received->data_size;
+            char **res = malloc(dataSize);
+            memcpy(*res, msg_received->data, dataSize);
+
+            return res;
         }
 
     }
