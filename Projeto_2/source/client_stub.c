@@ -54,7 +54,6 @@ int rtable_put(struct rtable_t *rtable, struct entry_t *entry){
     struct MessageT *msg;
     char *buf;
     unsigned len;
-    //msg = malloc(sizeof(struct MessageT)); //may be necessary alocate memory before message_t_init()
     message_t__init(&msg); 
 
     //msg->base = NULL; // ??????? not necessary as the professor example
@@ -84,50 +83,100 @@ int rtable_put(struct rtable_t *rtable, struct entry_t *entry){
 }
 
 struct data_t *rtable_get(struct rtable_t *rtable, char *key){
-    if(rtable != NULL){
-        if(rtable->table != NULL && strcmp(key, NULL) != 0){
-            return table_get(rtable->table, key);
+    struct data_t *data;
+    if(rtable != NULL && strcmp(key, NULL) != 0){
+        struct MessageT *msg, *msg_received;
+        char *buf;
+        unsigned len;
+        message_t__init(&msg); 
+
+        msg->opcode = MESSAGE_T__OPCODE__OP_GET;
+        msg->c_type = MESSAGE_T__C_TYPE__CT_KEY;
+        msg->data_size = strlen(key);
+        msg->data = key;
+
+        len = message_t__get_packed_size(&msg);
+        buf = malloc(len);
+
+        message_t__pack(&msg, buf);        
+
+        if(msg_received = network_send_receive(rtable, &msg) != NULL){
+            char *received_buf;
+            message_t__pack_to_buffer(msg_received, buf);
+            if(data = buffer_to_data(received_buf, sizeof(received_buf)) == 0){ //putting message response of network into a buffer to use buffer_to_data, comparing with 0 suposing that return 0 is OK
+                return data;
+            }
         }
-        printf("[WARN] invalid NULL argument");
+
     }
     return NULL;
 }
 
 int rtable_del(struct rtable_t *rtable, char *key){
-    if(rtable != NULL){
-        if(rtable->table != NULL && strcmp(key, NULL) != 0){
-            table_del(rtable->table, key);
+    if(rtable != NULL && strcmp(key, NULL) != 0){
+        struct MessageT *msg;
+        char *buf;
+        unsigned len;
+        message_t__init(&msg); 
+
+        msg->opcode = MESSAGE_T__OPCODE__OP_DEL;
+        msg->c_type = MESSAGE_T__C_TYPE__CT_KEY;
+        msg->data_size = strlen(key);
+        msg->data = key;
+
+        if(network_send_receive(rtable, &msg) != NULL){
             return 0;
         }
-        printf("[WARN] invalid NULL argument");
     }
     return -1;
 }
 
 int rtable_size(struct rtable_t *rtable){
     if(rtable != NULL){
-        if(rtable->table != NULL){
-            return table_size(rtable->table);
+        struct MessageT *msg, *msg_received;
+        char *buf;
+        unsigned len;
+        message_t__init(&msg); 
+
+        msg->opcode = MESSAGE_T__OPCODE__OP_SIZE;
+        msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
+        msg->data_size = 0;
+        msg->data = NULL;
+
+        if(msg_received = network_send_receive(rtable, &msg) != NULL){
+            //im waiting for size into msg_received->data_size
+            return msg_received->data_size;
         }
-        printf("[WARN] invalid NULL argument");
     }
     return -1;
 }
 
 char **rtable_get_keys(struct rtable_t *rtable){
     if(rtable != NULL){
-        if(rtable->table != NULL){
-            return table_get_keys(rtable->table);
+        //TODO TRICKY
+        struct MessageT *msg, *msg_received;
+        char *buf;
+        unsigned len;
+        message_t__init(&msg);
+
+        msg->opcode = MESSAGE_T__OPCODE__OP_GETKEYS;
+        msg->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
+        msg->data_size = 0; //don't need to send table in the msg, just the network need's to know
+        msg->data = NULL;
+
+        if(network_send_receive() != NULL){
+            //unpack the result and get the char**
         }
-        printf("[WARN] invalid NULL argument");
+
     }
     return NULL;
 }
 
-void rtable_free_keys(char **keys){
+void rtable_free_keys(char **keys){ //FALTA receber o TABLE
     if(keys != NULL){
         table_free_keys(keys);
     }
+    printf("[ERROR] invalid argument keys");
 }
 
 void rtable_print(struct rtable_t *rtable){
