@@ -1,12 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../../Projeto_1/source/data.c"
-#include "../../Projeto_1/source/entry.c"
+//#include "../../Projeto_1/source/data.c"
+//#include "../../Projeto_1/source/entry.c"
+#include "../include/client/client_stub.h"
+#include "data.c"
+#include "entry.c"
+#include "client_stub.c"
+#include "../include/extra/inet.h"
 
 #define BUFFERSIZE 50
-/*
+
 int main(int argc, char** argv) { 
+    struct rtable_t *remote_table;
+    if(argc == 2){
+        printf("%s\n", argv[1]);
+        remote_table = rtable_connect(argv[1]);
+    }
+
     char *text = calloc(1,1), buffer[BUFFERSIZE];
     printf("Enter a message: \n");
     while(fgets(buffer, BUFFERSIZE , stdin)){
@@ -27,7 +38,7 @@ int main(int argc, char** argv) {
             int datasize = strlen(argData);
             struct data_t *data = data_create2(datasize, argData);
             struct entry_t *entry = entry_create(argKey, data);
-    
+            //rtable_put();
         }
 
         else if(strcmp(strtok(split, " "), "get") == 0){
@@ -43,4 +54,4 @@ int main(int argc, char** argv) {
         else if(strcmp(split, "size") == 0);
     }
 
- }*/
+ }

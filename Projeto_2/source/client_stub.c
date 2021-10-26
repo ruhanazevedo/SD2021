@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../include/serialization.h"
+#include "../include/extra/inet.h"
 
 //"19012392103921:0909"
 struct rtable_t *rtable_connect(const char *address_port){
