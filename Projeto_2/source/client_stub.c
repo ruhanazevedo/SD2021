@@ -18,7 +18,7 @@ struct rtable_t *rtable_connect(const char *address_port){
     remote_table->address = endpoint;
     remote_table->port = strtol(strtok(NULL,""), NULL, 10);
     //remote_table->table = table_create(1); //criar a table com 1 lista
-    remote_table->server = malloc(sizeof(struct sockaddr_in));
+    remote_table->server = malloc(sizeof(struct sockaddr_in *));
 
     char str[MAX_MSG];
     int count, nbytes;
