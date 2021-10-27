@@ -4,16 +4,10 @@
 #include <errno.h>
 #include "../include/client/client_stub-private.h"
 
-static int sockfd;
-static struct sockaddr_in server;
 
 int network_connect(struct rtable_t *rtable){
     
-
-    //int sockfd;
-    //struct sockaddr_in server;
-    char str[MAX_MSG];
-    int count, nbytes;
+    /* v feito no client_stub v
 
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("Erro ao criar socket TCP");
@@ -27,10 +21,11 @@ int network_connect(struct rtable_t *rtable){
         close(sockfd);
         return -1;
     }
+    */
     
-    if (connect(sockfd,(struct sockaddr *)&server, sizeof(server)) < 0) {
+    if (connect(rtable->sockfd, rtable->server, sizeof(rtable->server)) < 0) {
         perror("Erro ao conectar-se ao servidor");
-        close(sockfd);
+        close(rtable->sockfd);
         return -1;
     }
     
@@ -41,41 +36,44 @@ int network_connect(struct rtable_t *rtable){
 struct MessageT *network_send_receive(struct rtable_t * rtable,
                                        struct MessageT *msg){
     int nbytes;
-    char response[MAX_MSG];
 
-    message_t__init(msg);
+    //message_t__init(msg); <- feito no client_stub
     int len = message_t__get_packed_size(msg);
-    char*buf = malloc(len);
+    char *buf = malloc(len);
     sdmessage__pack(msg,buf);
 
     // Envia tamanho da mensagem
-    if((nbytes = write(sockfd,len, 4)) != 4){
+    if((nbytes = write_all(rtable->sockfd,htonl(len), sizeof(len))) != sizeof(len)){
         perror("Erro ao enviar dados ao servidor");
-        close(sockfd);
+        close(rtable->sockfd);
         return -1;
     }
     // Envia mensagem
-    if((nbytes = write(sockfd,buf,len)) != len){
+    if((nbytes = write_all(rtable->sockfd,buf,len)) != len){
         perror("Erro ao enviar dados ao servidor");
-        close(sockfd);
+        close(rtable->sockfd);
         return NULL;
     }
+    free(buf);
     
-    if((nbytes = read(sockfd,&response,len)) != len){
+    char *response = malloc(len);
+
+    if((nbytes = read_all(rtable->sockfd,&response,len)) != len){
         perror("Erro ao receber dados do servidor");
-        close(sockfd);
+        close(rtable->sockfd);
         return -1;
     };
-    MessageT *ds;
-    ds = message_t__unpack(NULL, len, buf);
+    MessageT *ds = malloc(sizeof(MessageT));
+    ds = message_t__unpack(NULL, len, response);
+    free(response);
 }   
 
 int network_close(struct rtable_t * rtable){
-    close(sockfd); // Fecha o socket
+    close(rtable->sockfd); // Fecha o socket
     printf("ligação terminada\n");
     return 0; // Termina
 }
-
+/*
 int main(int argc, char **argv){
     struct rtable_t *table = malloc(sizeof(struct rtable_t));
     table->address = "127.0.0.7";
@@ -85,3 +83,4 @@ int main(int argc, char **argv){
     int test = network_close(table);
     printf("resultado: %d\n" ,test);
 }
+*/
