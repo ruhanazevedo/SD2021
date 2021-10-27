@@ -2,8 +2,8 @@
 #define _CLIENT_STUB_PRIVATE_H
 
 #include "client_stub.h"
-#include "../table.h"
-#include "../extra/inet.h" //podemos acrescentar o inet.h aqui?
+#include "table.h"
+#include "extra/inet.h" 
 
 struct rtable_t{
     char *address;

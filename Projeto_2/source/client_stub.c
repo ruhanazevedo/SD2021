@@ -1,5 +1,5 @@
-#include "../include/client/client_stub.h"
-#include "../include/client/client_stub-private.h"
+//#include "../include/client/client_stub.h"
+#include "../include/client_stub-private.h"
 #include "../proto/sdmessage.pb-c.h"
 #include <stddef.h> //NULLS
 #include <stdio.h>
@@ -180,7 +180,6 @@ char **rtable_get_keys(struct rtable_t *rtable){
 
             return res;
         }
-
     }
     return NULL;
 }
