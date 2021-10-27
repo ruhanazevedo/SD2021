@@ -28,16 +28,20 @@ table.o: $(INCLUDE)table-private.h $(INCLUDE)table.h $(INCLUDE)data.h $(INCLUDE)
 serialization.o: $(INCLUDE)data.h $(INCLUDE)entry.h $(INCLUDE)serialization.h
 	$(FLAG) $(SRC)serialization.c -o $(OBJ)serialization.o
 
-client_stub.o: $(INCLUDE)client_stub-private.h $(INCLUDE)client_stub.h
-	$(FLAG) $(SRC)client_stub.c -o $(OBJ)client_stub.o
+#client_stub.o: $(INCLUDE)client_stub-private.h $(INCLUDE)client_stub.h
+#	$(FLAG) $(SRC)client_stub.c -o $(OBJ)client_stub.o
+		
 
 client-lib.o: $(INCLUDE)client_stub-private.h $(INCLUDE)client_stub.h $(INCLUDE)network_client.h $(INCLUDE)data.h $(INCLUDE)entry.h
 	$(FLAG) $(SRC)client_stub.c -o $(OBJ)client_stub.o
 	$(FLAG) $(SRC)network_client.c -o $(OBJ)network_client.o
 	ld -r $(OBJ)client_stub.o $(OBJ)network_client.o $(OBJ)data.o $(OBJ)entry.o -o $(OBJ)client-lib.o
 
-table-client: $(OBJ)client_stub.o $(OBJ)network_client.o
-	$(CC) -g $(OBJ)main.o $(OBJ)table.o $(OBJ)entry.o -o $(BIN)main	
+table-client.o: $(INCLUDE)table-client.h  
+	$(FLAG) $(SRC)table-client.c -o $(OBJ)table-client.o
+
+table-client: $(OBJ)client-lib.o $(OBJ)table-client.o
+	$(CC) -g $(OBJ)client-lib.o $(OBJ)table-client.o -o $(BIN)table-client
 
 clean:	
 	rm -rf $(BIN)*
