@@ -3,7 +3,7 @@
 #include <string.h>
 //#include "../../Projeto_1/source/data.c"
 //#include "../../Projeto_1/source/entry.c"
-#include "../include/client/client_stub.h"
+#include "../include/client_stub.h"
 #include "data.c"
 #include "entry.c"
 #include "client_stub.c"

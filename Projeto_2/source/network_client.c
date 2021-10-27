@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include "../include/client/network_client.h"
+#include "../include/network_client.h"
 #include "../include/extra/inet.h"
 #include <errno.h>
-#include "../include/client/client_stub-private.h"
+#include "../include/client_stub-private.h"
 
 
 int network_connect(struct rtable_t *rtable){

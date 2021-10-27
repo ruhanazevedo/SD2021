@@ -11,7 +11,7 @@ SRC = source/
 BIN = binary/
 FLAG = gcc -g -Wall -I include/ -c
 
-all : data.o entry.o list.o table.o serialization.o client_stub.o
+all : data.o entry.o list.o table.o serialization.o client-lib.o table_client.o table_client
 
 data.o: $(INCLUDE)data.h
 	$(FLAG) $(SRC)data.c -o $(OBJ)data.o
@@ -37,11 +37,11 @@ client-lib.o: $(INCLUDE)client_stub-private.h $(INCLUDE)client_stub.h $(INCLUDE)
 	$(FLAG) $(SRC)network_client.c -o $(OBJ)network_client.o
 	ld -r $(OBJ)client_stub.o $(OBJ)network_client.o $(OBJ)data.o $(OBJ)entry.o -o $(OBJ)client-lib.o
 
-table-client.o: $(INCLUDE)table-client.h  
-	$(FLAG) $(SRC)table-client.c -o $(OBJ)table-client.o
+table_client.o: $(SRC)table_client.c  
+	$(FLAG) $(SRC)table_client.c -o $(OBJ)table_client.o
 
-table-client: $(OBJ)client-lib.o $(OBJ)table-client.o
-	$(CC) -g $(OBJ)client-lib.o $(OBJ)table-client.o -o $(BIN)table-client
+table_client: $(OBJ)client-lib.o $(OBJ)table_client.o proto/sdmessage.pb-c.o
+	$(CC) -g $(OBJ)client-lib.o $(OBJ)table_client.o proto/sdmessage.pb-c.o -I/proto -L/protobuf -o $(BIN)table_client
 
 clean:	
 	rm -rf $(BIN)*
