@@ -24,10 +24,22 @@ message message_t
                 CT_NONE   = 70;
         }
         C_type c_type = 2;
+        
+        /*
         sint32 data_size = 3;
         string data = 4;
 	int32 result = 5;
 	string key = 6;
         repeated string keys = 7;
+        */
 
+        repeated string keys = 3;
+        bytes data = 4;
+        int32 result = 5;
+        message Entry
+         {
+                 string key = 1;
+                 bytes data = 2;
+         }
+        repeated Entry entries = 6;
 };
