@@ -14,7 +14,7 @@
 int main(int argc, char** argv) { 
     struct rtable_t *remote_table;
     if(argc == 2){
-        printf("%s\n", argv[1]);
+        printf("trying to reach %s\n", argv[1]);
         remote_table = rtable_connect(argv[1]);
     }
 
@@ -29,6 +29,7 @@ int main(int argc, char** argv) {
         //printf("%s\n", buffer);   
         char *split = strtok(text, "\n");
         if(strcmp(split, "quit") == 0){
+            printf("disconnect");
             break;
         }
         else if(strcmp(strtok(split, " "), "put") == 0){
