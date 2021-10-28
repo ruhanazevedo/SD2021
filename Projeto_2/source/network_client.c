@@ -3,6 +3,7 @@
 #include "../include/extra/inet.h"
 #include <errno.h>
 #include "../include/client_stub-private.h"
+#include "message.c"
 
 
 int network_connect(struct rtable_t *rtable){
@@ -40,7 +41,7 @@ struct MessageT *network_send_receive(struct rtable_t * rtable,
     //message_t__init(msg); <- feito no client_stub
     int len = message_t__get_packed_size(msg);
     char *buf = malloc(len);
-    sdmessage__pack(msg,buf);
+    message_t__pack(msg,buf);
 
     // Envia tamanho da mensagem
     if((nbytes = write_all(rtable->sockfd,htonl(len), sizeof(len))) != sizeof(len)){

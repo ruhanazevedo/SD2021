@@ -6,7 +6,8 @@
 
 #include "../include/list.h"
 #include "../include/list-private.h"
-#include "data.c"
+//#include "data.c"
+#include "../include/data.h"
 #include <stddef.h> //NULLS
 
 struct list_t *list_create(){

@@ -7,7 +7,7 @@
 #ifndef _DATA_PRIVATE_H
 #define _DATA_PRIVATE_H
 
-#include "data.h"
+//#include "data.h"
 
 /*
 * Função que imprime o conteúdo do data_t recebido

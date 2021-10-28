@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../include/serialization.h"
+#include "serialization.c"
+#include "table.c"
 #include "../include/extra/inet.h"
 
 //"19012392103921:0909"
