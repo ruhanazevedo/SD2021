@@ -1,4 +1,4 @@
-#include "../include/server/table_skel.h"
+#include "../include/table_skel.h"
 #include "network_server.h"
 #include "inet.h"
 
@@ -65,11 +65,11 @@ int network_main_loop(int listening_socket) {
 }
 
 
-struct message_t *network_receive(int client_socket) {
+MessageT *network_receive(int client_socket) {
 	
    	char *buf;
 	int res, msgsize, msgsizeAux;
-	struct message_t *msg;
+	MessageT *msg = NULL;
 
 	// recebe o tamanho da mensagem
 	if ((res = read_all(client_socket, (char *)&msgsizeAux, sizeof(int))) < 0) {
@@ -80,7 +80,7 @@ struct message_t *network_receive(int client_socket) {
 	}
 
 	msgsize = ntohl(msgsizeAux);
-	msg = (struct message_t *) malloc(msgsize);
+	msg = (MessageT *) malloc(msgsize);
 	buf = (char *) malloc(sizeof(char) *msgsize);
 
 	// recebe a mensagem e coloca no buf
@@ -93,27 +93,33 @@ struct message_t *network_receive(int client_socket) {
 	}
 
 	// De-serializar a mensagem do pedido
-	msg = buffer_to_message(buf, msgsize);
+	msg = message_t__unpack(NULL, msgsize, buf);
 
 	// Verificar se a de-serializacao teve sucesso 
 	if (msg == NULL) {
+		fprintf(stdout, "error unpacking message\n");
 		free(buf);
 		free(msg);
 		return NULL;
 	}
 	
 	free(buf);
+	sdmessage__free_unpacked(msg, NULL);
 	return msg;
 }
 
 
-int network_send(int client_socket, struct message_t *msg) {
+int network_send(int client_socket, struct MessageT *msg) {
 
 	char *buf;
 	int msgsize, result, msgsizeAux;
-
-    //Serializa a mensagem 
-	msgsizeAux = message_to_buffer(msg, &buf);
+	msgsizeAux = sdmessage__get_packed_size(&msg);
+    buf = malloc(msgsizeAux);
+    if (buf == NULL) {
+        fprintf(stdout, "malloc error\n");
+        return 1;
+    }
+    sdmessage__pack(&msg, buf);
 
 	//Verifica se a serializacao teve sucesso 
 	if (msgsizeAux < 0) {

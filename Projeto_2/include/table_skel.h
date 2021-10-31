@@ -20,6 +20,6 @@ void table_skel_destroy();
  * e utiliza a mesma estrutura message_t para devolver o resultado.
  * Retorna 0 (OK) ou -1 (erro, por exemplo, tabela nao incializada)
 */
-int invoke(struct message_t *msg);
+int invoke(MessageT *msg);
 
 #endif
