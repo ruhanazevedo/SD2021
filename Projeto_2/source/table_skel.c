@@ -1,4 +1,5 @@
-#include "../proto/sdmessage.pb-c.h"
+//#include "../proto/sdmessage.pb-c.h"
+#include "../sdmessage.pb-c.h"
 #include "table.h"
 #include "table_skel.h"
 #include "../include/message.h"
@@ -59,8 +60,10 @@ int invoke(struct message_t *msg) {
 		} else {
 			msg->m->opcode += 1;
 			msg->m->c_type = MESSAGE_T__C_TYPE__CT_VALUE;
-			msg->m->data2 = data->data;
-			msg->m->data_size = data->datasize;
+			//msg->m->data = data->data;
+			memcpy(msg->m->data.data, data->data, data->datasize);
+			//msg->m->data_size = data->datasize;
+			memcpy(msg->m->data.len, data->datasize, sizeof(int));
 			return 0;
 
 		}
@@ -68,7 +71,7 @@ int invoke(struct message_t *msg) {
 
 	else if (msg->m->opcode == MESSAGE_T__OPCODE__OP_PUT && msg->m->c_type == MESSAGE_T__C_TYPE__CT_ENTRY) {
 		
-		if ((table_put(table, msg->m->key, data_create2(msg->m->data_size, msg->m->data2))) == 0) {
+		if ((table_put(table, msg->m->key, data_create2(msg->m->data_size,msg->m->data.data))) == 0) {
 			msg->m->opcode += 1;
 			msg->m->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 			return 0;
@@ -90,7 +93,7 @@ int invoke(struct message_t *msg) {
 	else if (msg->m->opcode == MESSAGE_T__OPCODE__OP_PRINT && msg->m->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
 		msg->m->opcode += 1;
 		msg->m->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
-		msg->m->entries = table_get_entries(table);
+		table_print(table);
 		return 0;
 	}
 

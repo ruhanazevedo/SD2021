@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include "network_server.h"
-#include "message.h"
+#include "../include/network_server.h"
+#include "../include/message.h"
 
 
 int testInput(int argc){
