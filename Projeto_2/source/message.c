@@ -4,32 +4,13 @@
 #include <errno.h>
 
 
-/* aloca o espaço necessário a uma mensagem */
+
 struct message_t *message_create() {
 
-	struct message_t *msg = (struct message_t *) malloc(sizeof(struct message_t));
+	//TODO se nao precisarem podemos apagar
 
-	if (msg == NULL) {
-		printf("Error cant create message\n");
-		return NULL;
-	}
-	
-	return msg;
+	return;
 }
-
-int message_to_buffer(struct message_t *msg, char **msg_buf) {
-	//TODO
-	return -1;
-}
-
-/* Transforma uma mensagem no array de bytes, buffer, para
- * uma struct message_t*
- */
-struct message_t *buffer_to_message(char *msg_buf, int msg_size) {
-	//TODO
-	return NULL;
-}
-
 
 int write_all(int sock, char *buf, int len) {
 	
