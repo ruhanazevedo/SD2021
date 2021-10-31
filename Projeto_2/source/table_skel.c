@@ -1,19 +1,13 @@
-<<<<<<< HEAD
-//#include "../proto/sdmessage.pb-c.h"
-#include "sdmessage.pb-c.h"
-//#include "table.h"
-//#include "table.c"
-=======
 /********* Grupo 9 ********
 * 44898 - José Alves      *
 * 46670 - Tiago Lourenço  *
 * 51779 - Ruhan Azevedo   *
 ***************************/
 
-#include "../proto/sdmessage.pb-c.h"
-#include "table.h"
->>>>>>> main
-#include "table_skel.h"
+#include "../include/sdmessage.pb-c.h"
+//#include "table.c"
+#include "../include/table_skel.h"
+#include "../include/table-private.h"
 #include "../include/message.h"
 #include <stddef.h> //NULLS
 
@@ -107,9 +101,32 @@ int invoke(MessageT *msg) {
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_PRINT && msg->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
 		msg->opcode += 1;
 		msg->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
-		msg->entries = table_get_entries(table);
+		        struct entry_t **entries = malloc(sizeof(struct entry_t)*table->size + sizeof(NULL)); 
+        int k = 0;
+        for(int i=0 ; i<table->nListas ; i++){
+            if(table->list[i] != NULL){
+                int listSize = list_size(table->list[i]); 
+                char **list_entries = list_get_entrys(table->list[i]); 
+                for(int j=0 ; j<listSize ; j++){
+                    if(list_entries[j] != NULL){
+                        entries[k] =  list_entries[j];
+                        ++k;
+                    }
+                }
+            }
+        }
+        entries[k] = NULL;
+        msg->entries = entries;
 		return 0;
 	}
 
+	/*else if (msg->opcode == MESSAGE_T__OPCODE__OP_PRINT && msg->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
+		msg->opcode += 1;
+		msg->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
+		msg->entries = table_get_entries(table);
+		return 0;
+	}*/
+
 	return -1;
 }
+

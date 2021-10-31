@@ -12,9 +12,10 @@ BIN = binary/
 FLAG = gcc -g -Wall -I include/ -c
 PROTO_DIR = proto/
 
-#all : data.o entry.o list.o table.o serialization.o client-lib.o table_client.o table_client
-all : client-lib.o table_client.o table_client server-lib.o table_server.o table_server
+
+all : data.o entry.o list.o table.o serialization.o client_stub.o network_client.o client-lib.o table_client.o table_skel.o network_server.o server-lib.o table_server.o table_client table_server
 proto: proto.h-c proto.h-c.o 
+
 
 data.o: $(INCLUDE)data.h
 	$(FLAG) $(SRC)data.c -o $(OBJ)data.o
@@ -30,9 +31,6 @@ table.o: $(INCLUDE)table-private.h $(INCLUDE)table.h $(INCLUDE)data.h $(INCLUDE)
 
 serialization.o: $(INCLUDE)data.h $(INCLUDE)entry.h $(INCLUDE)serialization.h
 	$(FLAG) $(SRC)serialization.c -o $(OBJ)serialization.o
-
-#client_stub.o: $(INCLUDE)client_stub-private.h $(INCLUDE)client_stub.h
-#	$(FLAG) $(SRC)client_stub.c -o $(OBJ)client_stub.o
 		
 
 proto.h-c:
@@ -42,38 +40,39 @@ proto.h-c.o:
 	$(FLAG) -c $(INCLUDE)sdmessage.pb-c.c -o $(INCLUDE)sdmessage.pb-c.o
 
 
-client-lib.o: $(INCLUDE)client_stub-private.h $(INCLUDE)client_stub.h $(INCLUDE)network_client.h $(INCLUDE)data.h $(INCLUDE)entry.h $(INCLUDE)list-private.h $(INCLUDE)list.h $(INCLUDE)table-private.h $(INCLUDE)table.h
-	$(FLAG) $(SRC)data.c -o $(OBJ)data.o
-	$(FLAG) $(SRC)entry.c -o $(OBJ)entry.o
-	$(FLAG) $(SRC)list.c -o $(OBJ)list.o
-	$(FLAG) $(SRC)table.c -o $(OBJ)table.o
-	$(FLAG) $(SRC)serialization.c -o $(OBJ)serialization.o
+client_stub.o: $(INCLUDE)client_stub.h
 	$(FLAG) $(SRC)client_stub.c -o $(OBJ)client_stub.o
+
+network_client.o: $(INCLUDE)network_client.h
 	$(FLAG) $(SRC)network_client.c -o $(OBJ)network_client.o
+
+
+client-lib.o: $(INCLUDE)client_stub-private.h $(INCLUDE)client_stub.h $(INCLUDE)network_client.h $(INCLUDE)data.h $(INCLUDE)entry.h $(INCLUDE)list-private.h $(INCLUDE)list.h $(INCLUDE)table-private.h $(INCLUDE)table.h
 	ld -r $(OBJ)client_stub.o $(OBJ)network_client.o $(OBJ)data.o $(OBJ)entry.o -o $(OBJ)client-lib.o
 
 table_client.o: $(SRC)table_client.c  
 	$(FLAG) $(SRC)table_client.c -o $(OBJ)table_client.o
 
+table_skel.o: $(INCLUDE)table_skel.h 
+	$(FLAG) $(SRC)table_skel.c -o $(OBJ)table_skel.o
+
+network_server.o: $(INCLUDE)network_server.h
+	$(FLAG) $(SRC)network_server.c -o $(OBJ)network_server.o
+
+server-lib.o: $(INCLUDE)table_skel.h $(INCLUDE)network_server.h 
+	ld -r $(OBJ)table_skel.o $(OBJ)network_server.o $(OBJ)table.o $(OBJ)entry.o $(OBJ)data.o -o $(OBJ)server-lib.o
+
+
+
+table_server.o: $(SRC)table_server.c $(INCLUDE)network_server.h $(INCLUDE)table_skel.h
+	$(FLAG) $(SRC)table_server.c -o $(OBJ)table_server.o
+
+
 table_client: $(OBJ)client-lib.o $(OBJ)table_client.o $(INCLUDE)sdmessage.pb-c.o
 	$(CC) -g $(OBJ)client-lib.o $(OBJ)table_client.o $(INCLUDE)sdmessage.pb-c.o -I$(INCLUDE) -L/home/aluno-di/SD -lprotobuf-c -o $(BIN)table_client
 
-server-lib.o: $(INCLUDE)table_skel.h $(INCLUDE)network_server.h $(INCLUDE)table.h $(INCLUDE)entry.h $(INCLUDE)data.h
-	$(FLAG) $(SRC)table_skel.c -o $(OBJ)table_skel.o
-	$(FLAG) $(SRC)network_server.c -o $(OBJ)network_server.o
-	ld -r $(OBJ)table_skel.o $(OBJ)network_server.o $(OBJ)table.o $(OBJ)entry.o $(OBJ)data.o -o $(OBJ)server-lib.o
-
-table_skel.o: $(SRC)table_skel.c 
-	$(FLAG) $(SRC)table_skel.c -o $(OBJ)table_skel.o
-
-network_server.o: $(SRC)network_server.c
-	$(FLAG) $(SRC)network_server.c -o $(OBJ)network_server.o
-
-table_server.o: $(SRC)table_server.c
-	$(FLAG) $(SRC)table_server.c -o $(OBJ)table_server.o
-
-table_server: $(OBJ)server-lib.o $(OBJ)table_server.o $(INCLUDE)sdmessage.pb-c.o
-	$(CC) -g $(OBJ)server-lib.o $(OBJ)table_server.o $(INCLUDE)sdmessage.pb-c.o -I$(INCLUDE) -L/home/aluno-di/SD -lprotobuf-c -o $(BIN)table_server
+table_server: $(OBJ)server-lib.o $(OBJ)table_server.o $(INCLUDE)sdmessage.pb-c.o 
+	$(CC) -g $(OBJ)server-lib.o $(OBJ)table_server.o $(INCLUDE)sdmessage.pb-c.o -I$(INCLUDE) -L/home/aluno-di/SD -lprotobuf-c -o $(BIN)table_server 
 
 # delete proto file dependencies
 pclean:
