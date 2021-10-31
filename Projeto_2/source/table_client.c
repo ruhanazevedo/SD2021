@@ -14,7 +14,7 @@
 
 int main(int argc, char** argv) { 
     struct rtable_t *remote_table;
-    if(argc == 2){
+    if(argc >= 2){
         printf("trying to reach %s\n", argv[1]);
         remote_table = rtable_connect(argv[1]);
     }

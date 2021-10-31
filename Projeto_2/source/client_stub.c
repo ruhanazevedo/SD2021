@@ -10,7 +10,6 @@
 #include "table.c"
 #include "../include/extra/inet.h"
 
-//"19012392103921:0909"
 struct rtable_t *rtable_connect(const char *address_port){
     struct rtable_t *remote_table = malloc(sizeof(struct rtable_t));
     char *endpoint = malloc(sizeof(char)*strlen(address_port));
@@ -57,7 +56,7 @@ int rtable_put(struct rtable_t *rtable, struct entry_t *entry){
     struct MessageT *msg;
     char *buf;
     unsigned len;
-    message_t__init(&msg); 
+    //message_t__init(&msg); 
 
     //msg->base = NULL; // ??????? not necessary as the professor example
     msg->opcode = MESSAGE_T__OPCODE__OP_PUT;
@@ -91,7 +90,7 @@ struct data_t *rtable_get(struct rtable_t *rtable, char *key){
         struct MessageT *msg, *msg_received;
         char *buf;
         unsigned len;
-        message_t__init(&msg); 
+        //message_t__init(&msg); 
 
         msg->opcode = MESSAGE_T__OPCODE__OP_GET;
         msg->c_type = MESSAGE_T__C_TYPE__CT_KEY;
@@ -114,7 +113,7 @@ int rtable_del(struct rtable_t *rtable, char *key){
         struct MessageT *msg, *msg_received;
         char *buf;
         unsigned len;
-        message_t__init(&msg); 
+        //message_t__init(&msg); 
 
         msg->opcode = MESSAGE_T__OPCODE__OP_DEL;
         msg->c_type = MESSAGE_T__C_TYPE__CT_KEY;
@@ -134,16 +133,19 @@ int rtable_del(struct rtable_t *rtable, char *key){
 }
 
 int rtable_size(struct rtable_t *rtable){
+    printf("RH1");
     if(rtable != NULL){
+        printf("RH2");
         struct MessageT *msg, *msg_received;
-        char *buf;
-        unsigned len;
-        message_t__init(&msg); 
+        msg = malloc(sizeof(struct MessageT));
 
+        //message_t__init(&msg); 
         msg->opcode = MESSAGE_T__OPCODE__OP_SIZE;
         msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 
+        msg_received = malloc(sizeof(struct MessageT));
         if(msg_received = network_send_receive(rtable, &msg) != NULL){
+            
             if(msg_received->c_type == MESSAGE_T__C_TYPE__CT_RESULT){
                 return msg_received->result;
             }
