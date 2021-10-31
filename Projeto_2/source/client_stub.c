@@ -1,6 +1,6 @@
 //#include "../include/client/client_stub.h"
 #include "../include/client_stub-private.h"
-#include "../sdmessage.pb-c.h"
+#include "../include/sdmessage.pb-c.h"
 #include <stddef.h> //NULLS
 #include <stdio.h>
 #include <stdlib.h>

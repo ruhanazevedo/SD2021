@@ -13,7 +13,8 @@ FLAG = gcc -g -Wall -I include/ -c
 PROTO_DIR = proto/
 
 #all : data.o entry.o list.o table.o serialization.o client-lib.o table_client.o table_client
-all : proto.h-c proto.h-c.o client-lib.o table_client.o table_client
+all : client-lib.o table_client.o table_client server-lib.o table_server.o table_server
+proto: proto.h-c proto.h-c.o 
 
 data.o: $(INCLUDE)data.h
 	$(FLAG) $(SRC)data.c -o $(OBJ)data.o
@@ -35,11 +36,10 @@ serialization.o: $(INCLUDE)data.h $(INCLUDE)entry.h $(INCLUDE)serialization.h
 		
 
 proto.h-c:
-	protoc --c_out=. sdmessage.proto
-
+	protoc --c_out=./$(INCLUDE) sdmessage.proto
 
 proto.h-c.o: 
-	$(CC) -c sdmessage.pb-c.c
+	$(FLAG) -c $(INCLUDE)sdmessage.pb-c.c -o $(INCLUDE)sdmessage.pb-c.o
 
 
 client-lib.o: $(INCLUDE)client_stub-private.h $(INCLUDE)client_stub.h $(INCLUDE)network_client.h $(INCLUDE)data.h $(INCLUDE)entry.h $(INCLUDE)list-private.h $(INCLUDE)list.h $(INCLUDE)table-private.h $(INCLUDE)table.h
@@ -55,10 +55,31 @@ client-lib.o: $(INCLUDE)client_stub-private.h $(INCLUDE)client_stub.h $(INCLUDE)
 table_client.o: $(SRC)table_client.c  
 	$(FLAG) $(SRC)table_client.c -o $(OBJ)table_client.o
 
-table_client: $(OBJ)client-lib.o $(OBJ)table_client.o proto/sdmessage.pb-c.o
-	$(CC) -g $(OBJ)client-lib.o $(OBJ)table_client.o proto/sdmessage.pb-c.o -I/proto -L/home/aluno-di/SD -lprotobuf-c -o $(BIN)table_client
+table_client: $(OBJ)client-lib.o $(OBJ)table_client.o $(INCLUDE)sdmessage.pb-c.o
+	$(CC) -g $(OBJ)client-lib.o $(OBJ)table_client.o $(INCLUDE)sdmessage.pb-c.o -I$(INCLUDE) -L/home/aluno-di/SD -lprotobuf-c -o $(BIN)table_client
+
+server-lib.o: $(INCLUDE)table_skel.h $(INCLUDE)network_server.h $(INCLUDE)table.h $(INCLUDE)entry.h $(INCLUDE)data.h
+	$(FLAG) $(SRC)table_skel.c -o $(OBJ)table_skel.o
+	$(FLAG) $(SRC)network_server.c -o $(OBJ)network_server.o
+	ld -r $(OBJ)table_skel.o $(OBJ)network_server.o $(OBJ)table.o $(OBJ)entry.o $(OBJ)data.o -o $(OBJ)server-lib.o
+
+table_skel.o: $(SRC)table_skel.c 
+	$(FLAG) $(SRC)table_skel.c -o $(OBJ)table_skel.o
+
+network_server.o: $(SRC)network_server.c
+	$(FLAG) $(SRC)network_server.c -o $(OBJ)network_server.o
+
+table_server.o: $(SRC)table_server.c
+	$(FLAG) $(SRC)table_server.c -o $(OBJ)table_server.o
+
+table_server: $(OBJ)server-lib.o $(OBJ)table_server.o $(INCLUDE)sdmessage.pb-c.o
+	$(CC) -g $(OBJ)server-lib.o $(OBJ)table_server.o $(INCLUDE)sdmessage.pb-c.o -I$(INCLUDE) -L/home/aluno-di/SD -lprotobuf-c -o $(BIN)table_server
+
+# delete proto file dependencies
+pclean:
+	rm $(INCLUDE)sdmessage.pb-c.*
+	rm $(INCLUDE)sdmessage.pb-c.*
 
 clean:	
-	rm sdmessage.pb-c.*
 	rm -rf $(BIN)*
 	rm $(OBJ)*.o

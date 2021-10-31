@@ -1,6 +1,8 @@
 #include "../include/table_skel.h"
 #include "network_server.h"
-#include "inet.h"
+#include "extra/inet.h"
+//#include "../include/message.h"
+#include "message.c"
 
 
 int network_server_init(short port) {
@@ -104,7 +106,7 @@ MessageT *network_receive(int client_socket) {
 	}
 	
 	free(buf);
-	sdmessage__free_unpacked(msg, NULL);
+	message_t__free_unpacked(msg, NULL);
 	return msg;
 }
 
@@ -113,13 +115,13 @@ int network_send(int client_socket, struct MessageT *msg) {
 
 	char *buf;
 	int msgsize, result, msgsizeAux;
-	msgsizeAux = sdmessage__get_packed_size(&msg);
+	msgsizeAux = message_t__get_packed_size(&msg);
     buf = malloc(msgsizeAux);
     if (buf == NULL) {
         fprintf(stdout, "malloc error\n");
         return 1;
     }
-    sdmessage__pack(&msg, buf);
+    message_t__pack(&msg, buf);
 
 	//Verifica se a serializacao teve sucesso 
 	if (msgsizeAux < 0) {
