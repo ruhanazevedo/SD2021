@@ -1,9 +1,15 @@
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include "../include/network_server.h"
-#include "../include/message.h"
+#include "network_server.h"
+#include "message.h"
 
 
 int testInput(int argc){

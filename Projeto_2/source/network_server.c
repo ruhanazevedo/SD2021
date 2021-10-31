@@ -1,3 +1,9 @@
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #include "../include/table_skel.h"
 #include "network_server.h"
 #include "inet.h"
@@ -26,7 +32,7 @@ int network_server_init(short port) {
 		return -1;
 	}
 
-    	// Esta chamada diz ao SO que esta é uma socket para receber pedidos
+    // Esta chamada diz ao SO que esta é uma socket para receber pedidos
 	if (listen(sockfd, 0) < 0) {
 		perror("Erroe executing listen\n");
 		close(sockfd);
@@ -46,7 +52,7 @@ int network_main_loop(int listening_socket) {
     	// Bloqueia a espera de pedidos de conexão
     	while ((connsockfd = accept(listening_socket,(struct sockaddr *) &client, &client_size)) != -1) {
 
-        	struct message_t * msg = network_receive(connsockfd);
+        	MessageT * msg = network_receive(connsockfd);
 
    		if (invoke(msg) == -1) {
    			printf("Error in network_main_loop\n");
@@ -61,18 +67,22 @@ int network_main_loop(int listening_socket) {
         // Fecha socket referente a esta conexão
 		close(connsockfd);
     	}
-    	return 0;
+    return 0;
 }
 
 
 MessageT *network_receive(int client_socket) {
 	
-   	char *buf;
-	int res, msgsize, msgsizeAux;
 	MessageT *msg = NULL;
+	int result, msgsize, msgsizeAux;
+   	char *buf;
 
-	// recebe o tamanho da mensagem
-	if ((res = read_all(client_socket, (char *)&msgsizeAux, sizeof(int))) < 0) {
+	if (client_socket < 0) {
+		return NULL;
+	}
+
+	// Recebe o tamanho da mensagem
+	if ((result = read_all(client_socket, (char *)&msgsizeAux, sizeof(int))) < 0) {
 		perror("Error in read_all\n");
 		close(client_socket);
 		return NULL;
@@ -80,39 +90,42 @@ MessageT *network_receive(int client_socket) {
 	}
 
 	msgsize = ntohl(msgsizeAux);
-	msg = (MessageT *) malloc(msgsize);
+	//msg = (MessageT *) malloc(msgsize);
 	buf = (char *) malloc(sizeof(char) *msgsize);
 
-	// recebe a mensagem e coloca no buf
-	if ((res = read_all(client_socket, buf, msgsize)) != msgsize) {
+	// Recebe a mensagem
+	if ((result = read_all(client_socket, buf, msgsize)) != msgsize) {
 		perror("Error in read_all\n");
 		close(client_socket);
 		free(buf);
-		free(msg);
 		return NULL;
 	}
 
-	// De-serializar a mensagem do pedido
 	msg = message_t__unpack(NULL, msgsize, buf);
 
-	// Verificar se a de-serializacao teve sucesso 
+	// Verificar se a deserializacao teve sucesso 
 	if (msg == NULL) {
 		fprintf(stdout, "error unpacking message\n");
 		free(buf);
-		free(msg);
 		return NULL;
 	}
 	
 	free(buf);
 	sdmessage__free_unpacked(msg, NULL);
+
 	return msg;
 }
 
 
 int network_send(int client_socket, struct MessageT *msg) {
-
-	char *buf;
+	
 	int msgsize, result, msgsizeAux;
+	char *buf;
+
+	if (client_socket < 0 || msg == NULL) {
+		return -1;
+	}
+
 	msgsizeAux = sdmessage__get_packed_size(&msg);
     buf = malloc(msgsizeAux);
     if (buf == NULL) {
@@ -124,17 +137,15 @@ int network_send(int client_socket, struct MessageT *msg) {
 	//Verifica se a serializacao teve sucesso 
 	if (msgsizeAux < 0) {
 		free(buf);
-		free(msg);
 		return -1;
 	}
 
-	//Verifica se o envio teve sucesso
+	
 	msgsize = htonl(msgsizeAux);
 	if (((result = write_all(client_socket, (char *)&msgsize, sizeof(int))) < 0) || ((result = write_all(client_socket, buf, msgsizeAux)) != msgsizeAux)) {
 		perror("Error in write_all\n");
 		close(client_socket);
 		free(buf);
-		free(msg);
 		return -1;
 	}
 

@@ -1,21 +1,24 @@
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #ifndef _MESSAGE_H
 #define _MESSAGE_H
 
 #include "../include/entry.h"
 #include "../proto/sdmessage.pb-c.h"
-#include "message-private.h"
 
 
-struct message_t {
+/* Função que garante a leitura de len bytes armazenados em buf
+ * através da connecao com uma socket sock
+*/
+int write_all(int sock, char *buf, int len);
 
-	MessageT *m;
-};
-
-
-/* aloca o espaço necessário a uma mensagem */ 	//TODO se nao precisarem podemos apagar
-struct message_t *message_create();
-
-/* Liberta a memoria alocada na função buffer_to_message */ 	//TODO se nao precisarem podemos apagar
-void free_message(struct message_t *msg);
+/* Função que garante a escrita de len bytes armazenados em buf
+ * através da connecao com uma socket sock
+*/
+int read_all(int sock, char *buf, int len);
 
 #endif
