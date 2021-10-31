@@ -231,3 +231,25 @@ struct node_t *addNewNode(struct node_t *node){
         return NULL;
     }   
 }
+
+struct entry_t **list_get_entrys(struct list_t *list){
+    
+    if(list == NULL){
+        printf("[WARN] list received is NULL\n");
+        return NULL;
+    }
+
+    struct entry_t **array = malloc(sizeof(struct entry_t)*(list->size)+1);
+    struct node_t *nodesList = getNodeHead(list->nodes);
+    int i = 0;
+    
+    while(i < list->size){
+        array[i] = entry_dup(nodesList->current_entry); //nodesList->current_entry->key;
+        ++i;
+        nodesList = nodesList->child;
+    }
+    printf("%d", list->size);
+    array[list->size] = NULL;
+    
+    return array;
+}

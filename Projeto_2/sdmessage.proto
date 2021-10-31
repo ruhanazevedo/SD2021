@@ -42,4 +42,7 @@ message message_t
                  bytes data = 2;
          }
         repeated Entry entries = 6;
+        string key = 7;
+        sint32 data_size = 8;
+        string data2 = 9;
 };

@@ -62,5 +62,12 @@ struct node_t *getNodeWithoutChild(struct node_t *node);
 */
 struct node_t *addNewNode(struct node_t *node);
 
+/* Função que devolve um array de entry* com a cópia de todas as keys da 
+ * tabela, colocando o último elemento do array com o valor NULL e
+ * reservando toda a memória necessária.
+ */
+struct entry_t **list_get_entrys(struct list_t *list);
+
+
 
 #endif

@@ -150,3 +150,23 @@ int hash(unsigned char *str){
         i += str[j];
     return abs(i % CAPACITY);
 }
+
+char **table_get_entrys(struct table_t *table){
+
+    struct entry_t **entries = malloc(sizeof(struct entry_t)*table->size + sizeof(NULL)); 
+    int k = 0;
+    for(int i=0 ; i<table->size ; i++){
+        if(table->list[i] != NULL){
+            int listSize = list_size(table->list[i]); 
+            char **list_entries = list_get_entrys(table->list[i]); 
+            for(int j=0 ; j<listSize ; j++){
+                if(list_entries[j] != NULL){
+                    entries[k] =  list_entries[j];
+                    ++k;
+                }
+            }
+        }
+    }
+    entries[k] = NULL;
+    return entries;
+}

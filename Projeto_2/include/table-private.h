@@ -24,4 +24,10 @@ struct table_t {
 */
 int hash(unsigned char *str);
 
+/* Função que devolve um array de entry* com a cópia de todas as entry da
+ * tabela, colocando o último elemento do array com o valor NULL e
+ * reservando toda a memória necessária.
+ */
+char **table_get_entrys(struct table_t *table);
+
 #endif

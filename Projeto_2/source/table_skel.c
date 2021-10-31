@@ -59,7 +59,7 @@ int invoke(struct message_t *msg) {
 		} else {
 			msg->m->opcode += 1;
 			msg->m->c_type = MESSAGE_T__C_TYPE__CT_VALUE;
-			msg->m->data = data->data;
+			msg->m->data2 = data->data;
 			msg->m->data_size = data->datasize;
 			return 0;
 
@@ -68,7 +68,7 @@ int invoke(struct message_t *msg) {
 
 	else if (msg->m->opcode == MESSAGE_T__OPCODE__OP_PUT && msg->m->c_type == MESSAGE_T__C_TYPE__CT_ENTRY) {
 		
-		if ((table_put(table, msg->m->key, data_create2(msg->m->data_size,msg->m->data))) == 0) {
+		if ((table_put(table, msg->m->key, data_create2(msg->m->data_size, msg->m->data2))) == 0) {
 			msg->m->opcode += 1;
 			msg->m->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 			return 0;
@@ -90,7 +90,7 @@ int invoke(struct message_t *msg) {
 	else if (msg->m->opcode == MESSAGE_T__OPCODE__OP_PRINT && msg->m->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
 		msg->m->opcode += 1;
 		msg->m->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
-		table_print(table);
+		msg->m->entries = table_get_entries(table);
 		return 0;
 	}
 
