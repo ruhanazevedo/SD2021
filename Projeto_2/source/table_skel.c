@@ -1,7 +1,18 @@
+<<<<<<< HEAD
 //#include "../proto/sdmessage.pb-c.h"
 #include "sdmessage.pb-c.h"
 //#include "table.h"
 //#include "table.c"
+=======
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
+#include "../proto/sdmessage.pb-c.h"
+#include "table.h"
+>>>>>>> main
 #include "table_skel.h"
 #include "../include/message.h"
 #include <stddef.h> //NULLS
@@ -12,15 +23,19 @@ struct table_t *table;
 int table_skel_init(int n_lists) {
 
 	table = table_create(n_lists);
+
 	if (table == NULL) {
 		return -1;
 	}
+
 	return 0;
 }
 
 
 void table_skel_destroy() {
+
 	table_destroy(table);
+
 }
 
 

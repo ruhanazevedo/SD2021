@@ -1,8 +1,13 @@
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #include "../include/message.h"
 #include "../include/extra/inet.h"
 //#include "sdmessage.pb-c.h"
 #include <errno.h>
-
 
 int write_all(int sock, char *buf, int len) {
 	
