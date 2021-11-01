@@ -38,7 +38,7 @@ struct MessageT *network_send_receive(struct rtable_t * rtable,
                                        struct MessageT *msg){
     int nbytes;
 
-    message_t__init(msg);// <- feito no client_stub
+    //message_t__init(msg);// <- feito no client_stub
     int len = message_t__get_packed_size(msg);
     char *buf = malloc(len);
     message_t__pack(msg,buf);

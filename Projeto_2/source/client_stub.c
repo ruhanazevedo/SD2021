@@ -97,7 +97,7 @@ struct data_t *rtable_get(struct rtable_t *rtable, char *key){
         msg-> n_keys = 1;
         strcpy(msg->keys[0], key);     
 
-        if(msg_received = network_send_receive(rtable, &msg) != NULL){
+        if(msg_received = network_send_receive(rtable, msg) != NULL){
             data = malloc(sizeof(struct data_t));
             memcpy(data->data, &msg_received->data.data, msg_received->data.len);
             memcpy(data->datasize, &msg_received->data.len, sizeof(msg_received->data.len));
@@ -121,7 +121,7 @@ int rtable_del(struct rtable_t *rtable, char *key){
         strcpy(msg->keys[0], key);
         
 
-        if(msg_received = network_send_receive(rtable, &msg) != NULL){
+        if(msg_received = network_send_receive(rtable, msg) != NULL){
             if(msg_received->opcode != MESSAGE_T__OPCODE__OP_ERROR){
                 //n retorna erro
                 return 0;
@@ -144,7 +144,7 @@ int rtable_size(struct rtable_t *rtable){
         msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 
         msg_received = malloc(sizeof(struct MessageT));
-        if(msg_received = network_send_receive(rtable, &msg) != NULL){
+        if(msg_received = network_send_receive(rtable, msg) != NULL){
             
             if(msg_received->c_type == MESSAGE_T__C_TYPE__CT_RESULT){
                 return msg_received->result;
@@ -167,7 +167,7 @@ char **rtable_get_keys(struct rtable_t *rtable){
         msg->opcode = MESSAGE_T__OPCODE__OP_GETKEYS;
         msg->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
 
-        if(msg_received = network_send_receive() != NULL){
+        if(msg_received = network_send_receive(rtable, msg) != NULL){
             if(msg_received->c_type == MESSAGE_T__C_TYPE__CT_KEYS){
                 keys = malloc(sizeof(char)*msg_received->n_keys);
                 for(int i=0 ; i<msg_received->n_keys ; i++){
