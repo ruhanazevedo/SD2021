@@ -9,7 +9,7 @@
 //#include "sdmessage.pb-c.h"
 #include <errno.h>
 
-int write_all(int sock, char *buf, int len) {
+int write_all(int sock, void *buf, int len) {
 	
 	int bufsize = len; 
 	while(len > 0) {
@@ -27,7 +27,7 @@ int write_all(int sock, char *buf, int len) {
 }
 
 
-int read_all(int sock, char *buf, int len) {
+int read_all(int sock, void *buf, int len) {
 
 	int bufsize = len;
 	while (len > 0) {

@@ -11,11 +11,11 @@
 /* Função que garante a leitura de len bytes armazenados em buf
  * através da connecao com uma socket sock
 */
-int write_all(int sock, char *buf, int len);
+int write_all(int sock, void *buf, int len);
 
 /* Função que garante a escrita de len bytes armazenados em buf
  * através da connecao com uma socket sock
 */
-int read_all(int sock, char *buf, int len);
+int read_all(int sock, void *buf, int len);
 
 #endif
