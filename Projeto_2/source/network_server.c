@@ -33,7 +33,7 @@ int network_server_init(short port) {
 		close(sockfd);
 		return -1;
 	}
-
+	
     // Esta chamada diz ao SO que esta é uma socket para receber pedidos
 	if (listen(sockfd, 0) < 0) {
 		perror("Erroe executing listen\n");
@@ -47,28 +47,31 @@ int network_server_init(short port) {
 
 int network_main_loop(int listening_socket) {
 	
-	struct sockaddr_in client;
+	struct sockaddr_in *client;
     socklen_t client_size;
     int connsockfd;
 
     // Bloqueia a espera de pedidos de conexão
-    while ((connsockfd = accept(listening_socket,(struct sockaddr *) &client, &client_size)) != -1) {
 
-        MessageT * msg = network_receive(connsockfd);
+    while ((connsockfd = accept(listening_socket, &client, &client_size)) != -1) {
 
+        MessageT *msg = network_receive(connsockfd);
    		if (invoke(msg) == -1) {
-   			printf("Error in network_main_loop\n");
+   			printf("Error in network_main_loop 1\n");
 			free(msg);
    			return -1;
    		}
    		if (network_send(connsockfd, msg) == -1) {
-   			printf("Error in network_main_loop\n");
+   			printf("Error in network_main_loop 2\n");
 			free(msg);
    			return -1;
    		}
         // Fecha socket referente a esta conexão
 		close(connsockfd);
+		//message_t__free_unpacked(msg, NULL);
     }
+	printf("morreu\n");
+
 	return 0;
 }
 
@@ -82,7 +85,6 @@ MessageT *network_receive(int client_socket) {
 	if (client_socket < 0) {
 		return NULL;
 	}
-
 	// Recebe o tamanho da mensagem
 	if ((result = read_all(client_socket, (char *)&msgsizeAux, sizeof(int))) < 0) {
 		perror("Error in read_all\n");
@@ -90,7 +92,6 @@ MessageT *network_receive(int client_socket) {
 		return NULL;
 
 	}
-
 	msgsize = ntohl(msgsizeAux);
 	//msg = (MessageT *) malloc(msgsize);
 	buf = (char *) malloc(sizeof(char) *msgsize);
@@ -102,7 +103,6 @@ MessageT *network_receive(int client_socket) {
 		free(buf);
 		return NULL;
 	}
-
 	msg = message_t__unpack(NULL, msgsize, buf);
 
 	// Verificar se a deserializacao teve sucesso 
@@ -111,9 +111,8 @@ MessageT *network_receive(int client_socket) {
 		free(buf);
 		return NULL;
 	}
-	
 	free(buf);
-	message_t__free_unpacked(msg, NULL);
+	//message_t__free_unpacked(msg, NULL);
 	return msg;
 }
 
