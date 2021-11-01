@@ -31,9 +31,19 @@ int main(int argc, char **argv) {
 	port = atoi(argv[1]);
 	sockfd = network_server_init(port);
 	
+	if (sockfd == -1) {
+		printf("Error creating server");
+		return -1;
+	}	
+
 	int n_lists = atoi(argv[2]);
 	table_skel_init(n_lists);
 	int result = network_main_loop(sockfd);
+
+	if (result == -1) {
+		printf("Error in main loop");
+		return -1;
+	}
 
 	int network_server_close();
 
