@@ -152,10 +152,11 @@ int rtable_size(struct rtable_t *rtable){
         msg->opcode = MESSAGE_T__OPCODE__OP_SIZE;
         msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 
-        //msg_received = malloc(sizeof(struct MessageT));
+        msg_received = malloc(sizeof(struct MessageT));
     
+        
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
-            
+        
             if(msg_received->c_type == MESSAGE_T__C_TYPE__CT_RESULT){
                 return msg_received->result;
             }
