@@ -96,7 +96,6 @@ int main(int argc, char** argv) {
             printf("Executando comando size..\n");
             int res = -99;
             if((res = rtable_size(remote_table)) != -1){
-                printf("Executando comando size...\n");
                 printf("size obtido: %d\n", res);
             }
             else {

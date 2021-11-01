@@ -101,7 +101,7 @@ int invoke(MessageT *msg) {
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_PRINT && msg->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
 		msg->opcode += 1;
 		msg->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
-		        struct entry_t **entries = malloc(sizeof(struct entry_t)*table->size + sizeof(NULL)); 
+		struct entry_t **entries = malloc(sizeof(struct entry_t)*table->size + sizeof(NULL)); 
         int k = 0;
         for(int i=0 ; i<table->nListas ; i++){
             if(table->list[i] != NULL){
@@ -116,6 +116,7 @@ int invoke(MessageT *msg) {
             }
         }
         entries[k] = NULL;
+		msg->n_entries = k;
         msg->entries = entries;
 		return 0;
 	}

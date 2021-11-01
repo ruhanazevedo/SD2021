@@ -133,9 +133,9 @@ int rtable_del(struct rtable_t *rtable, char *key){
 }
 
 int rtable_size(struct rtable_t *rtable){
-    printf("RH1");
+    printf("RH1\n");
     if(rtable != NULL){
-        printf("RH2");
+        printf("RH2\n");
         struct MessageT *msg, *msg_received;
         msg = malloc(sizeof(struct MessageT));
 
@@ -191,13 +191,22 @@ void rtable_print(struct rtable_t *rtable){
     struct MessageT *msg, *msg_received;
     //msg = malloc(sizeof(struct MessageT)); //may be necessary alocate memory before message_t_init()
     message_t__init(msg); 
-    //msg->base = NULL; // ???????
+    
     msg->opcode = MESSAGE_T__OPCODE__OP_PRINT;
     msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
-    
     if(msg_received = network_send_receive(rtable, msg) != NULL){
         if(msg_received->opcode == MESSAGE_T__OPCODE__OP_PRINT){
-            //MAGIC TODO 
+            printf("{\n");
+            printf("%5dtabela_remote: {", 2);
+            for(int i=0 ; i<msg_received->n_entries ; i++){
+                printf("%5d'key': '%s'",3,msg_received->entries[i]->key);
+                printf("%5d'data': ",3);
+                
+                printf("%5d'datasize': '%d'",4, msg_received->entries[i]->data.len);
+                printf("%5d'data': '%s'",4, msg_received->entries[i]->data.data);
+            }
+            printf("%5d}", 2);
+            printf("}\n");
         }
     }
 }
