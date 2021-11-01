@@ -48,13 +48,13 @@ int network_server_init(short port) {
 int network_main_loop(int listening_socket) {
 	
 	struct sockaddr_in client;
-    	socklen_t client_size;
-    	int connsockfd;
+    socklen_t client_size;
+    int connsockfd;
 
-    	// Bloqueia a espera de pedidos de conexão
-    	while ((connsockfd = accept(listening_socket,(struct sockaddr *) &client, &client_size)) != -1) {
+    // Bloqueia a espera de pedidos de conexão
+    while ((connsockfd = accept(listening_socket,(struct sockaddr *) &client, &client_size)) != -1) {
 
-        	MessageT * msg = network_receive(connsockfd);
+        MessageT * msg = network_receive(connsockfd);
 
    		if (invoke(msg) == -1) {
    			printf("Error in network_main_loop\n");
@@ -68,8 +68,8 @@ int network_main_loop(int listening_socket) {
    		}
         // Fecha socket referente a esta conexão
 		close(connsockfd);
-    	}
-    return 0;
+    }
+	return 0;
 }
 
 
@@ -127,13 +127,13 @@ int network_send(int client_socket, struct MessageT *msg) {
 		return -1;
 	}
 
-	msgsizeAux = message_t__get_packed_size(&msg);
+	msgsizeAux = message_t__get_packed_size(msg);
     buf = malloc(msgsizeAux);
     if (buf == NULL) {
         fprintf(stdout, "malloc error\n");
         return 1;
     }
-    message_t__pack(&msg, buf);
+    message_t__pack(msg, buf);
 
 	//Verifica se a serializacao teve sucesso 
 	if (msgsizeAux < 0) {
