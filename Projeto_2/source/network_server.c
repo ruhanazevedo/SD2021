@@ -143,7 +143,7 @@ int network_send(int client_socket, struct MessageT *msg) {
 
 	
 	msgsize = htonl(msgsizeAux);
-	if (((result = write_all(client_socket, (char *)&msgsize, sizeof(int))) < 0) || ((result = write_all(client_socket, buf, msgsizeAux)) != msgsizeAux)) {
+	if (((result = write_all(client_socket, &msgsize, sizeof(int))) < 0) || ((result = write_all(client_socket, buf, msgsizeAux)) != msgsizeAux)) {
 		perror("Error in write_all\n");
 		close(client_socket);
 		free(buf);

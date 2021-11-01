@@ -25,7 +25,7 @@ int network_connect(struct rtable_t *rtable){
     }
     */
     
-    if (connect(rtable->sockfd, rtable->server, sizeof(rtable->server)) < 0) {
+    if (connect(rtable->sockfd, (struct sockaddr *) rtable->server, sizeof(struct sockaddr_in)) < 0) {
         perror("Erro ao conectar-se ao servidor");
         close(rtable->sockfd);
         return -1;
@@ -46,7 +46,7 @@ struct MessageT *network_send_receive(struct rtable_t * rtable,
 
     // Envia tamanho da mensagem
     uint32_t network_byte_order = htonl(len); 
-    if((nbytes = write_all(rtable->sockfd, &network_byte_order, sizeof(int))) != sizeof(len)){
+    if((nbytes = write_all(rtable->sockfd, &network_byte_order, sizeof(network_byte_order))) != sizeof(len)){
         perror("Erro ao enviar dados ao servidor");
         close(rtable->sockfd);
         return -1;

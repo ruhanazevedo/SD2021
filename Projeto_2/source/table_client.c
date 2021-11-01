@@ -18,7 +18,6 @@ int main(int argc, char** argv) {
     if(argc >= 2){
         printf("trying to reach %s\n", argv[1]);
         remote_table = rtable_connect(argv[1]);
-        network_connect(remote_table);
         
     }
 
