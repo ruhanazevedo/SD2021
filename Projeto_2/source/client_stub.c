@@ -27,7 +27,7 @@ struct rtable_t *rtable_connect(const char *address_port){
 
     if ((remote_table->sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("Erro ao criar socket TCP");
-        return -1;
+        return NULL;
     }
     struct sockaddr_in server_aux;
     server_aux.sin_family = AF_INET;
@@ -35,7 +35,7 @@ struct rtable_t *rtable_connect(const char *address_port){
     if (inet_pton(AF_INET, remote_table->address, &server_aux.sin_addr) < 1) {
         printf("Erro ao converter IP\n");
         close(remote_table->sockfd);
-        return -1;
+        return NULL;
     }
     remote_table->server = &server_aux;
     free(endpoint);//look if this modify the remote_table

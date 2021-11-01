@@ -15,8 +15,8 @@
 int testInput(int argc){
     if (argc != 3){
 
-	printf("Uso: ./server_exemplo <porto _servidor> <size_table> \n");
-    	printf("Exemplo de uso: ./server_exemplo 12345 30\n");
+		printf("Uso: ./table_server <porto _servidor> <size_table> \n");
+    	printf("Exemplo de uso: ./table_server 12345 30\n");
         return -1;
     } 
     return 0;

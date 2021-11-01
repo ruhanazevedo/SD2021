@@ -13,12 +13,25 @@
 
 #define BUFFERSIZE 50
 
+int testInput(int argc){
+    if (argc != 2){
+
+	    printf("Uso: ./table_client <ip_servidor:porto_servidor> \n");
+    	printf("Exemplo de uso: ./table_client 127.0.0.1:12345 \n");
+        return -1;
+    } 
+    return 0;
+}
+
 int main(int argc, char** argv) { 
     struct rtable_t *remote_table;
-    if(argc >= 2){
-        printf("trying to reach %s\n", argv[1]);
-        remote_table = rtable_connect(argv[1]);
-        
+
+    if(testInput(argc) < 0) return -1;
+
+    printf("trying to reach %s\n", argv[1]);
+    
+    if(remote_table = rtable_connect(argv[1]) == NULL){
+        return -1;
     }
 
     char *text = calloc(1,1), buffer[BUFFERSIZE];
