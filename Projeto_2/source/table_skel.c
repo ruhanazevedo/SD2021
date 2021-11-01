@@ -36,27 +36,12 @@ void table_skel_destroy() {
 int invoke(MessageT *msg) {
 	if (msg == NULL || table == NULL || msg->opcode < 10 || msg->c_type < 10 || 
 		msg->opcode > 99 || msg->c_type > 70) {
-		if(msg == NULL){
-			printf("RH2\n");
-		}else if(table == NULL){
-			printf("RH3\n");
-		}else if(msg->opcode < 10){
-			printf("RH4\n");
-		}else if(msg->c_type < 10){
-			printf("RH5\n");
-		}else if(msg->opcode > 99){
-			printf("RH6\n");
-		}else if(msg->c_type > 70){
-			printf("RH7\n");
-		}
 		return -1;
 	}
-	printf("RH1\n");
 	if (msg->opcode == MESSAGE_T__OPCODE__OP_SIZE && msg->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
 		msg->opcode += 1;
 		msg->c_type = MESSAGE_T__C_TYPE__CT_RESULT;
 		msg->result = table_size(table);
-		printf("RH2\n");
 		return 0;
 	}
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_DEL && msg->c_type == MESSAGE_T__C_TYPE__CT_KEY) {

@@ -38,35 +38,35 @@ int network_connect(struct rtable_t *rtable){
 struct MessageT *network_send_receive(struct rtable_t * rtable,
                                        struct MessageT *msg){
     int nbytes, msgsize, msgsizeAux;
-
+    
     //message_t__init(msg);// <- feito no client_stub
     int len = message_t__get_packed_size(msg);
-    void *buf;
-    message_t__pack(msg,buf);
-
+    char *buf = malloc(len);
+    
+    message_t__pack(msg, buf);
+    
     // Envia tamanho da mensagem
+    
     uint32_t network_byte_order = htonl(len); 
     if((nbytes = write_all(rtable->sockfd, &network_byte_order, sizeof(len))) != sizeof(len)){
         perror("Erro ao enviar dados ao servidor");
-        printf("erro RH 1\n");
         close(rtable->sockfd);
         return -1;
     }
-
+    
+   
     // Envia mensagem
     if((nbytes = write_all(rtable->sockfd, buf, len)) != len){
         perror("Erro ao enviar dados ao servidor");
-        printf("erro RH 2\n");
         close(rtable->sockfd);
         return NULL;
     }
     
     void *response = malloc(len);
-
+     
     //recebe o tamanho da mensagem
     if((nbytes = read_all(rtable->sockfd, &msgsizeAux, sizeof(int))) != sizeof(int)){
         perror("Erro ao receber dados do servidor");
-        printf("erro RH 3\n");
         close(rtable->sockfd);
         return -1;
     };
@@ -75,16 +75,21 @@ struct MessageT *network_send_receive(struct rtable_t * rtable,
 
     buf = malloc(msgsize);
 
+     printf("RH idk\n");
+     printf("msgsize = %d\n", msgsize);
+     printf("msgsizeAux = %d\n", msgsizeAux);
     //recebe mensagem
     if((nbytes = read_all(rtable->sockfd, buf, msgsize)) != msgsize){
         perror("Erro ao receber dados do servidor");
-        printf("erro RH 3\n");
         close(rtable->sockfd);
         return -1;
     };
-    
+    //printf("len = %s\n", len);
+    //printf("response = %s\n", (char*)response);
+    printf("RH final\n");
     MessageT *ds = malloc(sizeof(MessageT));
-    ds = message_t__unpack(NULL, len, response); //essa linha esta a retornar erro
+    ds = message_t__unpack(NULL, msgsize, response); //essa linha esta a retornar erro
+    return ds;
     free(response);
     free(buf);
 }   

@@ -56,6 +56,9 @@ int network_main_loop(int listening_socket) {
     while ((connsockfd = accept(listening_socket, &client, &client_size)) != -1) {
 
         MessageT *msg = network_receive(connsockfd);
+		if(msg == NULL){
+			printf("msg null network_server\n");
+		}
    		if (invoke(msg) == -1) {
    			printf("Error in network_main_loop 1\n");
 			free(msg);
@@ -83,32 +86,25 @@ MessageT *network_receive(int client_socket) {
    	void *buf;
 
 	if (client_socket < 0) {
-		printf("RH A\n");
 		return NULL;
-	}
-	
-	if(read_all(client_socket, &msgsizeAux, sizeof(msgsizeAux)) < 0){
-		printf("TESTE\n");
 	}
 
 	// Recebe o tamanho da mensagem
-	if ((result = read_all(client_socket, &msgsizeAux, sizeof(msgsizeAux))) != sizeof(msgsizeAux)) {
-		perror("Error in read_all1\n");
-		printf("RH B\n");
+	result = read_all(client_socket, &msgsizeAux, sizeof(int));
+	if (result != sizeof(msgsizeAux)) {
+		perror("Error in read_all\n");
 		close(client_socket);
 		return NULL;
 	}
-
 	uint32_t msgsize = ntohl(msgsizeAux);
 	//msg = (MessageT *) malloc(msgsize);
 	buf = malloc(msgsize);
-
+	
 	// Recebe a mensagem
 	if ((result = read_all(client_socket, buf, msgsize)) != msgsize) {
-		perror("Error in read_all2\n");
+		perror("Error in read_all\n");
 		close(client_socket);
 		free(buf);
-		printf("RH C\n");
 		return NULL;
 	}
 	msg = message_t__unpack(NULL, msgsize, buf);
@@ -117,7 +113,6 @@ MessageT *network_receive(int client_socket) {
 	if (msg == NULL) {
 		fprintf(stdout, "error unpacking message\n");
 		free(buf);
-		printf("RH D\n");
 		return NULL;
 	}
 	free(buf);
@@ -127,7 +122,6 @@ MessageT *network_receive(int client_socket) {
 
 
 int network_send(int client_socket, struct MessageT *msg) {
-	
 	
 	int msgsize, result, msgsizeAux;
 	char *buf;
@@ -142,7 +136,7 @@ int network_send(int client_socket, struct MessageT *msg) {
         fprintf(stdout, "malloc error\n");
         return 1;
     }
-	
+
     message_t__pack(msg, buf);
 
 	//Verifica se a serializacao teve sucesso 
@@ -150,16 +144,27 @@ int network_send(int client_socket, struct MessageT *msg) {
 		free(buf);
 		return -1;
 	}
-
+	
 	msgsize = htonl(msgsizeAux);
-	//envia tamanho da mensagem e mensagem
-	if (((result = write_all(client_socket, &msgsize, sizeof(int))) != sizeof(int)) || ((result = write_all(client_socket, buf, msgsizeAux)) != msgsizeAux)) {
+	//envia tamanho da mensagem 
+	if ((result = write_all(client_socket, &msgsize, sizeof(int))) != sizeof(int)) {
 		perror("Error in write_all\n");
 		close(client_socket);
 		free(buf);
 		return -1;
 	}
 
+	
+	//envia mensagem
+	printf("RH2\n");
+	if ((result = write_all(client_socket, buf, msgsizeAux)) != msgsizeAux) {
+		perror("Error in write_all\n");
+		close(client_socket);
+		free(buf);
+		return -1;
+	}
+
+	
 	free(buf);
 	free(msg);
 	return 0;

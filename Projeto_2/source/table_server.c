@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
 	sockfd = network_server_init(port);
 	
 	if (sockfd == -1) {
-		printf("Error creating server");
+		printf("Error creating server\n");
 		return -1;
 	}	
 
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 	int result = network_main_loop(sockfd);
 
 	if (result == -1) {
-		printf("Error in main loop");
+		printf("Error in main loop\n");
 		return -1;
 	}
 
