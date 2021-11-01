@@ -206,7 +206,7 @@ void rtable_print(struct rtable_t *rtable){
                 printf("%5d'key': '%s'",3,msg_received->entries[i]->key);
                 printf("%5d'data': ",3);
                 
-                printf("%5d'datasize': '%d'",4, msg_received->entries[i]->data.len);
+                printf("%5d'datasize': '%ld'",4, msg_received->entries[i]->data.len);
                 printf("%5d'data': '%s'",4, msg_received->entries[i]->data.data);
             }
             printf("%5d}", 2);

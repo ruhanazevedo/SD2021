@@ -158,7 +158,7 @@ char **table_get_entrys(struct table_t *table){
     for(int i=0 ; i<table->size ; i++){
         if(table->list[i] != NULL){
             int listSize = list_size(table->list[i]); 
-            char **list_entries = list_get_entrys(table->list[i]); 
+            char **list_entries = (char **) list_get_entrys(table->list[i]); 
             for(int j=0 ; j<listSize ; j++){
                 if(list_entries[j] != NULL){
                     entries[k] =  list_entries[j];
