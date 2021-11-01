@@ -37,7 +37,7 @@ int read_all(int sock, void *buf, int len){
       if(res == 0)
           return 0;
       if(res<0) {
-          perror("A leitura falhou:");
+          perror("falha na leitura:");
           return res;
       }
       buf += res;

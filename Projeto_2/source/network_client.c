@@ -87,11 +87,11 @@ struct MessageT *network_send_receive(struct rtable_t * rtable,
     //printf("len = %s\n", len);
     //printf("response = %s\n", (char*)response);
     printf("RH final\n");
-    MessageT *ds = malloc(sizeof(MessageT));
-    ds = message_t__unpack(NULL, msgsize, response); //essa linha esta a retornar erro
+    struct MessageT *ds;
+    ds = message_t__unpack(NULL, msgsize, buf); //essa linha esta a retornar erro
     return ds;
-    free(response);
-    free(buf);
+    //free(response);
+    //free(buf);
 }   
 
 int network_close(struct rtable_t * rtable){
