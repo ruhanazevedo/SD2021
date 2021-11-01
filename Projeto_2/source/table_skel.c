@@ -46,7 +46,7 @@ int invoke(MessageT *msg) {
 	}
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_DEL && msg->c_type == MESSAGE_T__C_TYPE__CT_KEY) {
 		msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
-		if ((table_del(table, msg->key)) == 0) {
+		if ((table_del(table, msg->keys[0])) == 0) {
 			msg->opcode += 1;
 			return 0;
 		} else {
@@ -58,7 +58,7 @@ int invoke(MessageT *msg) {
 	} 
 
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_GET && msg->c_type == MESSAGE_T__C_TYPE__CT_KEY) {
-		struct data_t *data = table_get(table, msg->key);
+		struct data_t *data = table_get(table, msg->keys[0]);
 		if (data == NULL) {
 			msg->opcode = MESSAGE_T__OPCODE__OP_ERROR;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
@@ -66,15 +66,15 @@ int invoke(MessageT *msg) {
 		} else {
 			msg->opcode += 1;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_VALUE;
-			msg->data2 = data->data;
-			msg->data_size = data->datasize;
+			msg->data.data = data->data;
+			msg->data.len = data->datasize;
 			return 0;
 
 		}
 	} 
 
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_PUT && msg->c_type == MESSAGE_T__C_TYPE__CT_ENTRY) {
-		if ((table_put(table, msg->key, data_create2(msg->data_size, msg->data2))) == 0) {
+		if ((table_put(table, msg->entries[0]->key, data_create2(msg->entries[0]->data.len, msg->entries[0]->data.data))) == 0) {
 			msg->opcode += 1;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 			return 0;
@@ -90,6 +90,7 @@ int invoke(MessageT *msg) {
 		msg->opcode += 1;
 		msg->c_type = MESSAGE_T__C_TYPE__CT_KEYS;
 		msg->keys = table_get_keys(table);
+		msg->n_keys = sizeof(msg->keys);
 		return 0;
 	} 
 
@@ -110,18 +111,11 @@ int invoke(MessageT *msg) {
                 }
             }
         }
-        entries[k] = NULL; //talvez possamos tirar isso
+        entries[k] = NULL;
 		msg->n_entries = k;
         msg->entries = entries;
 		return 0;
 	}
-
-	/*else if (msg->opcode == MESSAGE_T__OPCODE__OP_PRINT && msg->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
-		msg->opcode += 1;
-		msg->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
-		msg->entries = table_get_entries(table);
-		return 0;
-	}*/
 
 	return -1;
 }

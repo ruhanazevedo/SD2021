@@ -1,12 +1,15 @@
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../include/client_stub.h"
-//#include "data.c" 
-//#include "entry.c"
 #include "../include/data.h"
 #include "../include/entry.h"
-//#include "/include/client_stub.h"
 #include "../include/extra/inet.h"
 #include "../include/data-private.h"
 #include "../include/network_client.h"

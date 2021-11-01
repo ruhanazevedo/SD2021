@@ -68,13 +68,10 @@ struct  MessageT
   int32_t result;
   size_t n_entries;
   MessageT__Entry **entries;
-  char *key;
-  int32_t data_size;
-  char *data2;
 };
 #define MESSAGE_T__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&message_t__descriptor) \
-    , MESSAGE_T__OPCODE__OP_BAD, MESSAGE_T__C_TYPE__CT_BAD, 0,NULL, {0,NULL}, 0, 0,NULL, (char *)protobuf_c_empty_string, 0, (char *)protobuf_c_empty_string }
+    , MESSAGE_T__OPCODE__OP_BAD, MESSAGE_T__C_TYPE__CT_BAD, 0,NULL, {0,NULL}, 0, 0,NULL }
 
 
 /* MessageT__Entry methods */

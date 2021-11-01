@@ -1,3 +1,10 @@
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
+
 #ifndef _NETWORK_SERVER_H
 #define _NETWORK_SERVER_H
 

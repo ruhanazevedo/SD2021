@@ -10,11 +10,11 @@
 #include <errno.h>
 
 int write_all(int sock, void *buf, int len) {
-	printf("write len = %d\n", len);
+	
 	int bufsize = len; 
 	while(len > 0) {
 		int res = write(sock, buf, len); 
-		printf("write res = %d\n", res);
+		
 		if(res < 0) {
 			if(errno==EINTR) 
 				continue;
@@ -30,10 +30,10 @@ int write_all(int sock, void *buf, int len) {
 
 int read_all(int sock, void *buf, int len){
     int size = len;
-	printf("read len = %d\n", len);
+	
   while(size>0) {
       int res = read(sock, buf, size);
-	  printf("read res = %d\n", res);
+	
       if(res == 0)
           return 0;
       if(res<0) {

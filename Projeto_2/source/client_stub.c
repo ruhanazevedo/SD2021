@@ -1,4 +1,9 @@
-//#include "../include/client/client_stub.h"
+/********* Grupo 9 ********
+* 44898 - José Alves      *
+* 46670 - Tiago Lourenço  *
+* 51779 - Ruhan Azevedo   *
+***************************/
+
 #include "../include/client_stub-private.h"
 #include "../include/sdmessage.pb-c.h"
 #include <stddef.h> //NULLS
@@ -15,15 +20,12 @@ struct rtable_t *rtable_connect(const char *address_port){
     char *endpoint = malloc(sizeof(char)*strlen(address_port));
     strcpy(endpoint, address_port);
     char *splitedEndpoint = strtok(endpoint, ":");
-    remote_table->address = malloc(sizeof(char)); // can be necessary to *strlen(hostname) (=) strlen(strtok(address_port, ":"))
-    //remote_table->address = endpoint;
+    remote_table->address = malloc(sizeof(char)); 
+    
     memcpy(remote_table->address, endpoint, strlen(endpoint));
-    remote_table->port = strtol(strtok(NULL,""), NULL, 10); //leak
-    //remote_table->table = table_create(1); //criar a table com 1 lista
+    remote_table->port = strtol(strtok(NULL,""), NULL, 10); 
+    
     remote_table->server = malloc(sizeof(struct sockaddr_in ));
-
-    char str[MAX_MSG];
-    int count, nbytes;
 
     if ((remote_table->sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("Erro ao criar socket TCP");
@@ -56,45 +58,35 @@ int rtable_disconnect(struct rtable_t *rtable){
 
 int rtable_put(struct rtable_t *rtable, struct entry_t *entry){
     struct MessageT *msg;
-    char *buf;
-    unsigned len;
 
     msg = malloc(sizeof(struct MessageT));
 
     message_t__init(msg); 
 
-    //msg->base = NULL; // ??????? not necessary as the professor example
     msg->opcode = MESSAGE_T__OPCODE__OP_PUT;
     msg->c_type = MESSAGE_T__C_TYPE__CT_ENTRY;
 
-    char *entry_buf; //falta inicializar, mas talvez nao seja necessario
-
-    entry_to_buffer(entry, &entry_buf);
-
     msg->n_entries = 1;
 
-    MessageT__Entry entry_tmp;
-    strcpy(entry_tmp.key, entry->key);
-    memcpy(&entry_tmp.data, entry->value->data, entry->value->datasize);
+    struct MessageT__Entry *entry_tmp;
+    entry_tmp = malloc(sizeof(struct MessageT__Entry));
+    message_t__entry__init(entry_tmp);
+    entry_tmp->key = entry->key;
+    entry_tmp->data.data = entry->value->data;
+    entry_tmp->data.len = entry->value->datasize;
 
     msg->entries[0] = &entry_tmp;
 
     if(network_send_receive(rtable, msg)!= NULL){
-        //n falhou
         return 0;
     }
-    else {
-        //falhou
-        return -1;
-    }
+    return -1;
 }
 
 struct data_t *rtable_get(struct rtable_t *rtable, char *key){
     struct data_t *data;
     if(rtable != NULL && strcmp(key, NULL) != 0){
         struct MessageT *msg, *msg_received;
-        char *buf;
-        unsigned len;
 
         msg = malloc(sizeof(struct MessageT));
 
@@ -119,8 +111,6 @@ struct data_t *rtable_get(struct rtable_t *rtable, char *key){
 int rtable_del(struct rtable_t *rtable, char *key){
     if(rtable != NULL && strcmp(key, NULL) != 0){
         struct MessageT *msg, *msg_received;
-        char *buf;
-        unsigned len;
 
         msg = malloc(sizeof(struct MessageT));
 
@@ -153,10 +143,8 @@ int rtable_size(struct rtable_t *rtable){
         msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 
         msg_received = malloc(sizeof(struct MessageT));
-    
         
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
-        
             if(msg_received->c_type == MESSAGE_T__C_TYPE__CT_RESULT){
                 return msg_received->result;
             }
@@ -171,8 +159,6 @@ char **rtable_get_keys(struct rtable_t *rtable){
     if(rtable != NULL){
         //TODO TRICKY
         struct MessageT *msg, *msg_received;
-        char *buf;
-        unsigned len;
 
         msg = malloc(sizeof(struct MessageT));
 
