@@ -56,7 +56,10 @@ int rtable_put(struct rtable_t *rtable, struct entry_t *entry){
     struct MessageT *msg;
     char *buf;
     unsigned len;
-    //message_t__init(&msg); 
+
+    msg = malloc(sizeof(struct MessageT));
+
+    message_t__init(msg); 
 
     //msg->base = NULL; // ??????? not necessary as the professor example
     msg->opcode = MESSAGE_T__OPCODE__OP_PUT;
@@ -90,13 +93,16 @@ struct data_t *rtable_get(struct rtable_t *rtable, char *key){
         struct MessageT *msg, *msg_received;
         char *buf;
         unsigned len;
-        //message_t__init(&msg); 
+
+        msg = malloc(sizeof(struct MessageT));
+
+        message_t__init(msg); 
 
         msg->opcode = MESSAGE_T__OPCODE__OP_GET;
         msg->c_type = MESSAGE_T__C_TYPE__CT_KEY;
         msg-> n_keys = 1;
         strcpy(msg->keys[0], key);     
-
+        msg_received = malloc(sizeof(struct MessageT));
         if(msg_received = network_send_receive(rtable, msg) != NULL){
             data = malloc(sizeof(struct data_t));
             memcpy(data->data, &msg_received->data.data, msg_received->data.len);
@@ -113,14 +119,17 @@ int rtable_del(struct rtable_t *rtable, char *key){
         struct MessageT *msg, *msg_received;
         char *buf;
         unsigned len;
-        //message_t__init(&msg); 
+
+        msg = malloc(sizeof(struct MessageT));
+
+        message_t__init(msg); 
 
         msg->opcode = MESSAGE_T__OPCODE__OP_DEL;
         msg->c_type = MESSAGE_T__C_TYPE__CT_KEY;
         msg->n_keys = 1;
         strcpy(msg->keys[0], key);
         
-
+        msg_received = malloc(sizeof(struct MessageT));
         if(msg_received = network_send_receive(rtable, msg) != NULL){
             if(msg_received->opcode != MESSAGE_T__OPCODE__OP_ERROR){
                 //n retorna erro
@@ -133,13 +142,11 @@ int rtable_del(struct rtable_t *rtable, char *key){
 }
 
 int rtable_size(struct rtable_t *rtable){
-    printf("RH1\n");
     if(rtable != NULL){
-        printf("RH2\n");
         struct MessageT *msg, *msg_received;
         msg = malloc(sizeof(struct MessageT));
 
-        //message_t__init(&msg); 
+        message_t__init(msg); 
         msg->opcode = MESSAGE_T__OPCODE__OP_SIZE;
         msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 
@@ -162,10 +169,15 @@ char **rtable_get_keys(struct rtable_t *rtable){
         struct MessageT *msg, *msg_received;
         char *buf;
         unsigned len;
-        message_t__init(&msg);
+
+        msg = malloc(sizeof(struct MessageT));
+
+        message_t__init(msg);
 
         msg->opcode = MESSAGE_T__OPCODE__OP_GETKEYS;
         msg->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
+
+        msg_received = malloc(sizeof(struct MessageT));
 
         if(msg_received = network_send_receive(rtable, msg) != NULL){
             if(msg_received->c_type == MESSAGE_T__C_TYPE__CT_KEYS){
@@ -189,11 +201,13 @@ void rtable_free_keys(char **keys){ //FALTA receber o TABLE
 
 void rtable_print(struct rtable_t *rtable){
     struct MessageT *msg, *msg_received;
-    //msg = malloc(sizeof(struct MessageT)); //may be necessary alocate memory before message_t_init()
+    msg = malloc(sizeof(struct MessageT));
     message_t__init(msg); 
     
     msg->opcode = MESSAGE_T__OPCODE__OP_PRINT;
     msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
+
+    msg_received = malloc(sizeof(struct MessageT));
     if(msg_received = network_send_receive(rtable, msg) != NULL){
         if(msg_received->opcode == MESSAGE_T__OPCODE__OP_PRINT){
             printf("{\n");

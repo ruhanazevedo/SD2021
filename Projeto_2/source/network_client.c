@@ -4,6 +4,7 @@
 #include <errno.h>
 #include "../include/client_stub-private.h"
 #include "message.c"
+//#include <netinet/in.h> not needed
 
 
 int network_connect(struct rtable_t *rtable){
@@ -44,13 +45,14 @@ struct MessageT *network_send_receive(struct rtable_t * rtable,
     message_t__pack(msg,buf);
 
     // Envia tamanho da mensagem
-    if((nbytes = write_all(rtable->sockfd,htonl(len), sizeof(len))) != sizeof(len)){
+    uint32_t network_byte_order = htonl(len); //necessario essa linha para que o write_all consiga ler o htonl
+    if((nbytes = write_all(rtable->sockfd, &network_byte_order, sizeof(len))) != sizeof(len)){
         perror("Erro ao enviar dados ao servidor");
         close(rtable->sockfd);
         return -1;
     }
     // Envia mensagem
-    if((nbytes = write_all(rtable->sockfd,buf,len)) != len){
+    if((nbytes = write_all(rtable->sockfd, buf, len)) != len){
         perror("Erro ao enviar dados ao servidor");
         close(rtable->sockfd);
         return NULL;

@@ -115,7 +115,7 @@ int invoke(MessageT *msg) {
                 }
             }
         }
-        entries[k] = NULL;
+        entries[k] = NULL; //talvez possamos tirar isso
 		msg->n_entries = k;
         msg->entries = entries;
 		return 0;

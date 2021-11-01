@@ -9,6 +9,7 @@
 //#include "/include/client_stub.h"
 #include "../include/extra/inet.h"
 #include "../include/data-private.h"
+#include "../include/network_client.h"
 
 #define BUFFERSIZE 50
 
@@ -17,6 +18,8 @@ int main(int argc, char** argv) {
     if(argc >= 2){
         printf("trying to reach %s\n", argv[1]);
         remote_table = rtable_connect(argv[1]);
+        network_connect(remote_table);
+        
     }
 
     char *text = calloc(1,1), buffer[BUFFERSIZE];
