@@ -30,8 +30,9 @@ int main(int argc, char **argv) {
 
 	port = atoi(argv[1]);
 	sockfd = network_server_init(port);
-
-	table_skel_init(argv[2]);
+	
+	int n_lists = atoi(argv[2]);
+	table_skel_init(n_lists);
 	int result = network_main_loop(sockfd);
 
 	int network_server_close();
