@@ -34,22 +34,32 @@ void table_skel_destroy() {
 
 
 int invoke(MessageT *msg) {
-	printf("RH1\n");
 	if (msg == NULL || table == NULL || msg->opcode < 10 || msg->c_type < 10 || 
 		msg->opcode > 99 || msg->c_type > 70) {
+		if(msg == NULL){
+			printf("RH2\n");
+		}else if(table == NULL){
+			printf("RH3\n");
+		}else if(msg->opcode < 10){
+			printf("RH4\n");
+		}else if(msg->c_type < 10){
+			printf("RH5\n");
+		}else if(msg->opcode > 99){
+			printf("RH6\n");
+		}else if(msg->c_type > 70){
+			printf("RH7\n");
+		}
 		return -1;
 	}
-	
+	printf("RH1\n");
 	if (msg->opcode == MESSAGE_T__OPCODE__OP_SIZE && msg->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
-		printf("RH2\n");
 		msg->opcode += 1;
 		msg->c_type = MESSAGE_T__C_TYPE__CT_RESULT;
 		msg->result = table_size(table);
+		printf("RH2\n");
 		return 0;
 	}
-	
-	else if (msg->opcode == MESSAGE_T__OPCODE__OP_DEL && msg->c_type == MESSAGE_T__C_TYPE__CT_KEY) {	
-		printf("RH3\n");
+	else if (msg->opcode == MESSAGE_T__OPCODE__OP_DEL && msg->c_type == MESSAGE_T__C_TYPE__CT_KEY) {
 		msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 		if ((table_del(table, msg->key)) == 0) {
 			msg->opcode += 1;
@@ -63,7 +73,6 @@ int invoke(MessageT *msg) {
 	} 
 
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_GET && msg->c_type == MESSAGE_T__C_TYPE__CT_KEY) {
-		printf("RH4\n");
 		struct data_t *data = table_get(table, msg->key);
 		if (data == NULL) {
 			msg->opcode = MESSAGE_T__OPCODE__OP_ERROR;
@@ -80,7 +89,6 @@ int invoke(MessageT *msg) {
 	} 
 
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_PUT && msg->c_type == MESSAGE_T__C_TYPE__CT_ENTRY) {
-		printf("RH5\n");
 		if ((table_put(table, msg->key, data_create2(msg->data_size, msg->data2))) == 0) {
 			msg->opcode += 1;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
@@ -94,7 +102,6 @@ int invoke(MessageT *msg) {
 	} 
 
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_GETKEYS && msg->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
-		printf("RH6\n");
 		msg->opcode += 1;
 		msg->c_type = MESSAGE_T__C_TYPE__CT_KEYS;
 		msg->keys = table_get_keys(table);
@@ -102,7 +109,6 @@ int invoke(MessageT *msg) {
 	} 
 
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_PRINT && msg->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
-		printf("RH7\n");
 		msg->opcode += 1;
 		msg->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
 		struct entry_t **entries = malloc(sizeof(struct entry_t)*table->size + sizeof(NULL)); 
@@ -122,7 +128,6 @@ int invoke(MessageT *msg) {
         entries[k] = NULL; //talvez possamos tirar isso
 		msg->n_entries = k;
         msg->entries = entries;
-		printf("RH8\n");
 		return 0;
 	}
 

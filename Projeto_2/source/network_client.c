@@ -37,17 +37,18 @@ int network_connect(struct rtable_t *rtable){
 
 struct MessageT *network_send_receive(struct rtable_t * rtable,
                                        struct MessageT *msg){
-    int nbytes;
+    int nbytes, msgsize, msgsizeAux;
 
     //message_t__init(msg);// <- feito no client_stub
     int len = message_t__get_packed_size(msg);
-    char *buf = malloc(len);
+    void *buf;
     message_t__pack(msg,buf);
 
     // Envia tamanho da mensagem
     uint32_t network_byte_order = htonl(len); 
-    if((nbytes = write_all(rtable->sockfd, &network_byte_order, sizeof(network_byte_order))) != sizeof(len)){
+    if((nbytes = write_all(rtable->sockfd, &network_byte_order, sizeof(len))) != sizeof(len)){
         perror("Erro ao enviar dados ao servidor");
+        printf("erro RH 1\n");
         close(rtable->sockfd);
         return -1;
     }
@@ -55,21 +56,37 @@ struct MessageT *network_send_receive(struct rtable_t * rtable,
     // Envia mensagem
     if((nbytes = write_all(rtable->sockfd, buf, len)) != len){
         perror("Erro ao enviar dados ao servidor");
+        printf("erro RH 2\n");
         close(rtable->sockfd);
         return NULL;
     }
-    free(buf);
     
-    char *response = malloc(len);
+    void *response = malloc(len);
 
-    if((nbytes = read_all(rtable->sockfd,&response,len)) != len){
+    //recebe o tamanho da mensagem
+    if((nbytes = read_all(rtable->sockfd, &msgsizeAux, sizeof(int))) != sizeof(int)){
         perror("Erro ao receber dados do servidor");
+        printf("erro RH 3\n");
         close(rtable->sockfd);
         return -1;
     };
+
+    msgsize = ntohl(msgsizeAux);
+
+    buf = malloc(msgsize);
+
+    //recebe mensagem
+    if((nbytes = read_all(rtable->sockfd, buf, msgsize)) != msgsize){
+        perror("Erro ao receber dados do servidor");
+        printf("erro RH 3\n");
+        close(rtable->sockfd);
+        return -1;
+    };
+    
     MessageT *ds = malloc(sizeof(MessageT));
-    ds = message_t__unpack(NULL, len, response);
+    ds = message_t__unpack(NULL, len, response); //essa linha esta a retornar erro
     free(response);
+    free(buf);
 }   
 
 int network_close(struct rtable_t * rtable){

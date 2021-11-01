@@ -104,6 +104,10 @@ int main(int argc, char** argv) {
                 printf("falha na execução do comando size\n");
             }
         }
+        else {
+            printf("Comando não reconhecido\n");
+            return;
+        }
     }
 
  }

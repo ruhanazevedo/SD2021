@@ -28,11 +28,16 @@ int write_all(int sock, void *buf, int len) {
 
 
 int read_all(int sock, void *buf, int len) {
+	printf("reading value\n");
 
 	int bufsize = len;
 	while (len > 0) {
 		int res = read(sock, buf, len);
-		if (res <= 0) {
+		printf("sock = %d\n", sock);
+		printf("buf = %p\n", buf);
+		printf("len = %d\n", len);
+		printf("res = %d\n", res);
+		if (res <= 0) { //EOF n é erro
 			if (errno == EINTR)
 				continue;
 			perror("read failed");
@@ -41,5 +46,6 @@ int read_all(int sock, void *buf, int len) {
 		buf += res;
 		len -= res;
 	}
+	printf("bufsize = %s\n", bufsize);
 	return bufsize;
 }
