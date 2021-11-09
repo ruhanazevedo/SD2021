@@ -13,13 +13,14 @@ int write_all(int sock, void *buf, int len) {
 	
 	int bufsize = len; 
 	while(len > 0) {
+        printf("vou enviar read de %d bytes\n", len);
 		int res = write(sock, buf, len); 
-		
-		if(res < 0) {
+		printf("enviei %d bytes\n", res);
+		if(res <= 0) {
 			if(errno==EINTR) 
 				continue;
 			perror("write failed");
-			return res;
+			return -1;
 		} 
 		buf+= res;
 		len-= res;
@@ -32,13 +33,14 @@ int read_all(int sock, void *buf, int len){
     int size = len;
 	
   while(size>0) {
+      printf("vou fazer read de %d bytes\n", size);
       int res = read(sock, buf, size);
-	
+      printf("recebi %d bytes\n", res);
       if(res == 0)
           return 0;
-      if(res<0) {
+      if(res < 0) {
           perror("falha na leitura:");
-          return res;
+          return -1;
       }
       buf += res;
       size -= res;

@@ -150,7 +150,7 @@ int hash(unsigned char *str){
         i += str[j];
     return abs(i % CAPACITY);
 }
-
+/*
 char **table_get_entrys(struct table_t *table){
 
     struct entry_t **entries = malloc(sizeof(struct entry_t)*table->size + sizeof(NULL)); 
@@ -170,3 +170,4 @@ char **table_get_entrys(struct table_t *table){
     entries[k] = NULL;
     return entries;
 }
+*/

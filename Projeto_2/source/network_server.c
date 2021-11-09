@@ -35,7 +35,7 @@ int network_server_init(short port) {
 	}
 	
     // Esta chamada diz ao SO que esta é uma socket para receber pedidos
-	if (listen(sockfd, 0) < 0) {
+	if (listen(sockfd, 5) < 0) {
 		perror("Erroe executing listen\n");
 		close(sockfd);
 		return -1;
@@ -47,17 +47,19 @@ int network_server_init(short port) {
 
 int network_main_loop(int listening_socket) {
 	
-	struct sockaddr_in *client;
+	struct sockaddr_in client;
     socklen_t client_size;
     int connsockfd;
 
     // Bloqueia a espera de pedidos de conexão
-
-    while ((connsockfd = accept(listening_socket, &client, &client_size)) != -1) {
-
+	printf("vou fazer accept\n");
+    while ((connsockfd = accept(listening_socket, (struct sockaddr *) &client, &client_size)) != -1) {
+		//deve ter while enquanto network_receive != NULL
         MessageT *msg = network_receive(connsockfd);
+		printf("recebeu mensagem\n");
 		if(msg == NULL){
 			printf("msg null network_server\n");
+			return -1;
 		}
    		if (invoke(msg) == -1) {
    			printf("Error in network server invoke\n");
@@ -73,7 +75,7 @@ int network_main_loop(int listening_socket) {
 		close(connsockfd);
 		//message_t__free_unpacked(msg, NULL);
     }
-	printf("morreu\n");
+	perror("morreu\n");
 
 	return 0;
 }
@@ -85,6 +87,8 @@ MessageT *network_receive(int client_socket) {
 	int result, msgsizeAux;
    	void *buf;
 
+	printf("vou receber mensagens no socket %d\n", client_socket);
+
 	if (client_socket < 0) {
 		return NULL;
 	}
@@ -92,17 +96,19 @@ MessageT *network_receive(int client_socket) {
 	// Recebe o tamanho da mensagem
 	result = read_all(client_socket, &msgsizeAux, sizeof(int));
 	if (result != sizeof(msgsizeAux)) {
-		perror("Error in read_all\n");
+		printf("Error in read_all message size result = %d\n", result);
 		close(client_socket);
 		return NULL;
 	}
+	
 	uint32_t msgsize = ntohl(msgsizeAux);
 	//msg = (MessageT *) malloc(msgsize);
+	printf("recebeu inteiro %d\n", msgsize);
 	buf = malloc(msgsize);
 	
 	// Recebe a mensagem
 	if ((result = read_all(client_socket, buf, msgsize)) != msgsize) {
-		perror("Error in read_all\n");
+		printf("Error in read_all message result = %d\n", result);
 		close(client_socket);
 		free(buf);
 		return NULL;
@@ -111,7 +117,7 @@ MessageT *network_receive(int client_socket) {
 
 	// Verificar se a deserializacao teve sucesso 
 	if (msg == NULL) {
-		fprintf(stdout, "error unpacking message\n");
+		printf("error unpacking message\n");
 		free(buf);
 		return NULL;
 	}
@@ -121,16 +127,17 @@ MessageT *network_receive(int client_socket) {
 }
 
 
-int network_send(int client_socket, struct MessageT *msg) {
+int network_send(int client_socket, MessageT *msg) {
 	
 	int msgsize, result, msgsizeAux;
-	char *buf;
+	unsigned char *buf;
 
 	if (client_socket < 0 || msg == NULL) {
 		return -1;
 	}
 	
 	msgsizeAux = message_t__get_packed_size(msg);
+	printf("tamanho de MessageT: %d\n", msgsizeAux);
     buf = malloc(msgsizeAux);
     if (buf == NULL) {
         fprintf(stdout, "malloc error\n");
@@ -156,7 +163,6 @@ int network_send(int client_socket, struct MessageT *msg) {
 
 	
 	//envia mensagem
-	printf("RH2\n");
 	if ((result = write_all(client_socket, buf, msgsizeAux)) != msgsizeAux) {
 		perror("Error in write_all\n");
 		close(client_socket);

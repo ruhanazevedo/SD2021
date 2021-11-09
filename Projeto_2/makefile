@@ -69,10 +69,10 @@ table_server.o: $(SRC)table_server.c $(INCLUDE)network_server.h $(INCLUDE)table_
 
 
 table_client: $(LIB)client-lib.o $(OBJ)table_client.o $(INCLUDE)sdmessage.pb-c.o
-	$(CC) -g $(LIB)client-lib.o $(OBJ)table_client.o $(INCLUDE)sdmessage.pb-c.o -I$(INCLUDE) -L/home/aluno-di/SD -lprotobuf-c -o $(BIN)table_client
+	$(CC) -g $(LIB)client-lib.o $(OBJ)table_client.o $(INCLUDE)sdmessage.pb-c.o -I$(INCLUDE) -L/usr/local/lib/ -lprotobuf-c -o $(BIN)table_client
 
 table_server: $(LIB)server-lib.o $(OBJ)table_server.o $(INCLUDE)sdmessage.pb-c.o 
-	$(CC) -g $(LIB)server-lib.o $(OBJ)table_server.o $(INCLUDE)sdmessage.pb-c.o -I$(INCLUDE) -L/home/aluno-di/SD -lprotobuf-c -o $(BIN)table_server 
+	$(CC) -g $(LIB)server-lib.o $(OBJ)table_server.o $(INCLUDE)sdmessage.pb-c.o -I$(INCLUDE) -L/usr/local/lib/ -lprotobuf-c -o $(BIN)table_server 
 
 # delete proto file dependencies
 pclean:
