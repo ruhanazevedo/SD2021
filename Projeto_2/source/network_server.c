@@ -55,22 +55,28 @@ int network_main_loop(int listening_socket) {
 	printf("vou fazer accept\n");
     while ((connsockfd = accept(listening_socket, (struct sockaddr *) &client, &client_size)) != -1) {
 		//deve ter while enquanto network_receive != NULL
-        MessageT *msg = network_receive(connsockfd);
-		printf("recebeu mensagem\n");
-		if(msg == NULL){
-			printf("msg null network_server\n");
-			return -1;
+
+        MessageT *msg;
+
+		while((msg = network_receive(connsockfd)) != NULL){
+			printf("recebeu mensagem\n");
+			if(msg == NULL){
+				printf("msg null network_server\n");
+				return -1;
+			}
+   			if (invoke(msg) == -1) {
+   				printf("Error in network server invoke\n");
+				free(msg);
+   				return -1;
+   			}
+   			if (network_send(connsockfd, msg) == -1) {
+   				printf("Error in network server send\n");
+				free(msg);
+   				return -1;
+   			}
 		}
-   		if (invoke(msg) == -1) {
-   			printf("Error in network server invoke\n");
-			free(msg);
-   			return -1;
-   		}
-   		if (network_send(connsockfd, msg) == -1) {
-   			printf("Error in network server send\n");
-			free(msg);
-   			return -1;
-   		}
+
+		
         // Fecha socket referente a esta conexão
 		close(connsockfd);
 		//message_t__free_unpacked(msg, NULL);
