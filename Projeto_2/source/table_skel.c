@@ -9,7 +9,9 @@
 #include "../include/table_skel.h"
 #include "../include/table-private.h"
 #include "../include/message.h"
+#include "../include/list-private.h"
 #include <stddef.h> //NULLS
+#include <stdio.h>
 
 struct table_t *table;
 
@@ -76,7 +78,7 @@ int invoke(MessageT *msg) {
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_PUT && msg->c_type == MESSAGE_T__C_TYPE__CT_ENTRY) {
 		printf("menssagem recebida\n");
 		printf("key %s\n", msg->entries[0]->key);
-		printf("datasize %d\n", msg->entries[0]->data.len);
+		printf("datasize %ld\n", msg->entries[0]->data.len);
 		printf("data %s\n", msg->entries[0]->data.data);
 		if ((table_put(table, msg->entries[0]->key, data_create2(msg->entries[0]->data.len, msg->entries[0]->data.data))) == 0) {
 			table_print(table);
@@ -107,10 +109,10 @@ int invoke(MessageT *msg) {
         for(int i=0 ; i<table->nListas ; i++){
             if(table->list[i] != NULL){
                 int listSize = list_size(table->list[i]); 
-                char **list_entries = list_get_entrys(table->list[i]); 
+                char **list_entries = (char**) list_get_entrys(table->list[i]); //TODO WARNING lista de entries para lista de char*
                 for(int j=0 ; j<listSize ; j++){
                     if(list_entries[j] != NULL){
-                        entries[k] =  list_entries[j];
+                        entries[k] = list_entries[j];
                         ++k;
                     }
                 }

@@ -39,13 +39,13 @@ int main(int argc, char** argv) {
 
     char *buffer[BUFFERSIZE];
     printf("Enter a message: \n");
-    while(fgets(buffer, BUFFERSIZE , stdin)){
+    while(fgets((char *)buffer, BUFFERSIZE , stdin)){
         char *text = calloc(1,1);
-        text = realloc( text, strlen(text)+1+strlen(buffer) );
+        text = realloc( text, strlen(text)+1+strlen((char*)buffer) );
         if( !text ){
             printf("fail");
         }
-        strcat( text, buffer ); 
+        strcat( text, (char*) buffer ); 
         char *split = strtok(text, "\n");
         if(strcmp(split, "quit") == 0){
             printf("disconnecting..\n");
