@@ -104,12 +104,14 @@ struct data_t *rtable_get(struct rtable_t *rtable, char *key){
         msg->opcode = MESSAGE_T__OPCODE__OP_GET;
         msg->c_type = MESSAGE_T__C_TYPE__CT_KEY;
         msg-> n_keys = 1;
+        msg->keys = malloc(sizeof(char*));
+        msg->keys[0] = malloc(strlen(key)+1);
         strcpy(msg->keys[0], key);     
         msg_received = malloc(sizeof(MessageT));
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
-            data = malloc(sizeof(struct data_t));
-            memcpy(data->data, &msg_received->data.data, msg_received->data.len);
-            data->datasize = msg_received->data.len;
+            data = data_create(msg_received->data.len);
+            memcpy(data->data, msg_received->data.data, msg_received->data.len);
+            //data->datasize = msg_received->data.len;
             return data;
         }
 
@@ -128,9 +130,9 @@ int rtable_del(struct rtable_t *rtable, char *key){
         msg->opcode = MESSAGE_T__OPCODE__OP_DEL;
         msg->c_type = MESSAGE_T__C_TYPE__CT_KEY;
         msg->n_keys = 1;
+        msg->keys = malloc(sizeof(char*));
         strcpy(msg->keys[0], key);
-        
-        msg_received = malloc(sizeof(MessageT));
+
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
             if(msg_received->opcode != MESSAGE_T__OPCODE__OP_ERROR){
                 //n retorna erro

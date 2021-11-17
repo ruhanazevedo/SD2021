@@ -48,6 +48,7 @@ int invoke(MessageT *msg) {
 	}
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_DEL && msg->c_type == MESSAGE_T__C_TYPE__CT_KEY) {
 		msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
+		printf("key: %s\n", msg->keys[0]);
 		if ((table_del(table, msg->keys[0])) == 0) {
 			msg->opcode += 1;
 			return 0;

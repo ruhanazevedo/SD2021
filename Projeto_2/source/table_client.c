@@ -83,8 +83,10 @@ int main(int argc, char** argv) {
             char *argKey = strtok(NULL, " ");
             struct data_t *data;
             if((data = rtable_get(remote_table, argKey)) != NULL){
-                printf("comando get realizado para a key: %s", argKey);
+                printf("comando get realizado para a key: %s\n", argKey);
                 data_print(data);
+                printf("\n");
+                data_destroy(data);
             }
             else{
                 printf("falha na execução do comando get\n");
