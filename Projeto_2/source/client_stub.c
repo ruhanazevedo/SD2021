@@ -21,7 +21,7 @@ struct rtable_t *rtable_connect(const char *address_port){
     struct rtable_t *remote_table = malloc(sizeof(struct rtable_t));
     char *endpoint = malloc(sizeof(char)*strlen(address_port));
     strcpy(endpoint, address_port);
-    char *splitedEndpoint = strtok(endpoint, ":");
+    strtok(endpoint, ":");
     remote_table->address = malloc(sizeof(char)); 
     
     memcpy(remote_table->address, endpoint, strlen(endpoint));

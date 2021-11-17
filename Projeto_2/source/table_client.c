@@ -37,15 +37,15 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    char *text = calloc(1,1), buffer[BUFFERSIZE];
+    char *buffer[BUFFERSIZE];
     printf("Enter a message: \n");
     while(fgets(buffer, BUFFERSIZE , stdin)){
+        char *text = calloc(1,1);
         text = realloc( text, strlen(text)+1+strlen(buffer) );
         if( !text ){
             printf("fail");
         }
         strcat( text, buffer ); 
-        //printf("%s\n", buffer);   
         char *split = strtok(text, "\n");
         if(strcmp(split, "quit") == 0){
             printf("disconnecting..\n");
@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
             char *argData = strtok(NULL, " ");
             printf("split de data %s\n", argData);
             printf("pointer de argData %p\n", argData);
-            printf("strlen %d\n", (strlen(argData)+1));
+            printf("strlen %ld\n", (strlen(argData)+1));
 
 
             int datasize = strlen(argData) + 1;
@@ -132,8 +132,9 @@ int main(int argc, char** argv) {
         }
         else {
             printf("Comando não reconhecido\n");
-            return;
+            
         }
+        free(text);
     }
 
  }
