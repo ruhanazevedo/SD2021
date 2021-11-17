@@ -47,11 +47,13 @@ int main(int argc, char** argv) {
         }
         strcat( text, (char*) buffer ); 
         char *split = strtok(text, "\n");
+        char *comparator = strtok(split, " ");
         if(strcmp(split, "quit") == 0){
             printf("disconnecting..\n");
             break;
         }
-        else if((strcmp(strtok(split, " "), "put")) == 0){
+        
+        else if((strcmp(comparator, "put")) == 0){
             printf("entrou no put\n");
             char *argKey = strtok(NULL, " ");
             printf("split de key %s\n", argKey);
@@ -77,7 +79,7 @@ int main(int argc, char** argv) {
             }
         }
 
-        else if(strcmp(strtok(split, " "), "get") == 0){
+        else if(strcmp(comparator, "get") == 0){
             char *argKey = strtok(NULL, " ");
             struct data_t *data;
             if((data = rtable_get(remote_table, argKey)) != NULL){
@@ -89,7 +91,7 @@ int main(int argc, char** argv) {
             }
         }
 
-        else if(strcmp(strtok(split, " "), "del") == 0){
+        else if(strcmp(comparator, "del") == 0){
             char *argKey = strtok(NULL, " ");
 
             int res = -99;
@@ -101,12 +103,12 @@ int main(int argc, char** argv) {
             }
         }
 
-        else if(strcmp(split, "table_print") == 0){
+        else if(strcmp(comparator, "table_print") == 0){
             printf("imprimindo tabela remota:\n");
             rtable_print(remote_table);
         }
 
-        else if(strcmp(split, "getkeys") == 0){
+        else if(strcmp(comparator, "getkeys") == 0){
             char **res;
             if((res = rtable_get_keys(remote_table)) != NULL){
                 printf("Executando comando getKeys..\n");
