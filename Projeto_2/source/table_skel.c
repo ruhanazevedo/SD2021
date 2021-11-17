@@ -74,7 +74,12 @@ int invoke(MessageT *msg) {
 	} 
 
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_PUT && msg->c_type == MESSAGE_T__C_TYPE__CT_ENTRY) {
+		printf("menssagem recebida\n");
+		printf("key %s\n", msg->entries[0]->key);
+		printf("datasize %d\n", msg->entries[0]->data.len);
+		printf("data %s\n", msg->entries[0]->data.data);
 		if ((table_put(table, msg->entries[0]->key, data_create2(msg->entries[0]->data.len, msg->entries[0]->data.data))) == 0) {
+			table_print(table);
 			msg->opcode += 1;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 			return 0;

@@ -59,7 +59,7 @@ int rtable_disconnect(struct rtable_t *rtable){
 }
 
 int rtable_put(struct rtable_t *rtable, struct entry_t *entry){
-    MessageT *msg;
+    MessageT *msg, *msg_received;
 
     msg = malloc(sizeof(MessageT));
 
@@ -69,19 +69,26 @@ int rtable_put(struct rtable_t *rtable, struct entry_t *entry){
     msg->c_type = MESSAGE_T__C_TYPE__CT_ENTRY;
 
     msg->n_entries = 1;
+    msg->entries = malloc(sizeof(MessageT__Entry *));
 
     MessageT__Entry *entry_tmp;
     entry_tmp = malloc(sizeof(MessageT__Entry));
     message_t__entry__init(entry_tmp);
     entry_tmp->key = entry->key;
-    entry_tmp->data.data = entry->value->data;
     entry_tmp->data.len = entry->value->datasize;
+    entry_tmp->data.data = malloc(entry->value->datasize);
+    entry_tmp->data.data = entry->value->data;
+    
 
     msg->entries[0] = entry_tmp;
 
-    if(network_send_receive(rtable, msg)!= NULL){
+    if((msg_received = network_send_receive(rtable, msg))!= NULL){
+        printf("recebeu mensagem %d\n", msg_received->opcode);
+        message_t__free_unpacked(msg_received, NULL);
+        free(msg);
         return 0;
     }
+    free(msg);
     return -1;
 }
 
@@ -138,7 +145,7 @@ int rtable_del(struct rtable_t *rtable, char *key){
 int rtable_size(struct rtable_t *rtable){
     if(rtable != NULL){
         MessageT *msg, *msg_received;
-        msg = calloc(1, sizeof(MessageT));
+        msg = malloc(sizeof(MessageT));
 
         message_t__init(msg); 
         msg->opcode = MESSAGE_T__OPCODE__OP_SIZE;
@@ -150,18 +157,18 @@ int rtable_size(struct rtable_t *rtable){
         //printf("endereço da resposta em client_stub %p\n", msg_received);
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
             printf("saiu do network_send_receive\n");
+            free(msg);
             printf("fez unpack e retornou mensagem %d\n", msg_received->opcode);
             
             if(msg_received->opcode == 11){
                 printf("recebeu mensagem %d\n", msg_received->opcode);
                 int result = msg_received->result;
-                free(msg);
+                message_t__free_unpacked(msg_received, NULL);
                 //passar result para variavel para poder fazer free ao msg_received
                 return result;
             }
             
         }
-        printf("fez unpack e retornou mensagem %d\n", msg_received->opcode);
         free(msg);
     }
     printf("rtable = NULL\n");

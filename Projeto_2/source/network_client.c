@@ -10,9 +10,7 @@
 #include <errno.h>
 #include "../include/client_stub-private.h"
 #include "message.c"
-//#include <netinet/in.h> not needed
 
-//MessageT *res;
 
 int network_connect(struct rtable_t *rtable){
     
@@ -33,7 +31,7 @@ MessageT *network_send_receive(struct rtable_t * rtable,
     int len = message_t__get_packed_size(msg);
     printf("tamanho de MessageT: %d\n", len);
     unsigned char *buf, *bufAux;
-    buf = calloc(1, len);
+    buf = malloc(len);
     
     message_t__pack(msg, buf);
     
@@ -52,7 +50,7 @@ MessageT *network_send_receive(struct rtable_t * rtable,
         return NULL;
     }
     
-    //void *response = malloc(len);
+    free(buf);
      
     //recebe o tamanho da mensagem
     if((nbytes = read_all(rtable->sockfd, &msgsizeAux, sizeof(int))) != sizeof(int)){
@@ -63,7 +61,7 @@ MessageT *network_send_receive(struct rtable_t * rtable,
 
     msgsize = ntohl(msgsizeAux);
 
-    bufAux = calloc(1, msgsize);
+    bufAux = malloc(msgsize);
 
     //recebe mensagem
     if((nbytes = read_all(rtable->sockfd, bufAux, msgsize)) != msgsize){
@@ -71,12 +69,12 @@ MessageT *network_send_receive(struct rtable_t * rtable,
         close(rtable->sockfd);
         return NULL;
     };
-    // fazer free de buf e bufaux
     
     MessageT *res = message_t__unpack(NULL, msgsize, bufAux);
-    //MessageT *ret = malloc(sizeof(MessageT));
-    //ret->opcode = res->opcode;
-    printf("endereço da resposta em network_client %p\n", res);
+
+    free(bufAux);
+
+    //printf("endereço da resposta em network_client %p\n", res);
     printf("fez unpack e retornou mensagem %d\n", res->opcode);
     if(res == NULL){
         printf("error unpacking message\n");

@@ -57,19 +57,20 @@ int main(int argc, char** argv) {
             printf("split de key %s\n", argKey);
             char *argData = strtok(NULL, " ");
             printf("split de data %s\n", argData);
+            printf("pointer de argData %p\n", argData);
             printf("strlen %d\n", (strlen(argData)+1));
 
-            //acho que isto é suposto também aceitar coisas que não são strings acho que deveria funcionar com void*?
 
-            int datasize = strlen(argData);
-            printf("break1\n");
+            int datasize = strlen(argData) + 1;
+            printf("break1, datasize = %d\n", datasize);
             struct data_t *data = data_create2(datasize, argData);
-            printf("break2\n");
             struct entry_t *entry = entry_create(argKey, data);
-            printf("break3\n");
+            printf("entry: key = %s\n", entry->key);
+            data_print(entry->value);
+            printf("\n");
             int res = -99;
             if((res = rtable_put(remote_table, entry)) == 0){
-                printf("Inserindo conjunto {key: %s, values:%s to the table}\n", argKey, argData);
+                printf("Inserindo conjunto {key: %s, value:%s na tabela}\n", argKey, argData);
             }
             else{
                 printf("falha na execução do comando put\n");
