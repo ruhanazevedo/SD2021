@@ -198,7 +198,6 @@ int rtable_size(struct rtable_t *rtable){
 char **rtable_get_keys(struct rtable_t *rtable){
     char **keys;
     if(rtable != NULL){
-        //TODO TRICKY
         MessageT *msg, *msg_received;
 
         msg = malloc(sizeof(MessageT));
@@ -206,15 +205,19 @@ char **rtable_get_keys(struct rtable_t *rtable){
         message_t__init(msg);
 
         msg->opcode = MESSAGE_T__OPCODE__OP_GETKEYS;
-        msg->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
+        msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 
         msg_received = malloc(sizeof(MessageT));
 
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
             if(msg_received->c_type == MESSAGE_T__C_TYPE__CT_KEYS){
                 keys = malloc(sizeof(char)*msg_received->n_keys);
+                printf("msg_received->n_keys = %d\n", msg_received->n_keys);
                 for(int i=0 ; i<msg_received->n_keys ; i++){
-                    strcpy(keys[i], msg_received->keys[i]);
+                    printf("entrou\n");
+                    keys[i] = msg_received->keys[i];
+                    printf("msg_received->keys[%d] = %s\n", i, msg_received->keys[i]);
+                    //strcpy(keys[i], msg_received->keys[i]);
                 }
                 return keys;
             }
@@ -242,14 +245,16 @@ void rtable_print(struct rtable_t *rtable){
     if((msg_received = network_send_receive(rtable, msg)) != NULL){
         if(msg_received->opcode == (MESSAGE_T__OPCODE__OP_PRINT + 1)){
             printf("msg_received->n_entries = %d\n", msg_received->n_entries);
-            printf("{\n");
-            printf("tabela_remote: {");
+            
+            printf("Remote_table: {\n");
             for(int i=0 ; i<msg_received->n_entries ; i++){
                 printf("\tkey: %s\n", (char*)msg_received->entries[i]->key);
                 printf("\tdatasize: %d\n",(int) msg_received->entries[i]->data.len);
                 printf("\tdata: %s\n", (char*) msg_received->entries[i]->data.data);
+                if(i+1 != msg_received->n_entries){
+                    printf("\n");
+                }
             }
-            printf("}");
             printf("}\n");
         }
     }

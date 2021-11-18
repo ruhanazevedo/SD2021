@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
             if((res = rtable_get_keys(remote_table)) != NULL){
                 printf("Executando comando getKeys..\n");
                 printf("keys obtidas:\n");
-                for(int i=0 ; i<sizeof(res) ; i++){
+                for(int i=0 ; res[i] != NULL ; i++){
                     printf("%s\n", res[i]);
                 }
             }

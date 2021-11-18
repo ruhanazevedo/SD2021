@@ -123,7 +123,6 @@ char **list_get_keys(struct list_t *list){
         ++i;
         nodesList = nodesList->child;
     }
-    printf("%d", list->size);
     array[list->size] = NULL;
     
     return array;
@@ -248,7 +247,6 @@ struct entry_t **list_get_entrys(struct list_t *list){
         ++i;
         nodesList = nodesList->child;
     }
-    printf("%d", list->size);
     array[list->size] = NULL;
     
     return array;

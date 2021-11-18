@@ -13,9 +13,9 @@ int write_all(int sock, void *buf, int len) {
 	
 	int bufsize = len; 
 	while(len > 0) {
-        printf("vou enviar read de %d bytes\n", len);
+        //printf("vou enviar read de %d bytes\n", len);
 		int res = write(sock, buf, len); 
-		printf("enviei %d bytes\n", res);
+		//printf("enviei %d bytes\n", res);
 		if(res <= 0) {
 			if(errno==EINTR) 
 				continue;
@@ -33,9 +33,9 @@ int read_all(int sock, void *buf, int len){
     int size = len;
 	
   while(size>0) {
-      printf("vou fazer read de %d bytes\n", size);
+      //printf("vou fazer read de %d bytes\n", size);
       int res = read(sock, buf, size);
-      printf("recebi %d bytes\n", res);
+      //printf("recebi %d bytes\n", res);
       if(res == 0)
           return 0;
       if(res < 0) {

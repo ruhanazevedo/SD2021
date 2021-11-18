@@ -101,7 +101,16 @@ int invoke(MessageT *msg) {
 		msg->opcode += 1;
 		msg->c_type = MESSAGE_T__C_TYPE__CT_KEYS;
 		msg->keys = table_get_keys(table);
-		msg->n_keys = sizeof(msg->keys);
+
+		int nKeys = 0;
+		printf("msg->keys[0] = %s\n", msg->keys[0]);
+		for(int i=0 ; msg->keys[i] != NULL ; i++){
+			printf("msg->keys[%d] = %s\n",i, msg->keys[i]);
+			nKeys += 1;
+		}
+		printf("\n");
+		msg->n_keys = nKeys;
+		printf("msg->n_keys = %d\n", msg->n_keys);
 		return 0;
 	} 
 

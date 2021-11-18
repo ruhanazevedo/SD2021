@@ -64,11 +64,13 @@ int network_main_loop(int listening_socket) {
 				printf("msg null network_server\n");
 				return -1;
 			}
+			
    			if (invoke(msg) == -1) {
    				printf("Error in network server invoke\n");
 				free(msg);
    				return -1;
    			}
+			   
    			if (network_send(connsockfd, msg) == -1) {
    				printf("Error in network server send\n");
 				free(msg);
