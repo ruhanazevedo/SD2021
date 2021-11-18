@@ -49,13 +49,14 @@ int invoke(MessageT *msg) {
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_DEL && msg->c_type == MESSAGE_T__C_TYPE__CT_KEY) {
 		msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 		printf("key: %s\n", msg->keys[0]);
+		printf("vou entrar no table_del\n");
 		if ((table_del(table, msg->keys[0])) == 0) {
 			msg->opcode += 1;
 			return 0;
 		} else {
 			msg->opcode = MESSAGE_T__OPCODE__OP_ERROR;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
-			return -1;
+			return 0;
 		}
 
 	} 
@@ -63,9 +64,11 @@ int invoke(MessageT *msg) {
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_GET && msg->c_type == MESSAGE_T__C_TYPE__CT_KEY) {
 		struct data_t *data = table_get(table, msg->keys[0]);
 		if (data == NULL) {
-			msg->opcode = MESSAGE_T__OPCODE__OP_ERROR;
-			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
-			return -1;
+			msg->opcode += 1;
+			msg->c_type = MESSAGE_T__C_TYPE__CT_VALUE;
+			msg->data.data = NULL;
+			msg->data.len = 0;
+			return 0;
 		} else {
 			msg->opcode += 1;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_VALUE;
@@ -89,7 +92,7 @@ int invoke(MessageT *msg) {
 		} else {
 			msg->opcode = MESSAGE_T__OPCODE__OP_ERROR;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
-			return -1;
+			return 0;
 		}
 
 	} 

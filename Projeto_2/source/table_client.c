@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
 
 
             int datasize = strlen(argData) + 1;
-            printf("break1, datasize = %d\n", datasize);
+            printf("datasize = %d\n", datasize);
             struct data_t *data = data_create2(datasize, argData);
             struct entry_t *entry = entry_create(argKey, data);
             printf("entry: key = %s\n", entry->key);
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
                 data_destroy(data);
             }
             else{
-                printf("falha na execução do comando get\n");
+                printf("chave não encontrada na tabela\n");
             }
         }
 

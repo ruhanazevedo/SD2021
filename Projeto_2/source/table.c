@@ -70,6 +70,7 @@ struct data_t *table_get(struct table_t *table, char *key){
 }
 
 int table_del(struct table_t *table, char *key){
+    printf("entrou no table_del\n");
     if(table == NULL || key == NULL || strcmp(key, "") == 0){
         printf("[ERROR] Unexpected NULL argument\n");
         return -1;
@@ -86,7 +87,6 @@ int table_del(struct table_t *table, char *key){
         --table->size;
         return 0;
     }
-
     printf("[ERROR] internal_error: If this was hit, something is wrong!\n");
     return -1;
 }

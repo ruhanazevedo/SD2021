@@ -82,10 +82,13 @@ int rtable_put(struct rtable_t *rtable, struct entry_t *entry){
 
     msg->entries[0] = entry_tmp;
 
+    
+
     if((msg_received = network_send_receive(rtable, msg))!= NULL){
-        printf("recebeu mensagem %d\n", msg_received->opcode);
-        message_t__free_unpacked(msg_received, NULL);
+        //printf("recebeu mensagem %d\n", msg_received->opcode);
         free(msg);
+        free(entry_tmp);
+        message_t__free_unpacked(msg_received, NULL);
         return 0;
     }
     free(msg);
@@ -109,11 +112,22 @@ struct data_t *rtable_get(struct rtable_t *rtable, char *key){
         strcpy(msg->keys[0], key);     
         msg_received = malloc(sizeof(MessageT));
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
-            data = data_create(msg_received->data.len);
-            memcpy(data->data, msg_received->data.data, msg_received->data.len);
-            //data->datasize = msg_received->data.len;
+            printf("saiu do network_send_receive\n");
+            free(msg);
+            if(msg_received->data.len != 0){
+                printf("entrou no if data existe\n");
+                data = data_create(msg_received->data.len);
+                memcpy(data->data, msg_received->data.data, msg_received->data.len);
+            }
+            else{
+                printf("entrou no else\n");
+                data = data_create(0);
+                printf("data: %p\n", data);
+            }
+            message_t__free_unpacked(msg_received, NULL);
             return data;
         }
+        free(msg);
 
     }
     return NULL;
@@ -131,12 +145,16 @@ int rtable_del(struct rtable_t *rtable, char *key){
         msg->c_type = MESSAGE_T__C_TYPE__CT_KEY;
         msg->n_keys = 1;
         msg->keys = malloc(sizeof(char*));
+        msg->keys[0] = malloc(strlen(key)+1);
         strcpy(msg->keys[0], key);
 
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
-            if(msg_received->opcode != MESSAGE_T__OPCODE__OP_ERROR){
-                //n retorna erro
+            if(msg_received->opcode == MESSAGE_T__OPCODE__OP_DEL + 1){
+                printf("chave %s apagada com sucesso.\n", key);
                 return 0;
+            }
+            if(msg_received->opcode == MESSAGE_T__OPCODE__OP_ERROR){
+                printf("chave %s não existe.\n", key);
             }
         }
         return -1;
@@ -154,16 +172,16 @@ int rtable_size(struct rtable_t *rtable){
         msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 
         //msg_received = malloc(sizeof(MessageT));
-        printf("vou chamar network_send_receive\n");
+        //printf("vou chamar network_send_receive\n");
         //MessageT *msg_received = network_send_receive(rtable, msg);
         //printf("endereço da resposta em client_stub %p\n", msg_received);
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
-            printf("saiu do network_send_receive\n");
+            //printf("saiu do network_send_receive\n");
             free(msg);
-            printf("fez unpack e retornou mensagem %d\n", msg_received->opcode);
+            //printf("fez unpack e retornou mensagem %d\n", msg_received->opcode);
             
             if(msg_received->opcode == 11){
-                printf("recebeu mensagem %d\n", msg_received->opcode);
+                //printf("recebeu mensagem %d\n", msg_received->opcode);
                 int result = msg_received->result;
                 message_t__free_unpacked(msg_received, NULL);
                 //passar result para variavel para poder fazer free ao msg_received
