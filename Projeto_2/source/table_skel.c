@@ -105,23 +105,33 @@ int invoke(MessageT *msg) {
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_PRINT && msg->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
 		msg->opcode += 1;
 		msg->c_type = MESSAGE_T__C_TYPE__CT_TABLE;
-		struct entry_t **entries = malloc(sizeof(struct entry_t)*table->size + sizeof(NULL)); 
-        int k = 0;
+
+		MessageT__Entry **msg_entries;
+		msg_entries = malloc(table->nListas * sizeof(MessageT__Entry));
+		int numEntries = 0;
+		int k = 0;
         for(int i=0 ; i<table->nListas ; i++){
             if(table->list[i] != NULL){
-                int listSize = list_size(table->list[i]); 
-                char **list_entries = (char**) list_get_entrys(table->list[i]); //TODO WARNING lista de entries para lista de char*
-                for(int j=0 ; j<listSize ; j++){
-                    if(list_entries[j] != NULL){
-                        entries[k] = list_entries[j];
-                        ++k;
-                    }
-                }
+                int nEntries = list_size(table->list[i]);
+				numEntries = nEntries;
+                struct entry_t **list_entries = list_get_entrys(table->list[i]); 
+				if(nEntries > 0){
+					for(int j=0 ; j<nEntries ; j++){
+						if(list_entries[j] != NULL){
+							msg_entries[k] = malloc(sizeof(MessageT__Entry));
+							message_t__entry__init(msg_entries[k]);
+							msg_entries[k]->key = list_entries[j]->key;
+							msg_entries[k]->data.data = list_entries[j]->value->data;
+							msg_entries[k]->data.len = list_entries[j]->value->datasize;
+							k+=1;
+						}
+					
+                	}
+				}
             }
         }
-        entries[k] = NULL;
 		msg->n_entries = k;
-        msg->entries = entries;
+		msg->entries = msg_entries;
 		return 0;
 	}
 
