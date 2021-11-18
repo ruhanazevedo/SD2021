@@ -118,11 +118,15 @@ char **list_get_keys(struct list_t *list){
     struct node_t *nodesList = getNodeHead(list->nodes);
     int i = 0;
     
-    while(i < list->size){
+    for(int i=0 ; i<list->size ; i++){
+        array[i] = entry_dup(nodesList->current_entry)->key; //nodesList->current_entry->key;
+        nodesList = nodesList->child;
+    }
+    /*while(i < list->size){
         array[i] = entry_dup(nodesList->current_entry)->key; //nodesList->current_entry->key;
         ++i;
         nodesList = nodesList->child;
-    }
+    }*/
     array[list->size] = NULL;
     
     return array;

@@ -226,7 +226,7 @@ char **rtable_get_keys(struct rtable_t *rtable){
     return NULL;
 }
 
-void rtable_free_keys(char **keys){ //FALTA receber o TABLE
+void rtable_free_keys(char **keys){ 
     if(keys != NULL){
         table_free_keys(keys);
     }
@@ -248,9 +248,9 @@ void rtable_print(struct rtable_t *rtable){
             
             printf("Remote_table: {\n");
             for(int i=0 ; i<msg_received->n_entries ; i++){
-                printf("\tkey: %s\n", (char*)msg_received->entries[i]->key);
-                printf("\tdatasize: %d\n",(int) msg_received->entries[i]->data.len);
-                printf("\tdata: %s\n", (char*) msg_received->entries[i]->data.data);
+                printf("\tkey: %s,\n", (char*)msg_received->entries[i]->key);
+                printf("\tdatasize: %d,\n",(int) msg_received->entries[i]->data.len);
+                printf("\tdata: %s;\n", (char*) msg_received->entries[i]->data.data);
                 if(i+1 != msg_received->n_entries){
                     printf("\n");
                 }

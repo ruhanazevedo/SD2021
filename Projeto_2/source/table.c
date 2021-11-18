@@ -107,6 +107,7 @@ char **table_get_keys(struct table_t *table){
             char **list_keys = list_get_keys(table->list[i]); 
             for(int j=0 ; j<listSize ; j++){
                 if(list_keys[j] != NULL){
+                    printf("entrou aqui\n");
                     keys[k] =  list_keys[j];
                     ++k;
                 }
