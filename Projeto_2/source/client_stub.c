@@ -222,17 +222,16 @@ void rtable_print(struct rtable_t *rtable){
 
     msg_received = malloc(sizeof(MessageT));
     if((msg_received = network_send_receive(rtable, msg)) != NULL){
-        if(msg_received->opcode == MESSAGE_T__OPCODE__OP_PRINT){
+        if(msg_received->opcode == (MESSAGE_T__OPCODE__OP_PRINT + 1)){
+            printf("msg_received->n_entries = %d\n", msg_received->n_entries);
             printf("{\n");
-            printf("%5dtabela_remote: {", 2);
+            printf("tabela_remote: {");
             for(int i=0 ; i<msg_received->n_entries ; i++){
-                printf("%5d'key': '%s'",3,msg_received->entries[i]->key);
-                printf("%5d'data': ",3);
-                
-                printf("%5d'datasize': '%ld'",4, msg_received->entries[i]->data.len);
-                printf("%5d'data': '%s'",4, msg_received->entries[i]->data.data);
+                printf("\tkey: %s\n", (char*)msg_received->entries[i]->key);
+                printf("\tdatasize: %d\n",(int) msg_received->entries[i]->data.len);
+                printf("\tdata: %s\n", (char*) msg_received->entries[i]->data.data);
             }
-            printf("%5d}", 2);
+            printf("}");
             printf("}\n");
         }
     }
