@@ -112,12 +112,19 @@ int main(int argc, char** argv) {
 
         else if(strcmp(comparator, "getkeys") == 0){
             char **res;
+            printf("Executando comando getKeys..\n");
             if((res = rtable_get_keys(remote_table)) != NULL){
-                printf("Executando comando getKeys..\n");
+                
                 printf("keys obtidas:\n");
-                for(int i=0 ; res[i] != NULL ; i++){
-                    printf("%s\n", res[i]);
+                if(res != NULL){
+                    for(int i=0 ; res[i] != NULL ; i++){
+                        printf("%s\n", res[i]);
+                    }
                 }
+                else {
+                    printf("Não existem keys na remote_table\n");
+                }
+                
             }
             else {
                 printf("falha na execução do comando geyKeys\n");

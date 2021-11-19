@@ -114,7 +114,7 @@ char **table_get_keys(struct table_t *table){
             }
         }
     }
-    //keys[k] = NULL;
+    keys[k] = NULL;
     return keys;
 }
 
