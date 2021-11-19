@@ -80,17 +80,15 @@ Projeto_1/output/*
 *.json
 
 #Ruhan: para ignorar o que esta dentro de proto para não haver replaces das nossas maquinas locais
-Projeto_2/proto/
-Projeto_2/protobuf/
-Projeto_2/output/
+Projeto_3/proto/
+Projeto_3/protobuf/
+Projeto_3/output/
 
 
-Projeto_1/binary/
+Projeto_3/include/extra/inet.h
 
-Projeto_2/include/extra/inet.h
+Projeto_3/binary/
 
-Projeto_2/binary/
+Projeto_3/sdmessage.pb-c.h
 
-Projeto_2/sdmessage.pb-c.h
-
-Projeto_2/sdmessage.pb-c.c
+Projeto_3/sdmessage.pb-c.c

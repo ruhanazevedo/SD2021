@@ -1,0 +1,23 @@
+Olá professores, tivemos um problema pontual que nos afectou a nível de testes: 
+    No network_send_receive() observamos em debug que o valor retornado pelo message_t__unpack() estava bem (com os valores que eram supostos no opcode, c_type, etc..),
+no entanto ao fazer return desse mesmo valor, obtinhamos algo diferente no lado da função que estava a chamar o network_send_receive(), isto é, no client_stub, o valor
+que estava a chegar aparentava ser o endereço retornado pelo network_send_receive(), mas com alguns números centrais do endereço em falta, o que afectava o client_stub
+de analisar o MessageT
+
+Também não percebemos completamente o que era para estar dentro da pasta /lib, pediamos que o enunciado fosse mais claro no futuro
+
+Outro problema que nos deparamos era que ao gerar o ficheiros do .proto, o .h e o .c eram gerados em simultaneo, o que não nos permitiu separa-los nas devidas pastas,
+por esse motivo decidimos abrir uma exceção para os files gerados pelo .proto, para estarem dentro do /include
+
+criamos no makefile 2 comandos auxiliares que permitem gerar o .c e .h do proto e outro que gerava o .o, e também apaga-los quando necessário
+    make proto => Cria os files .h, .c e .o do .proto dentro de /include
+    make pclean => Apaga os files gerados pelo 'make proto'
+
+Utilizamos o inet.h, do qual esta contido dentro de /include/extra
+
+Comandos clássico makefile
+
+make clean 
+	-> Limpa o conteúdo das pastas /binary, /object e /lib
+make all
+	-> Gera os objects para a pasta /object .os executáveis para a pasta /binary e as bibliotecas para a pasta /lib
