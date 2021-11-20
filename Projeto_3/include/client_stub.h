@@ -64,5 +64,9 @@ void rtable_free_keys(char **keys);
  */
 void rtable_print(struct rtable_t *rtable);
 
+/* Obtém as estatísticas do servidor.
+ */ 
+struct statistics *rtable_stats(struct rtable_t *rtable); 
+
 
 #endif

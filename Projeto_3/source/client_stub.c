@@ -266,3 +266,7 @@ void rtable_print(struct rtable_t *rtable){
     }
 }
 
+struct statistics *rtable_stats(struct rtable_t *rtable){
+    return NULL; //TODO
+}
+
