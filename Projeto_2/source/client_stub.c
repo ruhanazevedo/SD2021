@@ -219,6 +219,9 @@ char **rtable_get_keys(struct rtable_t *rtable){
                     return NULL;
                 }
                 keys = malloc(sizeof(char)*msg_received->n_keys);
+                //     v   v   v   v   v   v   v   v   v   v   v   v   v   v   v   v   v   v   v
+                // > fazer copia das keys de msg_received para keys para poder fazer free_unpacked <
+                //     ^   ^   ^   ^   ^   ^   ^   ^   ^   ^   ^   ^   ^   ^   ^   ^   ^   ^   ^
                 
                 //printf("msg_received->n_keys = %d\n", msg_received->n_keys);
                 for(int i=0 ; i<msg_received->n_keys ; i++){

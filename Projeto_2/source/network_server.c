@@ -21,7 +21,12 @@ int network_server_init(short port) {
 		perror("Error creating socket!\n");
 		return -1;
 	}
-	
+
+	int enable = 1;
+	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0){
+    	error("setsockopt(SO_REUSEADDR) failed");
+	}
+
 	// Preenche estrutura server com endereço(s) para associar (bind) à socket
 	server.sin_family = AF_INET;
 	server.sin_port = htons(port);
