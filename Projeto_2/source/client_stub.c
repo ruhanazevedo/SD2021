@@ -149,14 +149,18 @@ int rtable_del(struct rtable_t *rtable, char *key){
         strcpy(msg->keys[0], key);
 
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
+            free(msg);
             if(msg_received->opcode == MESSAGE_T__OPCODE__OP_DEL + 1){
                 printf("chave %s apagada com sucesso.\n", key);
+                message_t__free_unpacked(msg_received, NULL);
                 return 0;
             }
             if(msg_received->opcode == MESSAGE_T__OPCODE__OP_ERROR){
+                message_t__free_unpacked(msg_received, NULL);
                 printf("chave %s não existe.\n", key);
             }
         }
+        free(msg);
         return -1;
     }
     return -1;
@@ -223,18 +227,23 @@ char **rtable_get_keys(struct rtable_t *rtable){
                     //printf("msg_received->keys[%d] = %s\n", i, msg_received->keys[i]);
                     //strcpy(keys[i], msg_received->keys[i]);
                 }
+                //message_t__free_unpacked(msg_received, NULL);
                 return keys;
             }
         }
+        free(msg);
     }
     return NULL;
 }
 
 void rtable_free_keys(char **keys){ 
+    printf("entrei no rtable_free_keys\n");
     if(keys != NULL){
-        table_free_keys(keys);
+        printf("entrei no if keys !=NULL\n");
+        free(keys);
+        //table_free_keys(keys);
     }
-    printf("[ERROR] invalid argument keys");
+    printf("[ERROR] invalid argument keys\n");
 }
 
 void rtable_print(struct rtable_t *rtable){
@@ -264,5 +273,7 @@ void rtable_print(struct rtable_t *rtable){
             printf("}\n");
         }
     }
+    free(msg);
+    message_t__free_unpacked(msg_received, NULL);
 }
 
