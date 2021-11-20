@@ -9,6 +9,7 @@
 #include "extra/inet.h"
 //#include "../include/message.h"
 #include "message.c"
+#include <pthread.h>
 
 
 int network_server_init(short port) {
@@ -50,6 +51,34 @@ int network_server_init(short port) {
 }
 
 
+void *thread_job(void *params){
+	int *aux = (int*) params;
+	int connsockfd = *aux;
+	MessageT *msg;
+
+	while((msg = network_receive(connsockfd)) != NULL){
+		printf("recebeu mensagem\n");
+		if(msg == NULL){
+			printf("msg null network_server\n");
+			//return -1;
+		}
+		
+		if (invoke(msg) == -1) {
+			printf("Error in network server invoke\n");
+			free(msg);
+			//return -1;
+		}
+			
+		if (network_send(connsockfd, msg) == -1) {
+			printf("Error in network server send\n");
+			free(msg);
+			//return -1;
+		}
+	}	
+
+}
+
+
 int network_main_loop(int listening_socket) {
 	
 	struct sockaddr_in client;
@@ -60,32 +89,23 @@ int network_main_loop(int listening_socket) {
 	printf("vou fazer accept\n");
     while ((connsockfd = accept(listening_socket, (struct sockaddr *) &client, &client_size)) != -1) {
 		//deve ter while enquanto network_receive != NULL
+		printf("connsockfd 1= %d\n", connsockfd);
+        //apos conexao => criar as threads
+		pthread_t nova;
+		int *r, res;
+		int *thread_param = malloc(sizeof(int));
+		thread_param = connsockfd;
+		printf("RH1\n");
 
-        MessageT *msg;
-
-		while((msg = network_receive(connsockfd)) != NULL){
-			printf("recebeu mensagem\n");
-			if(msg == NULL){
-				printf("msg null network_server\n");
-				return -1;
-			}
-			
-   			if (invoke(msg) == -1) {
-   				printf("Error in network server invoke\n");
-				free(msg);
-   				return -1;
-   			}
-			   
-   			if (network_send(connsockfd, msg) == -1) {
-   				printf("Error in network server send\n");
-				free(msg);
-   				return -1;
-   			}
+		if (pthread_create(&nova, NULL, &thread_job, (void *) &thread_param) != 0){
+			printf("\nThread não criada.\n");
+			exit(EXIT_FAILURE);
 		}
 
-		
+
+		printf("RH2\n");
         // Fecha socket referente a esta conexão
-		close(connsockfd);
+		//close(connsockfd);
 		//message_t__free_unpacked(msg, NULL);
     }
 	perror("morreu\n");
@@ -195,4 +215,5 @@ int network_server_close() {
 	table_skel_destroy();
 	return 0;
 }
+
 
