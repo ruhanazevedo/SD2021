@@ -13,6 +13,7 @@
 #include "../include/extra/inet.h"
 #include "../include/data-private.h"
 #include "../include/network_client.h"
+//#include "../include/stats-private.h"
 
 #define BUFFERSIZE 50
 
@@ -48,8 +49,10 @@ int main(int argc, char** argv) {
         strcat( text, (char*) buffer ); 
         char *split = strtok(text, "\n");
         char *comparator = strtok(split, " ");
+
         if(strcmp(split, "quit") == 0){
             printf("disconnecting..\n");
+            rtable_disconnect(remote_table);
             break;
         }
         
@@ -130,7 +133,33 @@ int main(int argc, char** argv) {
                 printf("falha na execução do comando geyKeys\n");
             }
         }
-
+        else if(strcmp(comparator, "stats") == 0){
+            struct statistics *stats;
+            printf("Executando comando stats..\n");
+            if((stats = rtable_stats(remote_table)) != NULL){
+                
+            }
+            else {
+                printf("falha na execução do comando stats\n");
+            }
+        }
+        else if(strcmp(comparator, "help") == 0){
+            printf("Lista de operações disponíveis:\n");
+            printf("\tput <key> <data>\n");
+            printf("\t\tInsere um conjunto de key data na tabela remota\n");
+            printf("\tsize\n");
+            printf("\t\tRetorna o tamanho da tabela remota\n");
+            printf("\tdel <key>\n");
+            printf("\t\tApaga a key <key> da tabela remota\n");
+            printf("\tget <key>\n");
+            printf("\t\tRetorna o data pertencente à key <key> da tabela remota\n");
+            printf("\tgetkeys\n");
+            printf("\t\tRetorna todas as keys existentes na tabela remota\n");
+            printf("\ttale_print\n");
+            printf("\t\timprime tabela remota\n");
+            printf("\tquit\n");
+            printf("\t\tTermina a conexão com o servidor\n");
+        }
         else if(strcmp(split, "size") == 0){
             printf("Executando comando size..\n");
             int res = -99;
@@ -142,7 +171,7 @@ int main(int argc, char** argv) {
             }
         }
         else {
-            printf("Comando não reconhecido\n");
+            printf("Comando não reconhecido\nexperimente usar o comando help para listar as operações disponíveis da tabela remota\n");
             
         }
         free(text);

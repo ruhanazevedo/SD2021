@@ -25,6 +25,7 @@ message message_t
                 CT_RESULT = 50;
                 CT_TABLE  = 60;
                 CT_NONE   = 70;
+                CT_STATS  = 80;
         }
         C_type c_type = 2;
 

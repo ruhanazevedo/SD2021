@@ -25,7 +25,7 @@ int network_server_init(short port) {
 
 	int enable = 1;
 	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0){
-    	error("setsockopt(SO_REUSEADDR) failed");
+    	perror("setsockopt(SO_REUSEADDR) failed");
 	}
 	
 	// Preenche estrutura server com endereço(s) para associar (bind) à socket
@@ -93,11 +93,11 @@ int network_main_loop(int listening_socket) {
         //apos conexao => criar as threads
 		pthread_t nova;
 		int *r, res;
-		int *thread_param = malloc(sizeof(int));
-		thread_param = connsockfd;
+		//int *thread_param = malloc(sizeof(int));
+		//thread_param = connsockfd;
 		printf("RH1\n");
 
-		if (pthread_create(&nova, NULL, &thread_job, (void *) &thread_param) != 0){
+		if (pthread_create(&nova, NULL, &thread_job, (void *) &connsockfd) != 0){
 			printf("\nThread não criada.\n");
 			exit(EXIT_FAILURE);
 		}

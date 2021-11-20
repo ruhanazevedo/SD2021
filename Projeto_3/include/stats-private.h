@@ -9,7 +9,7 @@
 #define _STATS_PRIVATE_H
 
 
-struct stats_t{
+struct statistics{
     int n_put;
     int n_get;
     int n_del;

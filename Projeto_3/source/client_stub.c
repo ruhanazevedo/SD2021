@@ -180,7 +180,7 @@ int rtable_size(struct rtable_t *rtable){
             free(msg);
             //printf("fez unpack e retornou mensagem %d\n", msg_received->opcode);
             
-            if(msg_received->opcode == 11){
+            if(msg_received->opcode == MESSAGE_T__OPCODE__OP_SIZE + 1){
                 //printf("recebeu mensagem %d\n", msg_received->opcode);
                 int result = msg_received->result;
                 message_t__free_unpacked(msg_received, NULL);
@@ -267,6 +267,34 @@ void rtable_print(struct rtable_t *rtable){
 }
 
 struct statistics *rtable_stats(struct rtable_t *rtable){
-    return NULL; //TODO
+    MessageT *msg, *msg_received;
+    struct statistics *statistics;
+    msg = malloc(sizeof(MessageT));
+    message_t__init(msg); 
+    
+    msg->opcode = MESSAGE_T__OPCODE__OP_STATS;
+    msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
+    
+    if((msg_received = network_send_receive(rtable, msg)) != NULL){
+        free(msg);
+        if(msg_received->opcode == (MESSAGE_T__OPCODE__OP_STATS + 1)){
+            statistics = malloc(sizeof(struct statistics));
+            statistics->n_put = msg_received->stats[0];
+            statistics->n_get = msg_received->stats[1];
+            statistics->n_del = msg_received->stats[2];
+            statistics->n_size = msg_received->stats[3];
+            statistics->n_getkeys = msg_received->stats[4];
+            statistics->n_table_print = msg_received->stats[5];
+            statistics->avg_time = msg_received->stats[6];
+            message_t__free_unpacked(msg_received, NULL);
+            return statistics;
+        }
+    }
+    else{
+        free(msg);
+        return NULL; //TODO
+    }
+    
+    
 }
 
