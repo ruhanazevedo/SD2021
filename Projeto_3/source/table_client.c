@@ -50,7 +50,10 @@ int main(int argc, char** argv) {
         char *split = strtok(text, "\n");
         char *comparator = strtok(split, " ");
 
-        if(strcmp(split, "quit") == 0){
+        if(strcmp(text, "\n")== 0){
+            printf("Comando não reconhecido\nexperimente usar o comando help para listar as operações disponíveis da tabela remota\n");
+        }
+        else if(strcmp(split, "quit") == 0){
             printf("disconnecting..\n");
             rtable_disconnect(remote_table);
             break;
@@ -118,10 +121,15 @@ int main(int argc, char** argv) {
             printf("Executando comando getKeys..\n");
             if((res = rtable_get_keys(remote_table)) != NULL){
                 
-                printf("keys obtidas:\n");
                 if(res != NULL){
-                    for(int i=0 ; res[i] != NULL ; i++){
-                        printf("%s\n", res[i]);
+                    if(res[0] == NULL){
+                        printf("Não existem keys na remote_table\n");
+                    }
+                    else{
+                        printf("keys obtidas:\n");
+                        for(int i=0 ; res[i] != NULL ; i++){
+                            printf("%s\n", res[i]);
+                        }
                     }
                 }
                 else {
@@ -130,7 +138,7 @@ int main(int argc, char** argv) {
                 
             }
             else {
-                printf("falha na execução do comando geyKeys\n");
+                printf("falha na execução do comando getKeys\n");
             }
         }
         else if(strcmp(comparator, "stats") == 0){

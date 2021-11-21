@@ -118,13 +118,14 @@ int invoke(MessageT *msg) {
 		pthread_mutex_lock(&m_table);
 		printf("menssagem recebida\n");
 		printf("key %s\n", msg->entries[0]->key);
+		sleep((rand() % 5) + 1); /* Simular demora no tempo de processamento */ //TIRAR DEPOIS
+
 		printf("datasize %ld\n", msg->entries[0]->data.len);
 		printf("data %s\n", msg->entries[0]->data.data);
 		if ((table_put(table, msg->entries[0]->key, data_create2(msg->entries[0]->data.len, msg->entries[0]->data.data))) == 0) {
 			table_print(table);
 			msg->opcode += 1;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
-			printf("chegou ate o unlock\n");
 			pthread_mutex_unlock(&m_table);
 			pthread_mutex_lock(&m_stats);
 			stats->n_put +=1;
@@ -133,7 +134,6 @@ int invoke(MessageT *msg) {
 		} else {
 			msg->opcode = MESSAGE_T__OPCODE__OP_ERROR;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
-			printf("chegou ate o unlock\n");
 			pthread_mutex_unlock(&m_table);
 			return 0;
 		}
@@ -221,12 +221,9 @@ int invoke(MessageT *msg) {
 
 void setStatsAVGTime(clock_t time){
 	float seconds = ((float)clock()-time)/ CLOCKS_PER_SEC;
-	printf("seconds = %f\n", seconds);
-	printf("antes stats->avg_time = %f\n", stats->avg_time);
 	int n_total = stats->n_del + stats->n_get + stats->n_getkeys + stats->n_put + stats->n_size + stats->n_table_print;
 	float current_avg_time = stats->avg_time;
-	printf("current_avg_time = %f\n", current_avg_time);
+	pthread_mutex_lock(&m_stats);
 	stats->avg_time = (current_avg_time * ((float)(n_total-1)) + seconds) / n_total;
-	//printf();
-	printf("depois stats->avg_time = %f\n", stats->avg_time);
+	pthread_mutex_unlock(&m_stats);
 }
