@@ -285,7 +285,8 @@ struct statistics *rtable_stats(struct rtable_t *rtable){
             statistics->n_size = msg_received->stats[3];
             statistics->n_getkeys = msg_received->stats[4];
             statistics->n_table_print = msg_received->stats[5];
-            statistics->avg_time = msg_received->stats[6];
+            statistics->avg_time = msg_received->avg_time;
+            printf("statistics->avg_time = %f\n", statistics->avg_time);
             message_t__free_unpacked(msg_received, NULL);
             return statistics;
         }

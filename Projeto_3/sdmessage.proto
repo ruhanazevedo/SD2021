@@ -39,4 +39,5 @@ message message_t
          }
         repeated Entry entries = 6;
         repeated int32 stats = 7;
+        float avg_time = 8;
 };

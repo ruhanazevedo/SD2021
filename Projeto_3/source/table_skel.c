@@ -10,12 +10,17 @@
 #include "../include/table-private.h"
 #include "../include/message.h"
 #include "../include/list-private.h"
+#include "../include/stats-private.h"
+#include "../include/table_skel-private.h"
 #include <stddef.h> //NULLS
 #include <stdio.h>
 #include <pthread.h>
 
+
 struct table_t *table;
-pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t m_table = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t m_stats = PTHREAD_MUTEX_INITIALIZER;
+struct statistics *stats;
 
 int table_skel_init(int n_lists) {
 
@@ -24,6 +29,15 @@ int table_skel_init(int n_lists) {
 	if (table == NULL) {
 		return -1;
 	}
+
+	stats = malloc(sizeof(struct statistics));
+	stats->avg_time = 0;
+	stats->n_del = 0;
+	stats->n_get = 0;
+	stats->n_getkeys = 0;
+	stats->n_put = 0;
+	stats->n_size = 0;
+	stats->n_table_print = 0;
 
 	return 0;
 }
@@ -45,21 +59,32 @@ int invoke(MessageT *msg) {
 		msg->opcode += 1;
 		msg->c_type = MESSAGE_T__C_TYPE__CT_RESULT;
 		msg->result = table_size(table);
+
+		pthread_mutex_lock(&m_stats);
+
+		stats->n_size +=1;
+
+		pthread_mutex_unlock(&m_stats);
+
 		return 0;
 	}
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_DEL && msg->c_type == MESSAGE_T__C_TYPE__CT_KEY) {
-		pthread_mutex_lock(&m);
+		pthread_mutex_lock(&m_table);
 		msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 		printf("key: %s\n", msg->keys[0]);
 		printf("vou entrar no table_del\n");
 		if ((table_del(table, msg->keys[0])) == 0) {
 			msg->opcode += 1;
-			pthread_mutex_unlock(&m);
+			pthread_mutex_unlock(&m_table);
+			
+			pthread_mutex_lock(&m_stats);
+			stats->n_del +=1;
+			pthread_mutex_unlock(&m_stats);
 			return 0;
 		} else {
 			msg->opcode = MESSAGE_T__OPCODE__OP_ERROR;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
-			pthread_mutex_unlock(&m);
+			pthread_mutex_unlock(&m_table);
 			return 0;
 		}
 		
@@ -72,19 +97,25 @@ int invoke(MessageT *msg) {
 			msg->c_type = MESSAGE_T__C_TYPE__CT_VALUE;
 			msg->data.data = NULL;
 			msg->data.len = 0;
+			pthread_mutex_lock(&m_stats);
+			stats->n_get +=1;
+			pthread_mutex_unlock(&m_stats);
 			return 0;
 		} else {
 			msg->opcode += 1;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_VALUE;
 			msg->data.data = data->data;
 			msg->data.len = data->datasize;
+			pthread_mutex_lock(&m_stats);
+			stats->n_get +=1;
+			pthread_mutex_unlock(&m_stats);
 			return 0;
 
 		}
 	} 
 
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_PUT && msg->c_type == MESSAGE_T__C_TYPE__CT_ENTRY) {
-		pthread_mutex_lock(&m);
+		pthread_mutex_lock(&m_table);
 		printf("menssagem recebida\n");
 		printf("key %s\n", msg->entries[0]->key);
 		printf("datasize %ld\n", msg->entries[0]->data.len);
@@ -94,13 +125,16 @@ int invoke(MessageT *msg) {
 			msg->opcode += 1;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 			printf("chegou ate o unlock\n");
-			pthread_mutex_unlock(&m);
+			pthread_mutex_unlock(&m_table);
+			pthread_mutex_lock(&m_stats);
+			stats->n_put +=1;
+			pthread_mutex_unlock(&m_stats);
 			return 0;
 		} else {
 			msg->opcode = MESSAGE_T__OPCODE__OP_ERROR;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 			printf("chegou ate o unlock\n");
-			pthread_mutex_unlock(&m);
+			pthread_mutex_unlock(&m_table);
 			return 0;
 		}
 		
@@ -128,6 +162,9 @@ int invoke(MessageT *msg) {
         }
 		
 		msg->n_keys = k;
+		pthread_mutex_lock(&m_stats);
+		stats->n_getkeys +=1;
+		pthread_mutex_unlock(&m_stats);
 		return 0;
 	} 
 
@@ -159,14 +196,37 @@ int invoke(MessageT *msg) {
         }
 		msg->n_entries = k;
 		msg->entries = msg_entries;
+		pthread_mutex_lock(&m_stats);
+		stats->n_table_print +=1;
+		pthread_mutex_unlock(&m_stats);
 		return 0;
 	}
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_STATS && msg->c_type == MESSAGE_T__C_TYPE__CT_NONE) {
 		msg->opcode += 1;
 		msg->c_type = MESSAGE_T__C_TYPE__CT_STATS;
-		//TODO
+		msg->n_stats = 6;
+		msg->stats = malloc(6*sizeof(int));
+		msg->stats[0] = stats->n_put;
+		msg->stats[1] = stats->n_get;
+		msg->stats[2] = stats->n_del;
+		msg->stats[3] = stats->n_size;
+		msg->stats[4] = stats->n_getkeys;
+		msg->stats[5] = stats->n_table_print;
+		msg->avg_time = stats->avg_time;
+		return 0;
 	}
 
 	return -1;
 }
 
+void setStatsAVGTime(clock_t time){
+	float seconds = ((float)clock()-time)/ CLOCKS_PER_SEC;
+	printf("seconds = %f\n", seconds);
+	printf("antes stats->avg_time = %f\n", stats->avg_time);
+	int n_total = stats->n_del + stats->n_get + stats->n_getkeys + stats->n_put + stats->n_size + stats->n_table_print;
+	float current_avg_time = stats->avg_time;
+	printf("current_avg_time = %f\n", current_avg_time);
+	stats->avg_time = (current_avg_time * ((float)(n_total-1)) + seconds) / n_total;
+	//printf();
+	printf("depois stats->avg_time = %f\n", stats->avg_time);
+}

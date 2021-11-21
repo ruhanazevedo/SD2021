@@ -16,7 +16,7 @@ struct statistics{
     int n_size;
     int n_getkeys;
     int n_table_print;
-    int avg_time;
+    float avg_time;
     };
 
 #endif

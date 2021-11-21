@@ -137,7 +137,14 @@ int main(int argc, char** argv) {
             struct statistics *stats;
             printf("Executando comando stats..\n");
             if((stats = rtable_stats(remote_table)) != NULL){
-                
+                printf("Estatística da tabela remota:\n");
+                printf("\tNúmero de vezes que o comando put foi realizado: %d\n", stats->n_put);
+                printf("\tNúmero de vezes que o comando get foi realizado: %d\n", stats->n_get);
+                printf("\tNúmero de vezes que o comando del foi realizado: %d\n", stats->n_del);
+                printf("\tNúmero de vezes que o comando size foi realizado: %d\n", stats->n_size);
+                printf("\tNúmero de vezes que o comando getkeys foi realizado: %d\n", stats->n_getkeys);
+                printf("\tNúmero de vezes que o comando table_print foi realizado: %d\n", stats->n_table_print);
+                printf("\tTempo média de execução de todas as operações na tabela remota: %f\n", stats->avg_time);
             }
             else {
                 printf("falha na execução do comando stats\n");

@@ -10,6 +10,7 @@
 //#include "../include/message.h"
 #include "message.c"
 #include <pthread.h>
+#include "time.h"
 
 
 int network_server_init(short port) {
@@ -57,6 +58,8 @@ void *thread_job(void *params){
 	MessageT *msg;
 
 	while((msg = network_receive(connsockfd)) != NULL){
+		clock_t t;
+		t = clock();
 		printf("recebeu mensagem\n");
 		if(msg == NULL){
 			printf("msg null network_server\n");
@@ -74,6 +77,13 @@ void *thread_job(void *params){
 			free(msg);
 			//return -1;
 		}
+		printf("MESSAGE_T__OPCODE__OP_STATS = %d\n", msg->opcode);
+		if((msg->opcode != MESSAGE_T__OPCODE__OP_STATS+1) || (msg->opcode == MESSAGE_T__OPCODE__OP_ERROR)){
+			
+			setStatsAVGTime(t);
+			//printf("sec = %f\n", seconds);
+		}
+		
 	}	
 
 }
