@@ -285,6 +285,7 @@ struct statistics *rtable_stats(struct rtable_t *rtable){
             message_t__free_unpacked(msg_received, NULL);
             return statistics;
         }
+        return NULL;
     }
     else{
         free(msg);

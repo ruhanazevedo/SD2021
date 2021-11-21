@@ -85,7 +85,7 @@ void *thread_job(void *params){
 		}
 		
 	}	
-
+	return NULL;
 }
 
 
@@ -111,7 +111,9 @@ int network_main_loop(int listening_socket) {
 			printf("\nThread não criada.\n");
 			exit(EXIT_FAILURE);
 		}
-
+		if (pthread_detach(nova) != 0){
+			printf("\nErro no thread_detach.\n");
+		}
 
 		printf("RH2\n");
         // Fecha socket referente a esta conexão
