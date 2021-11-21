@@ -211,12 +211,18 @@ char **rtable_get_keys(struct rtable_t *rtable){
 
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
             if(msg_received->c_type == MESSAGE_T__C_TYPE__CT_KEYS){
-                keys = malloc(sizeof(char)*msg_received->n_keys);
+                //keys = malloc(sizeof(char)*(msg_received->n_keys+1));
+                keys = calloc((msg_received->n_keys+1), sizeof(char));
                 if(msg_received->n_keys == 0){
                     return keys;
                 }
-                for(int i=0 ; i<msg_received->n_keys ; i++){
-                    keys[i] = msg_received->keys[i];
+                keys[0] = calloc(1, sizeof(char));
+                keys[0] = msg_received->n_keys;
+                for(int i=1 ; i<(msg_received->n_keys+1) ; i++){
+                    keys[i] = calloc(1, sizeof(char));
+                    keys[i] = msg_received->keys[i-1];
+                    //keys[i] = malloc(sizeof(char)*strlen(msg_received->keys[i]));
+                    
                 }
                 return keys;
             }

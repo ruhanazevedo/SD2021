@@ -118,7 +118,7 @@ int invoke(MessageT *msg) {
 		pthread_mutex_lock(&m_table);
 		printf("menssagem recebida\n");
 		printf("key %s\n", msg->entries[0]->key);
-		sleep((rand() % 5) + 1); /* Simular demora no tempo de processamento */ //TIRAR DEPOIS
+		//sleep((rand() % 5) + 1); /* Simular demora no tempo de processamento */ //TIRAR DEPOIS
 
 		printf("datasize %ld\n", msg->entries[0]->data.len);
 		printf("data %s\n", msg->entries[0]->data.data);

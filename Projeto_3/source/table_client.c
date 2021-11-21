@@ -15,6 +15,7 @@
 #include "../include/network_client.h"
 //#include "../include/stats-private.h"
 
+
 #define BUFFERSIZE 50
 
 int testInput(int argc){
@@ -127,7 +128,11 @@ int main(int argc, char** argv) {
                     }
                     else{
                         printf("keys obtidas:\n");
-                        for(int i=0 ; res[i] != NULL ; i++){
+                        //printf("length = %d\n", strlen(res));
+                        int size_res = res[0]; 
+                        //printf("size_res = %d\n", size_res);
+                        for(int i=1 ; i<size_res+1  ; i++){
+                            //printf("i = %d\n", i );
                             printf("%s\n", res[i]);
                         }
                     }
