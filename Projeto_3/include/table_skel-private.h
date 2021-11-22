@@ -10,6 +10,9 @@
 
 #include "time.h"
 
+/*
+ * Altera o average time contido no stats
+ */
 void setStatsAVGTime(clock_t time);
 
 #endif

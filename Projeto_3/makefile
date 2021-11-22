@@ -14,8 +14,8 @@ PROTO_DIR = proto/
 LIB = lib/
 
 
-all : data.o entry.o list.o table.o serialization.o client_stub.o network_client.o client-lib.o table_client.o table_skel.o network_server.o server-lib.o table_server.o table_client table_server
-proto: proto.h-c proto.h-c.o 
+all : data.o entry.o list.o table.o serialization.o proto.h-c.o client_stub.o network_client.o client-lib.o table_client.o table_skel.o network_server.o server-lib.o table_server.o table_client table_server
+proto: proto.h-c 
 
 
 data.o: $(INCLUDE)data.h
@@ -32,13 +32,12 @@ table.o: $(INCLUDE)table-private.h $(INCLUDE)table.h $(INCLUDE)data.h $(INCLUDE)
 
 serialization.o: $(INCLUDE)data.h $(INCLUDE)entry.h $(INCLUDE)serialization.h
 	$(FLAG) $(SRC)serialization.c -o $(OBJ)serialization.o
-		
 
 proto.h-c:
 	protoc --c_out=./$(INCLUDE) sdmessage.proto
 
 proto.h-c.o: 
-	$(FLAG) -c $(INCLUDE)sdmessage.pb-c.c -o $(INCLUDE)sdmessage.pb-c.o
+	$(FLAG) -c $(SRC)sdmessage.pb-c.c -o $(OBJ)sdmessage.pb-c.o
 
 
 client_stub.o: $(INCLUDE)client_stub.h
@@ -68,11 +67,11 @@ table_server.o: $(SRC)table_server.c $(INCLUDE)network_server.h $(INCLUDE)table_
 	$(FLAG) $(SRC)table_server.c -o $(OBJ)table_server.o
 
 
-table_client: $(LIB)client-lib.o $(OBJ)table_client.o $(INCLUDE)sdmessage.pb-c.o
-	$(CC) -g $(LIB)client-lib.o $(OBJ)table_client.o $(INCLUDE)sdmessage.pb-c.o -I$(INCLUDE) -L/usr/local/lib/ -lprotobuf-c -o $(BIN)table_client
+table_client: $(LIB)client-lib.o $(OBJ)table_client.o $(OBJ)sdmessage.pb-c.o
+	$(CC) -g $(LIB)client-lib.o $(OBJ)table_client.o $(OBJ)sdmessage.pb-c.o -I$(INCLUDE) -L/usr/local/lib/ -lprotobuf-c -o $(BIN)table_client
 
-table_server: $(LIB)server-lib.o $(OBJ)table_server.o $(INCLUDE)sdmessage.pb-c.o 
-	$(CC) -pthread -g $(LIB)server-lib.o $(OBJ)table_server.o $(INCLUDE)sdmessage.pb-c.o -I$(INCLUDE) -L/usr/local/lib/ -lprotobuf-c -o $(BIN)table_server 
+table_server: $(LIB)server-lib.o $(OBJ)table_server.o $(OBJ)sdmessage.pb-c.o 
+	$(CC) -pthread -g $(LIB)server-lib.o $(OBJ)table_server.o $(OBJ)sdmessage.pb-c.o -I$(INCLUDE) -L/usr/local/lib/ -lprotobuf-c -o $(BIN)table_server 
 
 # delete proto file dependencies
 pclean:
