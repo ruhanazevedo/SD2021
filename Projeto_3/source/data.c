@@ -80,6 +80,6 @@ void data_print(struct data_t *data){
         return;
     }
     else {
-        printf("data_t[ datasize: %d, data: %p]", data->datasize, data->data);
+        printf("data_t[ datasize: %d, data: %s]", data->datasize, (char*)data->data);
     }
 }

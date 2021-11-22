@@ -5,6 +5,7 @@
 ***************************/
 
 #include "../include/table_skel.h"
+#include "../include/table_skel-private.h"
 #include "network_server.h"
 #include "extra/inet.h"
 //#include "../include/message.h"
@@ -102,7 +103,6 @@ int network_main_loop(int listening_socket) {
 		printf("connsockfd 1= %d\n", connsockfd);
         //apos conexao => criar as threads
 		pthread_t nova;
-		int *r, res;
 		//int *thread_param = malloc(sizeof(int));
 		//thread_param = connsockfd;
 		printf("RH1\n");

@@ -13,6 +13,7 @@
 #include "../include/extra/inet.h"
 #include "../include/data-private.h"
 #include "../include/network_client.h"
+//#include <iostream>
 //#include "../include/stats-private.h"
 
 
@@ -33,7 +34,7 @@ int main(int argc, char** argv) {
 
     if(testInput(argc) < 0) return -1;
 
-    printf("trying to reach %s\n", argv[1]);
+    printf("connecting to %s..\n", argv[1]);
     
     if((remote_table = rtable_connect(argv[1])) == NULL){
         return -1;
@@ -131,9 +132,8 @@ int main(int argc, char** argv) {
                     }
                     else{
                         printf("keys obtidas:\n");
-                        //printf("length = %d\n", strlen(res));
-                        int size_res = res[0]; 
-                        //printf("size_res = %d\n", size_res);
+                        int size_res = (size_t) res[0];//strtol(res[0], aux, 10);
+                        printf("size_res = %d\n",size_res);
                         for(int i=1 ; i<size_res+1  ; i++){
                             //printf("i = %d\n", i );
                             printf("%s\n", res[i]);
@@ -178,8 +178,10 @@ int main(int argc, char** argv) {
             printf("\t\tRetorna o data pertencente à key <key> da tabela remota\n");
             printf("\tgetkeys\n");
             printf("\t\tRetorna todas as keys existentes na tabela remota\n");
-            printf("\ttale_print\n");
+            printf("\ttable_print\n");
             printf("\t\timprime tabela remota\n");
+            printf("\tstats\n");
+            printf("\t\tEstatísticas da tabela remota\n");
             printf("\tquit\n");
             printf("\t\tTermina a conexão com o servidor\n");
         }

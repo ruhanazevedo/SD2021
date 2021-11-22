@@ -3,6 +3,7 @@
 * 46670 - Tiago Lourenço  *
 * 51779 - Ruhan Azevedo   *
 ***************************/
+
 #include "../include/network_client.h"
 #include "../include/client_stub-private.h"
 #include "../include/sdmessage.pb-c.h"
@@ -14,8 +15,6 @@
 #include "serialization.c"
 #include "table.c"
 #include "../include/extra/inet.h"
-
-//MessageT *msg_received;
 
 struct rtable_t *rtable_connect(const char *address_port){
     struct rtable_t *remote_table = malloc(sizeof(struct rtable_t));
@@ -85,7 +84,6 @@ int rtable_put(struct rtable_t *rtable, struct entry_t *entry){
     
 
     if((msg_received = network_send_receive(rtable, msg))!= NULL){
-        //printf("recebeu mensagem %d\n", msg_received->opcode);
         free(msg);
         free(entry_tmp);
         message_t__free_unpacked(msg_received, NULL);
@@ -112,17 +110,13 @@ struct data_t *rtable_get(struct rtable_t *rtable, char *key){
         strcpy(msg->keys[0], key);     
         msg_received = malloc(sizeof(MessageT));
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
-            printf("saiu do network_send_receive\n");
             free(msg);
             if(msg_received->data.len != 0){
-                printf("entrou no if data existe\n");
                 data = data_create(msg_received->data.len);
                 memcpy(data->data, msg_received->data.data, msg_received->data.len);
             }
             else{
-                printf("entrou no else\n");
                 data = data_create(0);
-                printf("data: %p\n", data);
             }
             message_t__free_unpacked(msg_received, NULL);
             return data;
@@ -170,21 +164,12 @@ int rtable_size(struct rtable_t *rtable){
         message_t__init(msg); 
         msg->opcode = MESSAGE_T__OPCODE__OP_SIZE;
         msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
-
-        //msg_received = malloc(sizeof(MessageT));
-        //printf("vou chamar network_send_receive\n");
-        //MessageT *msg_received = network_send_receive(rtable, msg);
-        //printf("endereço da resposta em client_stub %p\n", msg_received);
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
-            //printf("saiu do network_send_receive\n");
             free(msg);
-            //printf("fez unpack e retornou mensagem %d\n", msg_received->opcode);
             
             if(msg_received->opcode == MESSAGE_T__OPCODE__OP_SIZE + 1){
-                //printf("recebeu mensagem %d\n", msg_received->opcode);
                 int result = msg_received->result;
                 message_t__free_unpacked(msg_received, NULL);
-                //passar result para variavel para poder fazer free ao msg_received
                 return result;
             }
             
@@ -211,18 +196,16 @@ char **rtable_get_keys(struct rtable_t *rtable){
 
         if((msg_received = network_send_receive(rtable, msg)) != NULL){
             if(msg_received->c_type == MESSAGE_T__C_TYPE__CT_KEYS){
-                //keys = malloc(sizeof(char)*(msg_received->n_keys+1));
                 keys = calloc((msg_received->n_keys+1), sizeof(char));
                 if(msg_received->n_keys == 0){
                     return keys;
                 }
-                keys[0] = calloc(1, sizeof(char));
-                keys[0] = msg_received->n_keys;
+                keys[0] = calloc(1, sizeof(char)); 
+                //sprintf(keys[0], "%ld", msg_received->n_keys); 
+                keys[0] = (char*) msg_received->n_keys;
                 for(int i=1 ; i<(msg_received->n_keys+1) ; i++){
                     keys[i] = calloc(1, sizeof(char));
                     keys[i] = msg_received->keys[i-1];
-                    //keys[i] = malloc(sizeof(char)*strlen(msg_received->keys[i]));
-                    
                 }
                 return keys;
             }
@@ -249,7 +232,6 @@ void rtable_print(struct rtable_t *rtable){
     msg_received = malloc(sizeof(MessageT));
     if((msg_received = network_send_receive(rtable, msg)) != NULL){
         if(msg_received->opcode == (MESSAGE_T__OPCODE__OP_PRINT + 1)){
-            printf("msg_received->n_entries = %d\n", msg_received->n_entries);
             
             printf("remote_table: {\n");
             for(int i=0 ; i<msg_received->n_entries ; i++){
@@ -287,7 +269,6 @@ struct statistics *rtable_stats(struct rtable_t *rtable){
             statistics->n_getkeys = msg_received->stats[4];
             statistics->n_table_print = msg_received->stats[5];
             statistics->avg_time = msg_received->avg_time;
-            printf("statistics->avg_time = %f\n", statistics->avg_time);
             message_t__free_unpacked(msg_received, NULL);
             return statistics;
         }

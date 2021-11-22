@@ -116,7 +116,6 @@ char **list_get_keys(struct list_t *list){
 
     char **array = malloc(sizeof(char)*(list->size)+1);
     struct node_t *nodesList = getNodeHead(list->nodes);
-    int i = 0;
     
     for(int i=0 ; i<list->size ; i++){
         array[i] = entry_dup(nodesList->current_entry)->key; //nodesList->current_entry->key;
@@ -244,17 +243,11 @@ struct entry_t **list_get_entrys(struct list_t *list){
 
     struct entry_t **array = malloc(sizeof(struct entry_t)*(list->size)+1);
     struct node_t *nodesList = getNodeHead(list->nodes);
-    int i = 0;
     
     for(int i=0 ; i<list->size ; i++){
         array[i] = entry_dup(nodesList->current_entry); //nodesList->current_entry->key;
         nodesList = nodesList->child;
     }
-    /*while(i < list->size){
-        array[i] = entry_dup(nodesList->current_entry); //nodesList->current_entry->key;
-        ++i;
-        nodesList = nodesList->child;
-    }*/
     array[list->size] = NULL;
     
     return array;

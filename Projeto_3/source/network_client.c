@@ -74,9 +74,6 @@ MessageT *network_send_receive(struct rtable_t * rtable,
 
     free(bufAux);
 
-    //printf("endereço da resposta em network_client %p\n", res);
-    //printf("fez unpack e retornou mensagem %d\n", res->opcode);
-    printf("res->n_entries = %d\n", res->n_entries);
     if(res == NULL){
         printf("error unpacking message\n");
         return NULL;
