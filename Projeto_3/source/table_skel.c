@@ -5,7 +5,6 @@
 ***************************/
 
 #include "../include/sdmessage.pb-c.h"
-//#include "table.c"
 #include "../include/table_skel.h"
 #include "../include/table-private.h"
 #include "../include/message.h"
@@ -71,8 +70,6 @@ int invoke(MessageT *msg) {
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_DEL && msg->c_type == MESSAGE_T__C_TYPE__CT_KEY) {
 		pthread_mutex_lock(&m_table);
 		msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
-		printf("key: %s\n", msg->keys[0]);
-		printf("vou entrar no table_del\n");
 		if ((table_del(table, msg->keys[0])) == 0) {
 			msg->opcode += 1;
 			pthread_mutex_unlock(&m_table);
@@ -115,15 +112,10 @@ int invoke(MessageT *msg) {
 	} 
 
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_PUT && msg->c_type == MESSAGE_T__C_TYPE__CT_ENTRY) {
+		
 		pthread_mutex_lock(&m_table);
-		printf("menssagem recebida\n");
-		printf("key %s\n", msg->entries[0]->key);
-		//sleep((rand() % 5) + 1); /* Simular demora no tempo de processamento */ //TIRAR DEPOIS
 
-		printf("datasize %ld\n", msg->entries[0]->data.len);
-		printf("data %s\n", msg->entries[0]->data.data);
 		if ((table_put(table, msg->entries[0]->key, data_create2(msg->entries[0]->data.len, msg->entries[0]->data.data))) == 0) {
-			table_print(table);
 			msg->opcode += 1;
 			msg->c_type = MESSAGE_T__C_TYPE__CT_NONE;
 			pthread_mutex_unlock(&m_table);

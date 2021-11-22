@@ -13,7 +13,6 @@
 #include "../include/extra/inet.h"
 #include "../include/data-private.h"
 #include "../include/network_client.h"
-//#include <iostream>
 //#include "../include/stats-private.h"
 
 
@@ -73,10 +72,9 @@ int main(int argc, char** argv) {
             int datasize = strlen(argData) + 1;
             struct data_t *data = data_create2(datasize, argData);
             struct entry_t *entry = entry_create(argKey, data);
-            data_print(entry->value);
             int res = -99;
             if((res = rtable_put(remote_table, entry)) == 0){
-                printf("Inserindo conjunto {key: %s, value:%s na tabela}\n", argKey, argData);
+                printf("Inserindo conjunto {key: %s, value:%s} na tabela\n", argKey, argData);
             }
             else{
                 printf("falha na execução do comando put\n");
@@ -133,9 +131,7 @@ int main(int argc, char** argv) {
                     else{
                         printf("keys obtidas:\n");
                         int size_res = (size_t) res[0];//strtol(res[0], aux, 10);
-                        printf("size_res = %d\n",size_res);
                         for(int i=1 ; i<size_res+1  ; i++){
-                            //printf("i = %d\n", i );
                             printf("%s\n", res[i]);
                         }
                     }
@@ -160,7 +156,7 @@ int main(int argc, char** argv) {
                 printf("\tNúmero de vezes que o comando size foi realizado: %d\n", stats->n_size);
                 printf("\tNúmero de vezes que o comando getkeys foi realizado: %d\n", stats->n_getkeys);
                 printf("\tNúmero de vezes que o comando table_print foi realizado: %d\n", stats->n_table_print);
-                printf("\tTempo média de execução de todas as operações na tabela remota: %f\n", stats->avg_time);
+                printf("\tTempo médio de execução de todas as operações na tabela remota: %f\n", stats->avg_time);
             }
             else {
                 printf("falha na execução do comando stats\n");

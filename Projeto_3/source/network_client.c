@@ -29,7 +29,6 @@ MessageT *network_send_receive(struct rtable_t * rtable,
     int nbytes, msgsize, msgsizeAux;
     
     int len = message_t__get_packed_size(msg);
-    printf("tamanho de MessageT: %d\n", len);
     unsigned char *buf, *bufAux;
     buf = malloc(len);
     

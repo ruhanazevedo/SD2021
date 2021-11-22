@@ -81,7 +81,7 @@ int list_remove(struct list_t *list, char *key){
         return 0;
     }
     else {
-        printf("[ERROR] key not found in the node's list\n");
+        //printf("[ERROR] key not found in the node's list\n");
         return -1;
     }
 }
@@ -92,7 +92,7 @@ struct entry_t *list_get(struct list_t *list, char *key){
         return node->current_entry;
     }
     else {
-        printf("[ERROR] key not found in the node's list\n");
+        //printf("[ERROR] key not found in the node's list\n");
         return NULL;
     }    
 }

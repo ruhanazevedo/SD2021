@@ -70,7 +70,6 @@ struct data_t *table_get(struct table_t *table, char *key){
 }
 
 int table_del(struct table_t *table, char *key){
-    printf("entrou no table_del\n");
     if(table == NULL || key == NULL || strcmp(key, "") == 0){
         printf("[ERROR] Unexpected NULL argument\n");
         return -1;
@@ -107,7 +106,6 @@ char **table_get_keys(struct table_t *table){
             char **list_keys = list_get_keys(table->list[i]); 
             for(int j=0 ; j<listSize ; j++){
                 if(list_keys[j] != NULL){
-                    printf("entrou aqui\n");
                     keys[k] =  list_keys[j];
                     ++k;
                 }

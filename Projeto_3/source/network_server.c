@@ -8,7 +8,6 @@
 #include "../include/table_skel-private.h"
 #include "network_server.h"
 #include "extra/inet.h"
-//#include "../include/message.h"
 #include "message.c"
 #include <pthread.h>
 #include "time.h"
@@ -61,9 +60,9 @@ void *thread_job(void *params){
 	while((msg = network_receive(connsockfd)) != NULL){
 		clock_t t;
 		t = clock();
-		printf("recebeu mensagem\n");
+
 		if(msg == NULL){
-			printf("msg null network_server\n");
+			printf("message received is null on network_server\n");
 			//return -1;
 		}
 		
@@ -78,11 +77,8 @@ void *thread_job(void *params){
 			free(msg);
 			//return -1;
 		}
-		printf("MESSAGE_T__OPCODE__OP_STATS = %d\n", msg->opcode);
 		if((msg->opcode != MESSAGE_T__OPCODE__OP_STATS+1) || (msg->opcode == MESSAGE_T__OPCODE__OP_ERROR)){
-			
 			setStatsAVGTime(t);
-			//printf("sec = %f\n", seconds);
 		}
 		
 	}	
@@ -97,42 +93,31 @@ int network_main_loop(int listening_socket) {
     int connsockfd;
 
     // Bloqueia a espera de pedidos de conexão
-	printf("vou fazer accept\n");
+	printf("Servidor na escuta\n");
     while ((connsockfd = accept(listening_socket, (struct sockaddr *) &client, &client_size)) != -1) {
-		//deve ter while enquanto network_receive != NULL
-		printf("connsockfd 1= %d\n", connsockfd);
-        //apos conexao => criar as threads
+		
 		pthread_t nova;
-		//int *thread_param = malloc(sizeof(int));
-		//thread_param = connsockfd;
-		printf("RH1\n");
 
 		if (pthread_create(&nova, NULL, &thread_job, (void *) &connsockfd) != 0){
-			printf("\nThread não criada.\n");
+			printf("\nFalha na criação da Thread\n");
 			exit(EXIT_FAILURE);
 		}
 		if (pthread_detach(nova) != 0){
-			printf("\nErro no thread_detach.\n");
+			printf("\nErro na chamada do thread_detach\n");
 		}
-
-		printf("RH2\n");
         // Fecha socket referente a esta conexão
 		//close(connsockfd);
-		//message_t__free_unpacked(msg, NULL);
     }
-	perror("morreu\n");
+	perror("O servidor encerrou de maneira inesperada, tente novamente\n");
 
 	return 0;
 }
 
 
 MessageT *network_receive(int client_socket) {
-	
 	MessageT *msg = NULL;
 	int result, msgsizeAux;
    	void *buf;
-
-	printf("vou receber mensagens no socket %d\n", client_socket);
 
 	if (client_socket < 0) {
 		return NULL;
@@ -147,17 +132,16 @@ MessageT *network_receive(int client_socket) {
 	}
 	
 	uint32_t msgsize = ntohl(msgsizeAux);
-	//msg = (MessageT *) malloc(msgsize);
-	printf("recebeu inteiro %d\n", msgsize);
 	buf = malloc(msgsize);
 	
 	// Recebe a mensagem
 	if ((result = read_all(client_socket, buf, msgsize)) != msgsize) {
-		printf("Error in read_all message result = %d\n", result);
+		printf("Perdeu conexão com o cliente %d\n", result);
 		close(client_socket);
 		free(buf);
 		return NULL;
 	}
+	printf("Recebendo mensagem\n");
 	msg = message_t__unpack(NULL, msgsize, buf);
 
 	// Verificar se a deserializacao teve sucesso 
@@ -182,7 +166,6 @@ int network_send(int client_socket, MessageT *msg) {
 	}
 	
 	msgsizeAux = message_t__get_packed_size(msg);
-	printf("tamanho de MessageT: %d\n", msgsizeAux);
     buf = malloc(msgsizeAux);
     if (buf == NULL) {
         fprintf(stdout, "malloc error\n");
