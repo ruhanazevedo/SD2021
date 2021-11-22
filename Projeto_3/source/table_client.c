@@ -61,22 +61,18 @@ int main(int argc, char** argv) {
         }
         
         else if((strcmp(comparator, "put")) == 0){
-            printf("entrou no put\n");
             char *argKey = strtok(NULL, " ");
-            printf("split de key %s\n", argKey);
+            
             char *argData = strtok(NULL, " ");
-            printf("split de data %s\n", argData);
-            printf("pointer de argData %p\n", argData);
-            printf("strlen %ld\n", (strlen(argData)+1));
-
+            if(argKey == NULL || argData == NULL){
+                printf("Comando put precisa de mais argumentos para execução\nDigite help\n");
+                continue;
+            }
 
             int datasize = strlen(argData) + 1;
-            printf("datasize = %d\n", datasize);
             struct data_t *data = data_create2(datasize, argData);
             struct entry_t *entry = entry_create(argKey, data);
-            printf("entry: key = %s\n", entry->key);
             data_print(entry->value);
-            printf("\n");
             int res = -99;
             if((res = rtable_put(remote_table, entry)) == 0){
                 printf("Inserindo conjunto {key: %s, value:%s na tabela}\n", argKey, argData);
@@ -88,6 +84,10 @@ int main(int argc, char** argv) {
 
         else if(strcmp(comparator, "get") == 0){
             char *argKey = strtok(NULL, " ");
+            if(argKey == NULL){
+                printf("Comando get precisa de mais argumentos para execução\nDigite help\n");
+                continue;
+            }
             struct data_t *data;
             if((data = rtable_get(remote_table, argKey)) != NULL){
                 printf("comando get realizado para a key: %s\n", argKey);
@@ -102,7 +102,10 @@ int main(int argc, char** argv) {
 
         else if(strcmp(comparator, "del") == 0){
             char *argKey = strtok(NULL, " ");
-
+            if(argKey == NULL){
+                printf("Comando del precisa de mais argumentos para execução\nDigite help\n");
+                continue;
+            }
             int res = -99;
             if((res = rtable_del(remote_table, argKey)) == 0){
                 printf("Apagando entrada na tabela remota para a key: %s\n", argKey);
