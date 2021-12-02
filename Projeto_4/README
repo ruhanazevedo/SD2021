@@ -1,0 +1,19 @@
+Para além dos comandos já solicitados, de maneira a tornar a experiencia do cliente ainda mais autónoma, 
+adicionamos também o comando help, que faz a listagem de todos os comandos e cláusulas que permitem que o cliente 
+identifique o problema em argumentos passados ao servidor
+
+Adicionamos um table_skel-private.h para conter a função que altera o average_time do stats
+
+
+criamos no makefile 2 comandos auxiliares que permitem gerar o .c e .h do proto e outro que gerava o .o, e também apaga-los quando necessário
+    make proto => Cria os files .h, .c e .o do .proto dentro de /include
+    make pclean => Apaga os files gerados pelo 'make proto'
+
+Utilizamos o inet.h, do qual esta contido dentro de /include/extra
+
+Comandos clássico makefile
+
+make clean 
+	-> Limpa o conteúdo das pastas /binary, /object e /lib
+make all
+	-> Gera os objects para a pasta /object .os executáveis para a pasta /binary e as bibliotecas para a pasta /lib
