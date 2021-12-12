@@ -37,7 +37,10 @@ int main(int argc, char **argv) {
 	}	
 
 	int n_lists = atoi(argv[2]);
-	table_skel_init(n_lists);
+
+	//table_skel_init(n_lists);
+	table_skel_mapping(n_lists, "127.0.0.1", port);
+
 	int result = network_main_loop(sockfd);
 
 	if (result == -1) {
