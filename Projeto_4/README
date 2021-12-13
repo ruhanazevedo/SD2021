@@ -1,10 +1,12 @@
-Para além dos comandos já solicitados, de maneira a tornar a experiencia do cliente ainda mais autónoma, 
-adicionamos também o comando help, que faz a listagem de todos os comandos e cláusulas que permitem que o cliente 
-identifique o problema em argumentos passados ao servidor
+Relativamente ás mudanças efetuadas no servidor, realizamos as mesmas no table_skel. Fazendo a ligação ao ZooKeeper e posteriormente implementado
+os passos mencionados no enunciado.
 
-Adicionamos um table_skel-private.h para conter a função que altera o average_time do stats
+No lado do cliente realizamos alterações no table_client. Fazendo a ligação ao ZooKepper e posterior realização dos restantes passos.
 
+Realizámos testes com base no guião de avaliação fornecido pelos professores. Tendo difilculdades na realização das funções watch assim como no 
+caso de passagem do servidor backup para primary quando o servidor primary termina.
 
+Foram realizadas ligeiras alterações no makefile.
 criamos no makefile 2 comandos auxiliares que permitem gerar o .c e .h do proto e outro que gerava o .o, e também apaga-los quando necessário
     make proto => Cria os files .h, .c e .o do .proto dentro de /include
     make pclean => Apaga os files gerados pelo 'make proto'

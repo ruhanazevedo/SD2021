@@ -13,14 +13,13 @@
 #include "../include/extra/inet.h"
 #include "../include/data-private.h"
 #include "../include/network_client.h"
-//#include "../include/stats-private.h"
 #include <zookeeper/zookeeper.h>
 
 
 #define BUFFERSIZE 50
 
 static zhandle_t *zh;
-int watcherAllowed;
+char *server_endpoint;
 
 int testInput(int argc){
     if (argc != 2){
@@ -32,46 +31,61 @@ int testInput(int argc){
     return 0;
 }
 
-void watcher_function_client(){
-    printf("\n\nEntrando na watcher function client\n\n");
-    int primary = zoo_exists(zh, "/kvstore/primary", 0, NULL);
-	if(primary == ZNONODE && watcherAllowed == 1){
-        //altearar valor do rtable
-        
-        //informar o utilizador sobre a impossibilidade de executar operações na tabela;
-        printf("\n\n[WARN] De momento não é possível executar operações sobre a tabela remota;\n\n");
-		//return;
+void watcher_function(zhandle_t *zzh, int type, int state, const char *path, void *watcherCtx){
+	
+	if (ZOK != zoo_wget_children(zh, "/kvstore", watcher_function, watcherCtx, NULL)) {
+ 		fprintf(stderr, "Error setting watch at %s!\n", "/kvstore/primary");
 	}
+
+	int primary = zoo_exists(zh, "/kvstore/primary", 0, NULL);
+	char *server_endpoint_tmp[64];
+    int bufferlen1 = sizeof(server_endpoint_tmp);
+
+    int flag1 = zoo_get (zh, "/kvstore/primary", 0,
+                    server_endpoint_tmp, & bufferlen1, NULL);
+    
+
+    if (ZOK == primary) {
+		if(strcmp(server_endpoint_tmp, server_endpoint) != 0){
+            char **input = calloc(1, sizeof(char*)*2);
+            input[0] = calloc(1, sizeof(char));
+            input[0] = "./table_client";
+            input[1] = calloc(1, sizeof(char));
+            input[1] = "127.0.0.1:2181";
+            main(2, input);
+        }
+	} 
 }
 
-int main(int argc, char** argv) { 
-    struct rtable_t *remote_table;
 
-    if(testInput(argc) < 0) return -1;
+int main(int argc, char** argv) { 
+    server_endpoint = malloc(sizeof(char));
+    
+   struct rtable_t *remote_table;
+
+   if(testInput(argc) < 0) return -1;
 
    // ligar ao zookeeper
-   zh = zookeeper_init(argv[1], watcher_function_client, 2000, 0, NULL, 0);
+   zh = zookeeper_init(argv[1], watcher_function, 2000, 0, NULL, 0);
    // zoo_exists(primary)
    char *primary_path = "/kvstore/primary";
    int primary = zoo_exists(zh, primary_path, 0, NULL);
-   printf("\n\nRH1, primary = %d\n\n", primary);
-   char *server_endpoint[64];
+   char *server_endpoint_tmp[64];
    if(primary == ZOK){
-    int bufferlen1 = sizeof(server_endpoint);
+    int bufferlen1 = sizeof(server_endpoint_tmp);
 
     int flag1 = zoo_get (zh, primary_path, 0,
-                      server_endpoint, & bufferlen1, NULL);
-    watcherAllowed = 1;
-    printf("\n\nbuffer1 = %s\n\n", server_endpoint);
+                      server_endpoint_tmp, & bufferlen1, NULL);
+    
+    server_endpoint = server_endpoint_tmp;
    }
    else {
        printf("\n[WARN] De momento não há servidor disponível, tente mais tarde\n");
        return;
    }
-    //if true zoo_gets(primary)
-    printf("\n\nRH2\n\n");
     printf("connecting to %s..\n", server_endpoint);
     
+
     if((remote_table = rtable_connect(server_endpoint)) == NULL){
         return -1;
     }
@@ -82,7 +96,7 @@ int main(int argc, char** argv) {
         char *text = calloc(1,1);
         text = realloc( text, strlen(text)+1+strlen((char*)buffer) );
         if( !text ){
-            printf("fail");
+            printf("Falha ao receber messagem");
         }
         strcat( text, (char*) buffer ); 
         char *split = strtok(text, "\n");

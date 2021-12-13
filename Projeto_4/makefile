@@ -4,12 +4,12 @@
 #* 51779 - Ruhan Azevedo   *
 #***************************/
 
-CC=gcc
+CC=gcc -D THREADED
 INCLUDE = include/
 OBJ = object/
 SRC = source/
 BIN = binary/
-FLAG = gcc -g -Wall -I include/ -c
+FLAG = gcc -D THREADED -g -Wall -I include/ -c
 PROTO_DIR = proto/
 LIB = lib/
 

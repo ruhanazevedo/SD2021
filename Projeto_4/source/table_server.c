@@ -9,6 +9,7 @@
 #include <string.h>
 #include <signal.h>
 #include "network_server.h"
+#include "table_skel-private.h"
 #include "message.h"
 
 
@@ -47,9 +48,6 @@ int main(int argc, char **argv) {
 			printf("Error in main loop\n");
 			return -1;
 		}
-	}
-	if (filler == -2){
-		printf("já tavam feito *shrugs*\n");
 	}
 
 	int network_server_close();

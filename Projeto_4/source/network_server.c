@@ -208,6 +208,7 @@ int network_send(int client_socket, MessageT *msg) {
 int network_server_close() {
 
 	table_skel_destroy();
+	zookeeper_close();
 	return 0;
 }
 
