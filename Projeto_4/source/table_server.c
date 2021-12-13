@@ -39,13 +39,17 @@ int main(int argc, char **argv) {
 	int n_lists = atoi(argv[2]);
 
 	//table_skel_init(n_lists);
-	table_skel_mapping(n_lists, "127.0.0.1", port);
+	int filler = table_skel_mapping(n_lists, "127.0.0.1", port);
+	if (filler == 0){
+		int result = network_main_loop(sockfd);
 
-	int result = network_main_loop(sockfd);
-
-	if (result == -1) {
-		printf("Error in main loop\n");
-		return -1;
+		if (result == -1) {
+			printf("Error in main loop\n");
+			return -1;
+		}
+	}
+	if (filler == -2){
+		printf("já tavam feito *shrugs*\n");
 	}
 
 	int network_server_close();
