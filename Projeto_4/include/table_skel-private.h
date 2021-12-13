@@ -18,7 +18,7 @@ void setStatsAVGTime(clock_t time);
 /*
  * Função para mapear o init do table_skel, isto é, fazer o init necessario do table_skel_init e também o init do zookeeper
  */
-int table_skel_mapping(int n_lists, char* host, short port);
+int table_skel_mapping(int n_lists, char *zk_endpoint, char *server_port);
 
 /*
  * Função auxiliar de watch do zookeeper

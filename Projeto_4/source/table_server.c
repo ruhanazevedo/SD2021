@@ -13,7 +13,7 @@
 
 
 int testInput(int argc){
-    if (argc != 3){
+    if (argc != 4){
 
 		printf("Uso: ./table_server <porto _servidor> <size_table> \n");
     	printf("Exemplo de uso: ./table_server 12345 30\n");
@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 
 	port = atoi(argv[1]);
 	sockfd = network_server_init(port);
-	
+
 	if (sockfd == -1) {
 		printf("Error creating server\n");
 		return -1;
@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 	int n_lists = atoi(argv[2]);
 
 	//table_skel_init(n_lists);
-	int filler = table_skel_mapping(n_lists, "127.0.0.1", port);
+	int filler = table_skel_mapping(n_lists, argv[3], argv[1]);
 	if (filler == 0){
 		int result = network_main_loop(sockfd);
 

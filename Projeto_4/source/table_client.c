@@ -14,18 +14,34 @@
 #include "../include/data-private.h"
 #include "../include/network_client.h"
 //#include "../include/stats-private.h"
+#include <zookeeper/zookeeper.h>
 
 
 #define BUFFERSIZE 50
+
+static zhandle_t *zh;
+int watcherAllowed;
 
 int testInput(int argc){
     if (argc != 2){
 
 	    printf("Uso: ./table_client <ip_servidor:porto_servidor> \n");
-    	printf("Exemplo de uso: ./table_client 127.0.0.1:12345 \n");
+    	printf("Exemplo de uso: ./table_client 127.0.0.1:2181 \n");
         return -1;
     } 
     return 0;
+}
+
+void watcher_function_client(){
+    printf("\n\nEntrando na watcher function client\n\n");
+    int primary = zoo_exists(zh, "/kvstore/primary", 0, NULL);
+	if(primary == ZNONODE && watcherAllowed == 1){
+        //altearar valor do rtable
+        
+        //informar o utilizador sobre a impossibilidade de executar operações na tabela;
+        printf("\n\n[WARN] De momento não é possível executar operações sobre a tabela remota;\n\n");
+		//return;
+	}
 }
 
 int main(int argc, char** argv) { 
@@ -33,9 +49,30 @@ int main(int argc, char** argv) {
 
     if(testInput(argc) < 0) return -1;
 
-    printf("connecting to %s..\n", argv[1]);
+   // ligar ao zookeeper
+   zh = zookeeper_init(argv[1], watcher_function_client, 2000, 0, NULL, 0);
+   // zoo_exists(primary)
+   char *primary_path = "/kvstore/primary";
+   int primary = zoo_exists(zh, primary_path, 0, NULL);
+   printf("\n\nRH1, primary = %d\n\n", primary);
+   char *server_endpoint[64];
+   if(primary == ZOK){
+    int bufferlen1 = sizeof(server_endpoint);
+
+    int flag1 = zoo_get (zh, primary_path, 0,
+                      server_endpoint, & bufferlen1, NULL);
+    watcherAllowed = 1;
+    printf("\n\nbuffer1 = %s\n\n", server_endpoint);
+   }
+   else {
+       printf("\n[WARN] De momento não há servidor disponível, tente mais tarde\n");
+       return;
+   }
+    //if true zoo_gets(primary)
+    printf("\n\nRH2\n\n");
+    printf("connecting to %s..\n", server_endpoint);
     
-    if((remote_table = rtable_connect(argv[1])) == NULL){
+    if((remote_table = rtable_connect(server_endpoint)) == NULL){
         return -1;
     }
 

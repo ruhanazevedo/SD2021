@@ -22,32 +22,40 @@ pthread_mutex_t m_table = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t m_stats = PTHREAD_MUTEX_INITIALIZER;
 struct statistics *stats;
 static zhandle_t *zh;
+char *zk_server_endpoint;
 
-void watcher_function(){
-	//TODO
+void insert_on_backup(const char *buffer, int buflen){
+	zoo_set(zh, "/kvstore/backup", buffer, buflen, 0);
 }
 
-int table_skel_mapping(int n_lists, char* host, short port){
-	//char host_port[80];
-	char *host_port = malloc(sizeof(char));
-	strcat(host_port, host);
-	strcat(host_port, ":");
-	char * a_string = malloc(sizeof(char));
-	snprintf(a_string, 128, "%u", 2181);
-	strcat(host_port, a_string);
-	free(a_string);
-	//
-	char * server_port = malloc(sizeof(char));
-	snprintf(server_port, 5, "%u", port);
-	//
-	zh = zookeeper_init(host_port, watcher_function, 2000, 0, NULL, 0);
+void watcher_function(zhandle_t *zzh, int type, int state, const char *path, void *watcherCtx){
+	printf("\n\nteste watcher func\n\n");
+	
+	if (ZOK != zoo_wget_children(zh, "/kvstore/primary", watcher_function, watcherCtx, NULL)) {
+ 		fprintf(stderr, "Error setting watch at %s!\n", "/kvstore/primary");
+	}
+
+	int primary = zoo_exists(zh, "/kvstore/primary", 0, NULL);
+	int backup = zoo_exists(zh, "/kvstore/backup", 0, NULL);
+	if(primary == ZNONODE && backup == ZOK){
+		printf("\n\entrou watcher func\n\n");
+		char *server_endpoint[64];
+		int bufferlen1 = sizeof(server_endpoint);
+
+		int flag1 = zoo_get (zh, "/kvstore/backup", 0,
+						server_endpoint, & bufferlen1, NULL);
+		zoo_delete(zh, "/kvstore/backup", -1);
+		zoo_create(zh, "/kvstore/primary", server_endpoint, strlen(server_endpoint)+1, & ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL, NULL, 0);
+	}
+}
+
+int table_skel_mapping(int n_lists, char *zk_endpoint, char *server_port){
+	zh = zookeeper_init(zk_endpoint, watcher_function, 2000, 0, NULL, 0);
 	if(zh == NULL){
 		fprintf(stderr, "[ERROR] Error on connection attempt to zookeeper server\n");
 		exit(EXIT_FAILURE);
 	}
 	printf("\n\nRH3\n\n");
-	//int root = zoo_exists(zh, "/kvstore", 0, NULL);
-	//printf("\n\nroot = %d\n\n", root);
 	if (zoo_exists(zh, "/kvstore", 0, NULL) == ZNONODE) { //primario
 		printf("\n\nexiste?\n\n");
 		zoo_create(zh, "/kvstore", NULL, -1, & ZOO_OPEN_ACL_UNSAFE, 0, NULL, 0);
@@ -67,12 +75,25 @@ int table_skel_mapping(int n_lists, char* host, short port){
 			printf("\n passou no if backup \n");
 
 			printf("criar node com port = %s \n", server_port);
-			zoo_create(zh, "/kvstore/primary", server_port, 5, & ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL, NULL, 0);
+			char *local_host = calloc(1, sizeof(char));
+			strcat(local_host, "127.0.0.1:");
+			printf("local_host1 = %s\n\n", local_host);
+			strcat(local_host,server_port);
+			printf("local_host2 = %s\n\n", local_host);
+			zoo_create(zh, "/kvstore/primary", local_host, strlen(local_host)+1, & ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL, NULL, 0);
+			zk_server_endpoint = local_host;
+			printf("\n\nzk_server_endpoint = %s\n\n", zk_server_endpoint);
 		}	
 		printf("\n primary criado \n");
 	}
 	else if(backup == ZNONODE){
-		zoo_create(zh, "/kvstore/backup", server_port, 5, & ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL, NULL, 0);
+		char *local_host = calloc(1, sizeof(char));
+		strcat(local_host, "127.0.0.1:");
+		printf("local_host1 = %s\n\n", local_host);
+		strcat(local_host,server_port);
+		printf("local_host2 = %s\n\n", local_host);
+		zoo_create(zh, "/kvstore/backup", local_host, strlen(local_host)+1, & ZOO_OPEN_ACL_UNSAFE, ZOO_EPHEMERAL, NULL, 0);
+		zk_server_endpoint = local_host;
 	}
 	else {
 		printf("já há primary e backup, job done\n");
@@ -108,6 +129,7 @@ int table_skel_init(int n_lists) {
 void table_skel_destroy() {
 
 	table_destroy(table);
+	zookeeper_close(zh);
 
 }
 
@@ -174,7 +196,6 @@ int invoke(MessageT *msg) {
 	} 
 
 	else if (msg->opcode == MESSAGE_T__OPCODE__OP_PUT && msg->c_type == MESSAGE_T__C_TYPE__CT_ENTRY) {
-		
 		pthread_mutex_lock(&m_table);
 
 		if ((table_put(table, msg->entries[0]->key, data_create2(msg->entries[0]->data.len, msg->entries[0]->data.data))) == 0) {
